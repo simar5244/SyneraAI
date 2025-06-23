@@ -103,6 +103,7 @@
     "stripe": "^18.2.0",
     "tailwind-merge": "^3.2.0",
     "tailwindcss": "^4.1.4",
+    "autoprefixer": "^10.4.14",
     "three": "0.151.0",
     "ui": "github:shadcn/ui",
     "util": "^0.12.5",
@@ -124,7 +125,7 @@
     "@types/three": "^0.176.0",
     "@types/uuid": "^9.0.7",
     "@vitejs/plugin-react": "^4.0.0",
-    "autoprefixer": "^9.8.8",
+    
     "concurrently": "^8.2.2",
     "eslint": "^8",
     "eslint-config-next": "14.0.3",
