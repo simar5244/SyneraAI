@@ -1,6 +1,10 @@
 # Stage 1: Build the Next.js application
 FROM node:20-alpine AS builder
 
+# Cache bust argument to force layer rebuild
+ARG CACHE_DATE=2025-06-22
+RUN echo "Cache bust: $CACHE_DATE"
+
 # Install Python and build dependencies
 RUN apk add --no-cache \
     python3 \
@@ -41,8 +45,7 @@ ENV PYTHON=/usr/bin/python3
 ENV npm_config_python=/usr/bin/python3
 
 # Install Node.js dependencies with production flag
-RUN npm config set python python3 && \
-    npm ci --only=production && \
+RUN npm ci --only=production && \
     npm cache clean --force
 
 # Remove build dependencies
