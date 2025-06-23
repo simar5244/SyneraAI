@@ -1,19 +1,23 @@
 # Stage 1: Build the Next.js application
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 # Cache bust argument to force layer rebuild
 ARG CACHE_DATE=2025-06-22
 RUN echo "Cache bust: $CACHE_DATE"
 
-# Install Python and build dependencies
-RUN apk add --no-cache \
+# Install system dependencies (Python and build tools)
+RUN apt-get update && apt-get install -y \
     python3 \
-    py3-pip \
-    g++ \
-    make \
     python3-dev \
-    gcc \
-    musl-dev
+    python3-pip \
+    build-essential \
+    pkg-config \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    libgif-dev \
+    librsvg2-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -21,24 +25,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY requirements*.txt ./
 
-# Install build dependencies
-RUN apk add --no-cache --virtual .build-deps \
-    python3 \
-    python3-dev \
-    py3-pip \
-    make \
-    g++ \
-    gcc \
-    pkgconfig \
-    cairo-dev \
-    jpeg-dev \
-    pango-dev \
-    giflib-dev \
-    librsvg \
-    pango \
-    jpeg \
-    musl-dev \
-    && ln -sf python3 /usr/bin/python
+
 
 # Set Python path for node-gyp
 ENV PYTHON=/usr/bin/python3
@@ -89,7 +76,7 @@ COPY --from=builder /app/requirements*.txt ./
 RUN npm install --only=production --legacy-peer-deps
 
 # Install production Python dependencies
-RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
+RUN pip3 install --upgrade pip setuptools wheel && pip3 install --no-cache-dir --break-system-packages --use-deprecated=legacy-resolver -r requirements.txt
 
 # Copy built application and other necessary files
 COPY --from=builder /app/.next ./.next
