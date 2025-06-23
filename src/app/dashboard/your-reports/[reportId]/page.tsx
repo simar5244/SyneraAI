@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 
 // Ensure we're loading and saving conversation history per report ID
