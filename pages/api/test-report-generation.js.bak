@@ -1,0 +1,486 @@
+import { MongoClient } from 'mongodb';
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import Anthropic from '@anthropic-ai/sdk';
+
+// Environment variables
+const MONGODB_URI = process.env.MONGODB_URI;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_MODEL_NAME = "gemini-2.0-flash-001";
+const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
+const CLAUDE_MODEL = "claude-3-7-sonnet-20250219";
+
+// Configure safety settings for Gemini
+const safetySettings = [
+  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+];
+
+// Import the necessary functions from report-generation.js
+import * as reportGenFunctions from './report-generation.js';
+
+// Sample Claude query response for testing (using the provided real output)
+const SAMPLE_CLAUDE_RESPONSE = {
+  response: `Here's a comprehensive business report on the employees of company10, based on the most recent data available.
+
+**1. Current Status and Overview**
+
+Currently, company10 has a small team comprised of Sim Singh (admin, Software Engineer), Anthony (legal aid), user2 (employee_tier_3), user4 (call receptionist), and S S (Software engineer). All employees currently have an "active" employment status as of May 2025. The IT department appears to be a common link, although specific department assignments for all roles are not consistently documented. The company utilizes a tiered employee structure.
+
+**2. Key Metrics and Statistics**
+
+*   **Feedback Metrics:** Feedback data is somewhat limited, but we can see that Sim Singh has given feedback with an average rating of 3.2 in Q2 2025. User2 received feedback averaging a score of 5 in Q2 2025. S S received feedback of 3.4.
+
+*   **Utilization Scores:** Utilization scores, indicating workload and efficiency, vary across the team. Sim Singh has a utilization score of 0.25, while Anthony has a score of 0.1. user3 has a score of 0.12 and user4 has a score of 0.078. User2 has the lowest utilization score, sitting at 0.05.
+
+*   **Succession Planning:** Succession analyses have been conducted for each employee. For example, Sim Singh has "S S" listed as a potential successor, although currently deemed "non-viable" due to insufficient competency overlap. A similar analysis for Anthony, finds Sim Singh, S S, user2, and user4 as potential successors.
+
+* **Attrition Assessment:** While the provided data doesn't offer concrete attrition risk scores for each employee, the "stability_index" found within their analysis data points towards potential retention risks that could impact the company's stability.
+
+**3. Trends and Patterns**
+
+*   **IT Department Centralization:** A pattern emerges with most employees listed under the IT department, suggesting a possible centralization of roles within this area. Further investigation into departmental structure is recommended.
+
+*   **Limited Feedback Data:** There's a trend of limited feedback data across the company. While some employees have given or received feedback, overall activity appears low. This may indicate a need to encourage more regular feedback practices.
+
+**4. Challenges and Opportunities**
+
+*   **Succession Viability:** A challenge lies in identifying viable successors for key roles. Current successor analyses reveal several "non-viable" candidates, highlighting potential skill gaps. The opportunity here is to invest in targeted training and development programs to bridge these gaps and foster internal talent.
+
+*   **Skill Gaps and Development:** There's a need to address individual development areas. Many succession candidates are flagged for "limited skill overlap" or needing experience with more complex projects. Opportunities exist to create personalized development plans, mentorship programs, and project assignments to grow employee skills.
+
+*   **Low Stability Index:** Some employees exhibit a low stability index, indicating potential retention risks. Investigating the underlying causes (e.g., mismatch between responsibilities and seniority) and addressing them proactively can improve employee retention.
+
+**5. Recommendations and Next Steps**
+
+*   **Enhance Feedback Culture:** Implement regular feedback mechanisms, training, and tools to encourage employees to provide and receive constructive feedback.
+*   **Succession Planning Investment:** Focus on developing internal talent.
+*   **Investigate Attrition Risks:**
+*   **Clarify Departmental Structure:** Conduct a review of departmental structure to ensure alignment and optimal organization.
+
+By taking these steps, company10 can strategically develop its employees, mitigate risks, and build a stronger, more resilient workforce for the future.`
+};
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).json({ error: 'Method not allowed. Use POST.' });
+  }
+
+  console.log("=== TEST REPORT GENERATION API CALLED ===");
+  
+  try {
+    // Initialize Google Generative AI client
+    if (!GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY environment variable is not set.');
+    }
+    
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL_NAME, safetySettings });
+    
+    // Initialize Claude client if needed
+    let claudeClient = null;
+    if (CLAUDE_API_KEY) {
+      claudeClient = new Anthropic({
+        apiKey: CLAUDE_API_KEY,
+      });
+    }
+    
+    // Extract report parameters from request or use user's provided input
+    const reportParams = req.body || {};
+    console.log("Report parameters:", reportParams);
+    
+    // Use default parameters if not provided
+    if (!reportParams.reportTopic) {
+      reportParams.reportTopic = "Employee Analysis for Company10";
+    }
+    
+    if (!reportParams.company) {
+      reportParams.company = "Company10";
+    }
+    
+    // Generate a unique report ID
+    const reportId = reportParams.reportId || new Date().getTime().toString();
+    
+    // Allow client to pass their own Claude response
+    const claudeResponse = reportParams.claudeResponse || SAMPLE_CLAUDE_RESPONSE;
+    
+    // --------------------------------------------------------------------------------
+    // STEP 1: Process Claude response to generate report content
+    // --------------------------------------------------------------------------------
+    
+    console.log("Processing Claude response text for report generation");
+    
+    // Extract source information
+    const dbSourceInfo = reportGenFunctions.extractSourceInfo(claudeResponse.response) || {
+      description: `${reportParams.company} database`,
+      type: 'database'
+    };
+    console.log("Source info:", dbSourceInfo);
+    
+    // Web context simulation (normally from fetchWebsiteContext)
+    const webData = {
+      url: `https://${reportParams.company.toLowerCase().replace(/\s+/g, '')}.com`,
+      title: `${reportParams.company} - Business Data`,
+      description: "Provider of services"
+    };
+    
+    // Generate report content from Claude response
+    console.log("Generating report content from Claude response");
+    
+    let reportContent;
+    
+    try {
+      // Generate report content using Gemini
+      const reportPrompt = `
+You are an expert business report writer. Create a detailed, well-structured report based on the following data.
+
+REPORT TOPIC: ${reportParams.reportTopic}
+
+COMPANY: ${reportParams.company}
+
+TARGET AUDIENCE: ${reportParams.targetAudience || "Business executives"}
+
+DATA FROM AI ANALYSIS:
+${claudeResponse.response}
+
+REQUIREMENTS:
+1. Create a comprehensive business report with a clear title, executive summary, and structured sections
+2. Include specific data points, metrics, and findings from the provided information
+3. Maintain a professional tone appropriate for business executives
+4. Format the report using markdown (# for main headings, ## for subheadings, etc.)
+5. Preserve all formatting, including bold and italic text
+6. DO NOT make up any additional data not mentioned in the source
+7. Include a "References" section at the end citing the data sources
+
+Your response must be a valid JSON object with the following structure:
+{
+  "title": "The report title",
+  "content": "The full report content in markdown format"
+}
+
+IMPORTANT: The "content" field should contain properly formatted markdown with headers, lists, paragraphs and preserve all formatting (bold, italic, etc.) from the original text.
+`;
+
+      const reportResult = await model.generateContent(reportPrompt);
+      const reportResponse = reportResult.response.text();
+      
+      // Extract JSON from response
+      const jsonMatch = reportResponse.match(/\{[\s\S]*\}/);
+      
+      if (jsonMatch) {
+        try {
+          reportContent = JSON.parse(jsonMatch[0]);
+          console.log("Successfully parsed report JSON");
+        } catch (parseError) {
+          console.error("Error parsing report JSON:", parseError);
+          reportContent = reportGenFunctions.extractContentFromResponse(reportResponse, reportParams, dbSourceInfo, webData);
+        }
+      } else {
+        reportContent = reportGenFunctions.extractContentFromResponse(reportResponse, reportParams, dbSourceInfo, webData);
+      }
+      
+      // Ensure the report has a title
+      if (!reportContent.title) {
+        reportContent.title = `Report on ${reportParams.reportTopic}`;
+      }
+      
+      // Ensure references section exists
+      if (!reportContent.content.includes("# References")) {
+        reportContent.content += `
+
+# References
+
+1. ${dbSourceInfo.description} (Generated on ${new Date().toLocaleDateString()})
+`;
+      }
+      
+      console.log("Report content generated successfully");
+    } catch (contentError) {
+      console.error("Error generating report content:", contentError);
+      
+      // Fallback to direct extraction from Claude response
+      reportContent = {
+        title: `Report on ${reportParams.reportTopic}`,
+        content: claudeResponse.response
+          .replace(/\*\*/g, '') // Remove bold markers
+          .split('\n\n')
+          .map(section => {
+            if (section.startsWith('1.') || section.startsWith('2.') || 
+                section.startsWith('3.') || section.startsWith('4.') || 
+                section.startsWith('5.')) {
+              return `# ${section}`;
+            } else {
+              return section;
+            }
+          })
+          .join('\n\n') + `\n\n# References\n\n1. ${dbSourceInfo.description} (Generated on ${new Date().toLocaleDateString()})`
+      };
+    }
+    
+    // --------------------------------------------------------------------------------
+    // STEP 2: Use Gemini to analyze the data and suggest visualizations
+    // --------------------------------------------------------------------------------
+    
+    console.log("Analyzing data with Gemini for visualization generation");
+    
+    // Create a prompt for Gemini to analyze the data and generate visualization configs
+    const visualizationPrompt = `
+You are an expert data scientist with expertise in data visualization. Your task is to analyze the following report data and extract structured data that can be used for creating insightful visualizations.
+
+REPORT TEXT:
+${claudeResponse.response}
+
+TASK:
+1. Carefully analyze the text to identify ALL potential data points that could be visualized
+2. Transform the unstructured text into structured data suitable for Chart.js visualizations
+3. Identify the most appropriate chart types based on the data patterns
+4. Create complete visualization configurations with properly structured data
+
+For example, if the text mentions departments, roles, metrics, or any quantitative information, extract this into structured data.
+
+OUTPUT REQUIREMENTS:
+Return a JSON object containing:
+
+1. "extractedData": An object with extracted structured data arrays including:
+   - departmentLabels: Array of department names (if any)
+   - departmentCounts: Array of employee counts by department (if any)
+   - roleLabels: Array of role names (if any)
+   - roleCounts: Array of employee counts by role (if any)
+   - metricLabels: Array of metric names (if any)
+   - metricValues: Array of metric values (if any)
+   - timeSeriesLabels: Array of time-based labels (if any)
+   - timeSeriesValues: Array of time-based values (if any)
+   - statusLabels: Array of status categories (if any)
+   - statusCounts: Array of status counts (if any)
+
+2. "visualizationConfigs": An array of visualization config objects, each containing:
+   - type: Chart type (bar, line, pie, doughnut, radar, etc.)
+   - title: Descriptive chart title
+   - description: Explanation of what the chart shows
+   - data: Properly structured data object compatible with Chart.js with:
+     - labels: Array of labels
+     - datasets: Array of dataset objects with data values and styling
+   - options: Chart.js options to enhance the visualization
+
+IMPORTANT:
+- DO NOT make up any data not present in the text
+- Use appropriate chart types based on the data characteristics
+- Provide informative titles and descriptions
+- Only include visualizations if there is sufficient data
+- If department or role information is missing, look for other metrics
+- For each visualization, ensure the data structure is correct for the chart type
+- Use appropriate color schemes for each chart type
+`;
+
+    let extractedData = {};
+    let visualizationConfigs = [];
+    
+    try {
+      // Generate visualization analysis
+      const visualizationResult = await model.generateContent(visualizationPrompt);
+      const visualizationResponse = visualizationResult.response.text();
+      
+      // Extract JSON from response
+      const visualizationJsonMatch = visualizationResponse.match(/\{[\s\S]*\}/);
+      
+      if (visualizationJsonMatch) {
+        try {
+          const parsedData = JSON.parse(visualizationJsonMatch[0]);
+          
+          if (parsedData.extractedData) {
+            extractedData = parsedData.extractedData;
+            console.log("Successfully extracted structured data:", Object.keys(extractedData));
+          }
+          
+          if (parsedData.visualizationConfigs && Array.isArray(parsedData.visualizationConfigs)) {
+            visualizationConfigs = parsedData.visualizationConfigs;
+            console.log(`Successfully extracted ${visualizationConfigs.length} visualization configs`);
+          }
+        } catch (parseError) {
+          console.error("Error parsing visualization JSON:", parseError);
+          // Fallback to empty objects
+        }
+      }
+      
+      // If we didn't get any visualization configs, try the regular extraction
+      if (!visualizationConfigs || visualizationConfigs.length === 0) {
+        console.log("No visualizations from Gemini, falling back to direct extraction");
+        if (Object.keys(extractedData).length === 0) {
+          extractedData = reportGenFunctions.extractDataFromText(claudeResponse.response);
+        }
+        visualizationConfigs = reportGenFunctions.generateVisualizationsFromExtractedData(extractedData, reportParams);
+      }
+      
+    } catch (visualizationError) {
+      console.error("Error generating visualizations with Gemini:", visualizationError);
+      
+      // Fallback to direct data extraction
+      extractedData = reportGenFunctions.extractDataFromText(claudeResponse.response);
+      visualizationConfigs = reportGenFunctions.generateVisualizationsFromExtractedData(extractedData, reportParams);
+    }
+    
+    console.log(`Final visualization count: ${visualizationConfigs.length}`);
+    
+    // If we still don't have any visualizations, try one more approach
+    if (!visualizationConfigs || visualizationConfigs.length === 0) {
+      console.log("All visualization generation attempts failed, creating generic visualizations");
+      
+      // Try one more time with a simpler prompt
+      try {
+        const simplePrompt = `
+Analyze this business text and create JSON configurations for Chart.js visualizations:
+
+TEXT:
+${claudeResponse.response.substring(0, 3000)}
+
+Return an array of chart configurations. Each chart should have:
+1. type: The chart type (bar, pie, line, etc.)
+2. title: A descriptive title
+3. data: With labels array and datasets array containing data values
+4. options: Appropriate Chart.js options
+
+Only extract real data points from the text. Don't make up values.
+`;
+
+        const simpleResult = await model.generateContent(simplePrompt);
+        const simpleResponse = simpleResult.response.text();
+        
+        // Try to extract a JSON array from the response
+        const arrayMatch = simpleResponse.match(/\[\s*\{[\s\S]*\}\s*\]/);
+        
+        if (arrayMatch) {
+          try {
+            visualizationConfigs = JSON.parse(arrayMatch[0]);
+            console.log(`Successfully extracted ${visualizationConfigs.length} visualization configs with simple prompt`);
+          } catch (parseError) {
+            console.error("Error parsing simple visualization JSON:", parseError);
+          }
+        }
+      } catch (error) {
+        console.error("Error with simple visualization generation:", error);
+      }
+    }
+    
+    // Final fallback: create some basic visualizations if we still have none
+    if (!visualizationConfigs || visualizationConfigs.length === 0) {
+      console.log("Creating basic fallback visualizations");
+      
+      // Scan the text for data patterns
+      const text = claudeResponse.response;
+      
+      // Create a basic bar chart if we find numbers
+      const numberMatches = text.match(/\b(\d+(\.\d+)?)\b/g);
+      if (numberMatches && numberMatches.length > 3) {
+        // Take up to 5 numbers
+        const numbers = numberMatches.slice(0, 5).map(n => parseFloat(n));
+        
+        // Create generic labels
+        const labels = numbers.map((_, i) => `Data Point ${i+1}`);
+        
+        visualizationConfigs.push({
+          type: "bar",
+          title: "Key Metrics",
+          description: "Key numerical values extracted from the report",
+          data: {
+            labels: labels,
+            datasets: [{
+              label: "Value",
+              data: numbers,
+              backgroundColor: "#4C1D95"
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            },
+            plugins: {
+              legend: {
+                display: false
+              }
+            }
+          }
+        });
+      }
+      
+      // Create a pie chart for any categorical data we can find
+      const categoryPatterns = [
+        { regex: /\b(IT|HR|Finance|Marketing|Sales|Operations|Customer Service)\b/gi, title: "Departments" },
+        { regex: /\b(Manager|Engineer|Director|Analyst|Specialist|Coordinator)\b/gi, title: "Roles" }
+      ];
+      
+      for (const pattern of categoryPatterns) {
+        const matches = [...new Set((text.match(pattern.regex) || []).map(m => m.toLowerCase()))];
+        
+        if (matches.length >= 2) {
+          // Create a frequency count
+          const counts = {};
+          matches.forEach(match => {
+            counts[match] = (counts[match] || 0) + 1;
+          });
+          
+          // Convert to arrays
+          const labels = Object.keys(counts).map(k => k.charAt(0).toUpperCase() + k.slice(1));
+          const values = Object.values(counts);
+          
+          visualizationConfigs.push({
+            type: "pie",
+            title: pattern.title,
+            description: `Distribution of ${pattern.title.toLowerCase()} mentioned in the report`,
+            data: {
+              labels: labels,
+              datasets: [{
+                data: values,
+                backgroundColor: [
+                  "#4C1D95", "#2563EB", "#059669", "#D97706", "#DC2626",
+                  "#6D28D9", "#1D4ED8", "#10B981", "#F59E0B", "#B91C1C"
+                ].slice(0, labels.length)
+              }]
+            },
+            options: {
+              plugins: {
+                legend: {
+                  position: 'bottom'
+                }
+              }
+            }
+          });
+          
+          break; // Only create one pie chart
+        }
+      }
+    }
+    
+    // --------------------------------------------------------------------------------
+    // STEP 3: Return the final report with visualizations
+    // --------------------------------------------------------------------------------
+    
+    console.log("Report generation complete");
+    console.log("Report title:", reportContent.title);
+    console.log("Report content length:", reportContent.content?.length || 0);
+    console.log("Visualizations:", visualizationConfigs.length);
+    
+    // Return the generated report
+    return res.status(200).json({
+      reportId,
+      title: reportContent.title,
+      content: reportContent.content,
+      charts: visualizationConfigs,
+      visualizations: visualizationConfigs,
+      webData: webData,
+      dbSourceInfo: dbSourceInfo,
+      extractedData,
+      queryResults: { "searchResults": extractedData }
+    });
+    
+  } catch (error) {
+    console.error("Test report generation error:", error);
+    return res.status(500).json({
+      error: 'An unexpected error occurred',
+      details: error instanceof Error ? error.message : String(error)
+    });
+  }
+} 

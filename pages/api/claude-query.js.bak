@@ -1,0 +1,1209 @@
+import { MongoClient, ObjectId } from 'mongodb';
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import Anthropic from '@anthropic-ai/sdk';
+import { verifyAuth } from '@/lib/auth';
+
+// Environment variables
+const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGODB_URI_BASE;
+const HISTORY_COLLECTION_NAME = "conversation_history";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
+const GEMINI_MODEL_NAME = "gemini-2.0-flash-001";
+const CLAUDE_MODEL = "claude-3-7-sonnet-20250219";
+
+// Configure safety settings for Gemini
+const safetySettings = [
+  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+];
+
+// Fixed predefined prompt for report generation
+const REPORT_GENERATION_PROMPT = `You are an AI assistant generating a comprehensive business report. Your task is to create a detailed, professional report based on the following information:
+
+REPORT TOPIC: {reportTopic}
+
+COMPANY INFORMATION:
+- Company: {company}
+- Location: {location}
+- Website: {website}
+
+ADDITIONAL CONTEXT: {additionalContext}
+
+STAKEHOLDERS: {stakeholders}
+TARGET AUDIENCE: {targetAudience}
+TIMEFRAME: {timeframe}
+
+DATABASE INFORMATION:
+{databaseInfo}
+
+Your report should:
+1. Be comprehensive, professional, and data-driven
+2. Include an executive summary
+3. Organize information into clear sections with headings
+4. Reference specific data points from the database information
+5. Provide actionable insights and recommendations
+6. Use formal business language appropriate for the target audience
+
+IMPORTANT: For any charts or visualizations, you MUST provide structured data in the following format:
+
+[CHART_DATA]
+type: [chart type - one of: bar, line, pie, doughnut, polarArea, radar]
+title: [descriptive title for the chart]
+description: [brief description of what the chart shows]
+xAxisLabel: [label for x-axis if applicable]
+yAxisLabel: [label for y-axis if applicable]
+labels: [array of labels for data points, e.g., ["Jan", "Feb", "Mar"]]
+datasets: [
+  {
+    label: [dataset name],
+    data: [array of numeric values, e.g., [10, 20, 30]],
+    backgroundColor: [optional color information]
+  }
+]
+[/CHART_DATA]
+
+Include 3-5 different charts that best visualize the key data points from your report. Each chart must have complete and accurate data that directly corresponds to information in your report.`;
+
+// Main handler function
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).json({ error: 'Method not allowed. Use POST.' });
+  }
+
+  let client;
+  try {
+    console.log('=== CLAUDE QUERY API HANDLER START ===');
+    // Sanitize the request body for logging - completely remove company field
+    const sanitizedBody = {...req.body};
+    delete sanitizedBody.company; // Always remove company field from logging
+    console.log('Request body:', JSON.stringify(sanitizedBody));
+    
+    // Extract only the fields we need, completely ignoring company field
+    const { query, session_id, collection: specificCollection, isReportGeneration, reportParams } = req.body;
+
+    if (!query || !session_id) {
+      return res.status(400).json({ error: 'Query and session_id are required' });
+    }
+
+    // SECURITY CHECK: Extract companyCode from auth token
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(' ')[1] || req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    let payload;
+    try {
+      payload = await verifyAuth(token);
+      if (!payload?.companyCode && !payload?.company_code) throw new Error();
+    } catch {
+      return res.status(401).json({ error: 'Invalid authentication' });
+    }
+    // Ensure company code is standardized and lowercase
+    const userCompanyCode = (payload.companyCode || payload.company_code).toString().toLowerCase();
+
+    if (!userCompanyCode) {
+      return res.status(403).json({ error: 'Company context required' });
+    }
+    
+    console.log('Authenticated user company code:', userCompanyCode);
+    
+    // IMPORTANT: Always use the authenticated user's company code, NEVER from request
+    const dbName = `company_${userCompanyCode}`;
+    console.log('Target database name:', dbName);
+
+    // Initialize Google Generative AI client
+    if (!GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY environment variable is not set.');
+    }
+    console.log('GEMINI_API_KEY is set');
+    
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL_NAME, safetySettings });
+
+    // Initialize Claude client
+    if (!CLAUDE_API_KEY) {
+      throw new Error('CLAUDE_API_KEY environment variable is not set.');
+    }
+    console.log('CLAUDE_API_KEY is set');
+    
+    const claudeClient = new Anthropic({
+      apiKey: CLAUDE_API_KEY,
+    });
+
+    // Connect to MongoDB with enhanced connection options
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI environment variable is not set.');
+    }
+    
+    // Connect directly to the tenant's database by including the company database in the URI
+    const baseUri = MONGODB_URI.endsWith('/') ? MONGODB_URI : `${MONGODB_URI}/`;
+    const tenantUri = `${baseUri}${dbName}?retryWrites=true&w=majority`;
+    console.log('Connecting to tenant MongoDB URI:', tenantUri.replace(/mongodb\+srv:\/\/.*:.*@/, 'mongodb+srv://***:***@'));
+    
+    try {
+      // Use a simple connection approach without any special options
+      client = await MongoClient.connect(tenantUri);
+      console.log('MongoDB tenant connection successful');
+    } catch (connectError) {
+      console.error('MongoDB connection failed:', connectError.message);
+      throw new Error(`Failed to connect to MongoDB: ${connectError.message}`);
+    }
+    
+    const db = client.db(dbName);
+    console.log('Connected to tenant database:', dbName);
+    
+    // List all collections for debugging
+    const allCollections = await db.listCollections().toArray();
+    console.log(`DEBUG: All collections in ${dbName}:`, allCollections.map(c => c.name).join(', '));
+    
+    const historyCollection = db.collection(HISTORY_COLLECTION_NAME);
+    console.log('History collection reference created');
+
+    // Get conversation history
+    console.log('Retrieving conversation history for session:', session_id);
+    const history = await getConversationHistory(historyCollection, session_id);
+    console.log(`Retrieved ${history.length} history entries`);
+
+    // Introspect database schema and get sample data
+    console.log('Starting database introspection...');
+    const { schema, sampleData, relationships } = await introspectDatabase(db);
+    console.log('Database introspection complete');
+
+    // Check if database is empty and provide helpful response
+    const nonEmptyCollections = Object.entries(schema)
+      .filter(([name, fields]) => fields.length > 0 && name !== HISTORY_COLLECTION_NAME)
+      .map(([name]) => name);
+    
+    if (nonEmptyCollections.length === 0) {
+      console.log('WARNING: No collections with data found in the database');
+      const emptyDbResponse = `I couldn't find any data in the database. The database appears to be empty. You may need to:
+1. Insert some data into the database first
+2. Check your connection string and database name
+3. Verify that you have the correct permissions`;
+      
+      return res.status(200).json({ 
+        response: emptyDbResponse,
+        debug: { 
+          databaseEmpty: true,
+          collectionsFound: Object.keys(schema),
+          allCollections: allCollections.map(c => c.name)
+        }
+      });
+    }
+
+    // Log available collections
+    console.log(`Available collections: ${Object.keys(schema).join(', ')}`);
+    console.log('Collection schema details:');
+    Object.entries(schema).forEach(([collection, fields]) => {
+      console.log(`- ${collection}: ${fields.length} fields`);
+      if (fields.length > 0) {
+        console.log(`  Sample fields: ${fields.slice(0, 5).join(', ')}${fields.length > 5 ? '...' : ''}`);
+      }
+    });
+
+    // NEW APPROACH: Use LLM to generate MongoDB queries directly
+    console.log('Using LLM to analyze query and generate MongoDB operations...');
+    
+    // Create enhanced schema description with field meanings
+    const enhancedSchema = await generateEnhancedSchemaDescription(db, schema, sampleData);
+    
+    // Let LLM analyze the query and generate MongoDB operations
+    const queryAnalysis = await analyzeQueryWithLLM(model, query, enhancedSchema);
+    console.log('LLM query analysis:', queryAnalysis);
+    
+    // Execute the LLM-generated MongoDB operations
+    const searchResults = await executeMongoOperations(db, queryAnalysis);
+    console.log(`LLM-directed search returned ${searchResults.length} results`);
+    
+    // Use LLM to generate the final response
+    let responseText = '';
+    if (searchResults.length > 0) {
+      // Generate natural language response with search results
+      responseText = await generateResponseWithLLM(
+        claudeClient, model, query, history, searchResults, enhancedSchema, isReportGeneration, reportParams
+      );
+    } else {
+      // Generate fallback response when no results found
+      responseText = await generateFallbackWithLLM(
+        claudeClient, model, query, history, enhancedSchema, isReportGeneration, reportParams
+      );
+    }
+
+    // Save conversation
+    console.log('Saving conversation to history');
+    await saveConversation(historyCollection, session_id, query, responseText);
+
+    // Return response
+    console.log('Request completed successfully');
+    return res.status(200).json({ 
+      response: responseText,
+      debug: { 
+        resultsFound: searchResults ? searchResults.length : 0,
+        collectionsSearched: Object.keys(schema).length,
+        collectionsAvailable: Object.keys(schema)
+      }
+    });
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("ERROR in claude-query handler:", errorMessage);
+    if (error instanceof Error && error.stack) {
+      console.error("Error stack:", error.stack);
+    }
+    return res.status(500).json({
+      error: 'An unexpected error occurred',
+      details: errorMessage,
+      response: "I'm sorry, I encountered an unexpected error processing your request. Please try again with a different query."
+    });
+  } finally {
+    if (client) {
+      console.log('Closing MongoDB connection');
+      await client.close();
+    }
+    console.log('=== CLAUDE QUERY API HANDLER END ===');
+  }
+}
+
+// Create enhanced schema description with field meanings and examples
+async function generateEnhancedSchemaDescription(db, schema, sampleData) {
+  const enhancedSchema = {};
+  
+  for (const [collectionName, fields] of Object.entries(schema)) {
+    if (fields.length === 0) continue;
+    
+    // Get sample documents for this collection
+    const sampleDocs = sampleData[collectionName] || [];
+    
+    // Extract field descriptions and examples
+    const fieldDescriptions = {};
+    
+    fields.forEach(field => {
+      // Skip system fields
+      if (field === '_id' || field === '__v') return;
+      
+      // Initialize field description
+      fieldDescriptions[field] = {
+        name: field,
+        type: 'unknown',
+        description: '',
+        examples: []
+      };
+      
+      // Analyze sample docs to determine field type and examples
+      if (sampleDocs.length > 0) {
+        const examples = [];
+        let fieldType = 'unknown';
+        
+        sampleDocs.forEach(doc => {
+          if (doc[field] !== undefined) {
+            const value = doc[field];
+            examples.push(value);
+            
+            // Determine field type
+            if (Array.isArray(value)) {
+              fieldType = 'array';
+            } else if (typeof value === 'object' && value !== null) {
+              fieldType = 'object';
+            } else {
+              fieldType = typeof value;
+            }
+          }
+        });
+        
+        // Update field description
+        fieldDescriptions[field].type = fieldType;
+        fieldDescriptions[field].examples = examples.slice(0, 3); // Limit to 3 examples
+        
+        // Generate field description based on name and examples
+        const nameHints = {
+          id: 'Unique identifier',
+          name: 'Name',
+          title: 'Title',
+          description: 'Description',
+          email: 'Email address',
+          phone: 'Phone number',
+          address: 'Address',
+          date: 'Date',
+          created: 'Creation timestamp',
+          updated: 'Last update timestamp',
+          status: 'Status',
+          type: 'Type',
+          category: 'Category',
+          tags: 'Tags',
+          role: 'Role or position',
+          department: 'Department',
+          manager: 'Manager',
+          supervisor: 'Supervisor',
+          team: 'Team',
+          skills: 'Skills',
+          experience: 'Experience',
+          salary: 'Salary',
+          level: 'Level or tier',
+          tier: 'Tier or level',
+          score: 'Score or rating',
+          rating: 'Rating or score',
+          feedback: 'Feedback',
+          performance: 'Performance',
+          evaluation: 'Evaluation',
+          review: 'Review',
+          project: 'Project',
+          task: 'Task',
+          assignment: 'Assignment',
+          deadline: 'Deadline',
+          duration: 'Duration',
+          priority: 'Priority',
+          cost: 'Cost',
+          budget: 'Budget',
+          revenue: 'Revenue',
+          profit: 'Profit',
+          utilization: 'Utilization rate'
+        };
+        
+        // Set description based on field name
+        for (const [key, description] of Object.entries(nameHints)) {
+          if (field.toLowerCase().includes(key.toLowerCase())) {
+            fieldDescriptions[field].description = description;
+            break;
+          }
+        }
+        
+        // If no description, use field name
+        if (!fieldDescriptions[field].description) {
+          fieldDescriptions[field].description = field.replace(/([A-Z])/g, ' $1')
+            .replace(/_/g, ' ')
+            .toLowerCase()
+            .trim();
+        }
+      }
+    });
+    
+    enhancedSchema[collectionName] = {
+      name: collectionName,
+      fields: fieldDescriptions,
+      recordCount: await db.collection(collectionName).countDocuments(),
+      sampleCount: sampleDocs.length
+    };
+  }
+  
+  return enhancedSchema;
+}
+
+// Analyze query using LLM to generate MongoDB operations
+async function analyzeQueryWithLLM(model, query, enhancedSchema) {
+  try {
+    // Create concise schema representation for the LLM
+    const schemaRepresentation = Object.entries(enhancedSchema).map(([collectionName, collectionInfo]) => {
+      const fieldsList = Object.entries(collectionInfo.fields)
+        .map(([fieldName, fieldInfo]) => {
+          return `${fieldName} (${fieldInfo.type}): ${fieldInfo.description}${
+            fieldInfo.examples.length > 0 
+              ? ` - Example: ${JSON.stringify(fieldInfo.examples[0])}` 
+              : ''
+          }`;
+        }).join('\n      ');
+      
+      return `Collection: ${collectionName} (${collectionInfo.recordCount} records)
+    Fields:
+      ${fieldsList}`;
+    }).join('\n\n');
+    
+    // Create prompt for LLM with enhanced instructions for broader matching
+    const prompt = `You are a MongoDB query expert. Analyze this user query and generate the appropriate MongoDB operations to find the data they need.
+
+User Query: "${query}"
+
+Database Schema:
+${schemaRepresentation}
+
+Your task:
+1. Identify which collection(s) are relevant to the query
+2. Determine the appropriate MongoDB operations (find, aggregate, etc.)
+3. Create filter conditions that match the intent of the user's query
+4. Include any necessary sort, limit, or projection options
+5. For complex queries about employee recommendations, consider skills, roles, departments, etc.
+
+IMPORTANT GUIDELINES FOR EFFECTIVE SEARCHING:
+- Use partial text matching with $regex and case-insensitivity ($options: "i")
+- Avoid exact string matching; prefer substring matching for better results
+- Use $or conditions to search across multiple relevant fields
+- When searching for skills or expertise, try multiple related terms and synonyms
+- For people recommendations, search broadly in relevant fields (skills, role, department, experience)
+- Avoid overly specific filters that might exclude good matches
+- For text fields, use word boundary regex (\\b) only when necessary
+- Consider fuzzy matching by using multiple $regex patterns for variations
+- Implement OR logic across different concepts (e.g., {$or: [{field1: pattern}, {field2: pattern}]})
+- Create word stem patterns (e.g., "legal" should match "legal", "legally", etc.)
+
+Output JSON with the following structure:
+{
+  "collections": ["primary_collection", "secondary_collection"],
+  "primaryOperation": {
+    "collection": "collection_name",
+    "operation": "find|aggregate|etc",
+    "filter": {}, // MongoDB filter object
+    "options": {}, // Options like sort, limit, projection
+    "pipeline": [] // For aggregate operations
+  },
+  "secondaryOperations": [
+    {
+      "collection": "another_collection",
+      "operation": "find|aggregate|etc",
+      "filter": {},
+      "options": {},
+      "relation": "how this relates to primary results"
+    }
+  ],
+  "reasoning": "Explanation of your approach"
+}`;
+
+    // Call LLM to analyze query
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
+    
+    // Extract JSON from response
+    const jsonMatch = responseText.match(/```json\n([\s\S]*?)\n```/) || 
+                      responseText.match(/```\n([\s\S]*?)\n```/) ||
+                      responseText.match(/{[\s\S]*?}/);
+    
+    if (jsonMatch) {
+      try {
+        // Parse JSON from response
+        const jsonStr = jsonMatch[1] || jsonMatch[0];
+        return JSON.parse(jsonStr);
+      } catch (parseError) {
+        console.error('Error parsing LLM JSON response:', parseError);
+        // Fallback to basic query structure
+        return {
+          collections: [Object.keys(enhancedSchema)[0]],
+          primaryOperation: {
+            collection: Object.keys(enhancedSchema)[0],
+            operation: "find",
+            filter: {},
+            options: { limit: 20 }
+          },
+          reasoning: "Fallback due to JSON parsing error"
+        };
+      }
+    } else {
+      console.error('No JSON found in LLM response');
+      // Fallback to basic query structure
+      return {
+        collections: [Object.keys(enhancedSchema)[0]],
+        primaryOperation: {
+          collection: Object.keys(enhancedSchema)[0],
+          operation: "find", 
+          filter: {},
+          options: { limit: 20 }
+        },
+        reasoning: "Fallback due to missing JSON in response"
+      };
+    }
+  } catch (error) {
+    console.error('Error in LLM query analysis:', error);
+    // Return a simple fallback query plan
+    return {
+      collections: [Object.keys(enhancedSchema)[0]],
+      primaryOperation: {
+        collection: Object.keys(enhancedSchema)[0],
+        operation: "find",
+        filter: {},
+        options: { limit: 20 }
+      },
+      reasoning: "Error fallback: " + error.message
+    };
+  }
+}
+
+// Execute MongoDB operations based on LLM analysis
+async function executeMongoOperations(db, queryAnalysis) {
+  try {
+    let results = [];
+    
+    // Execute primary operation
+    if (queryAnalysis.primaryOperation) {
+      const { collection: collectionName, operation, filter, options, pipeline } = queryAnalysis.primaryOperation;
+      const collection = db.collection(collectionName);
+      
+      console.log(`Executing primary operation on ${collectionName}:`, 
+        operation === 'aggregate' ? 'Pipeline: ' + JSON.stringify(pipeline) : 'Filter: ' + JSON.stringify(filter));
+      
+      let primaryResults = [];
+      
+      if (operation === 'aggregate' && Array.isArray(pipeline)) {
+        // Execute aggregation pipeline
+        primaryResults = await collection.aggregate(pipeline).toArray();
+      } else {
+        // Default to find operation
+        primaryResults = await collection.find(filter || {}, options || {}).toArray();
+      }
+      
+      // Mark results with collection name
+      primaryResults.forEach(r => r.__collection = collectionName);
+      
+      console.log(`Primary operation returned ${primaryResults.length} results`);
+      results.push(...primaryResults);
+    }
+    
+    // Execute secondary operations if there are primary results and secondary operations defined
+    if (results.length > 0 && queryAnalysis.secondaryOperations && Array.isArray(queryAnalysis.secondaryOperations)) {
+      for (const secondaryOp of queryAnalysis.secondaryOperations) {
+        try {
+          const { collection: collectionName, operation, filter, options, pipeline, relation } = secondaryOp;
+          const collection = db.collection(collectionName);
+          
+          console.log(`Executing secondary operation on ${collectionName}`);
+          
+          let secondaryResults = [];
+          
+          if (operation === 'aggregate' && Array.isArray(pipeline)) {
+            // Execute aggregation pipeline
+            secondaryResults = await collection.aggregate(pipeline).toArray();
+          } else {
+            // Default to find operation
+            secondaryResults = await collection.find(filter || {}, options || {}).toArray();
+          }
+          
+          // Mark results with collection name and relation
+          secondaryResults.forEach(r => {
+            r.__collection = collectionName;
+            if (relation) r.__relation = relation;
+          });
+          
+          console.log(`Secondary operation on ${collectionName} returned ${secondaryResults.length} results`);
+          results.push(...secondaryResults);
+        } catch (secondaryError) {
+          console.error(`Error in secondary operation on ${secondaryOp.collection}:`, secondaryError);
+          // Continue with other operations
+        }
+      }
+    }
+    
+    // FALLBACK: If no results found, try a broader search
+    if (results.length === 0 && queryAnalysis.primaryOperation) {
+      console.log("No results found with specific filters. Trying broader search...");
+      
+      // Extract key terms from the reasoning or filter
+      let searchTerms = [];
+      
+      // Try to extract terms from reasoning
+      if (queryAnalysis.reasoning) {
+        const reasoning = queryAnalysis.reasoning.toLowerCase();
+        // Extract meaningful terms (skip common words)
+        const skipWords = ['the', 'a', 'an', 'in', 'on', 'at', 'with', 'for', 'to', 'from', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should', 'can', 'could', 'may', 'might', 'must', 'and', 'or', 'but', 'if', 'then', 'else', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 'as', 'user', 'query', 'asking', 'looking', 'find', 'search', 'collection', 'filter', 'operation', 'field', 'fields', 'options', 'match', 'matching', 'results', 'return'];
+        
+        const words = reasoning.split(/\s+/).filter(word => 
+          word.length > 3 && !skipWords.includes(word) && !/^\d+$/.test(word)
+        );
+        
+        // Add unique words to search terms
+        words.forEach(word => {
+          if (!searchTerms.includes(word)) searchTerms.push(word);
+        });
+      }
+      
+      // Extract terms from filter object if it exists
+      if (queryAnalysis.primaryOperation.filter) {
+        const filterObj = queryAnalysis.primaryOperation.filter;
+        // Look for regex patterns or exact matches in the filter
+        Object.values(filterObj).forEach(value => {
+          if (value && typeof value === 'object') {
+            // Check for regex patterns
+            if (value.$regex && typeof value.$regex === 'string') {
+              const term = value.$regex.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\]/g, ''); // Remove regex special chars
+              if (term.length > 2 && !searchTerms.includes(term)) {
+                searchTerms.push(term);
+              }
+            }
+          } else if (typeof value === 'string' && value.length > 3) {
+            // Direct string values
+            if (!searchTerms.includes(value)) searchTerms.push(value);
+          }
+        });
+      }
+      
+      // If no terms found, extract from collections
+      if (searchTerms.length === 0 && queryAnalysis.collections) {
+        searchTerms = queryAnalysis.collections
+          .map(coll => coll.replace(/s$/, '')) // Remove trailing 's' to get singular form
+          .filter(term => term.length > 3);
+      }
+      
+      console.log("Extracted search terms for broader search:", searchTerms);
+      
+      // Try broader search on all collections mentioned in the analysis
+      const collectionsToSearch = queryAnalysis.collections || 
+        (queryAnalysis.primaryOperation ? [queryAnalysis.primaryOperation.collection] : []);
+      
+      for (const collectionName of collectionsToSearch) {
+        try {
+          const collection = db.collection(collectionName);
+          
+          // Build a very flexible search query with $or conditions
+          const orConditions = [];
+          
+          // Get all string/text fields from the collection
+          const sampleDocs = await collection.find({}).limit(5).toArray();
+          const textFields = [];
+          
+          if (sampleDocs.length > 0) {
+            // Extract fields that contain string values
+            const sampleDoc = sampleDocs[0];
+            Object.entries(sampleDoc).forEach(([key, value]) => {
+              if (typeof value === 'string' || Array.isArray(value)) {
+                textFields.push(key);
+              }
+            });
+          }
+          
+          // If no text fields found, use some common ones
+          if (textFields.length === 0) {
+            textFields.push('name', 'title', 'description', 'role', 'department', 'skills', 'responsibilities', 'industry', 'sector', 'expertise');
+          }
+          
+          // Create $or conditions for each term across each text field
+          searchTerms.forEach(term => {
+            textFields.forEach(field => {
+              // Add basic substring match
+              orConditions.push({ [field]: { $regex: term, $options: 'i' } });
+              
+              // Add plural form match if term doesn't already end with 's'
+              if (!term.endsWith('s')) {
+                orConditions.push({ [field]: { $regex: `${term}s`, $options: 'i' } });
+              }
+              
+              // Try with spaces replaced by hyphens or underscores
+              if (term.includes(' ')) {
+                const hyphenTerm = term.replace(/\s+/g, '-');
+                const underscoreTerm = term.replace(/\s+/g, '_');
+                orConditions.push({ [field]: { $regex: hyphenTerm, $options: 'i' } });
+                orConditions.push({ [field]: { $regex: underscoreTerm, $options: 'i' } });
+              }
+            });
+          });
+          
+          // Execute the broader search
+          if (orConditions.length > 0) {
+            console.log(`Executing broader search on ${collectionName} with ${orConditions.length} conditions`);
+            const broadResults = await collection.find({ $or: orConditions }).limit(20).toArray();
+            
+            // Mark results with collection name
+            broadResults.forEach(r => {
+              r.__collection = collectionName;
+              r.__fromBroaderSearch = true; // Mark as coming from broader search
+            });
+            
+            console.log(`Broader search on ${collectionName} returned ${broadResults.length} results`);
+            results.push(...broadResults);
+          }
+        } catch (fallbackError) {
+          console.error(`Error in fallback search on ${collectionName}:`, fallbackError);
+        }
+      }
+    }
+    
+    return results;
+  } catch (error) {
+    console.error('Error executing MongoDB operations:', error);
+    return [];
+  }
+}
+
+// Generate final response using LLM
+async function generateResponseWithLLM(claudeClient, model, query, history, searchResults, enhancedSchema, isReportGeneration = false, reportParams = null) {
+  try {
+    // Check if results have a __fromBroaderSearch flag
+    const hasBroadMatches = searchResults.some(r => r.__fromBroaderSearch);
+    
+    // First try with Gemini
+    console.log('Attempting to generate response with Gemini...');
+    
+    // Prepare context for LLM
+    const resultsContext = searchResults.slice(0, 15).map(result => {
+      // Remove large objects or arrays to keep context size manageable
+      const simplifiedResult = { ...result };
+      
+      Object.entries(simplifiedResult).forEach(([key, value]) => {
+        // Skip special fields
+        if (key.startsWith('__')) return;
+        
+        // Summarize large arrays
+        if (Array.isArray(value) && value.length > 3) {
+          simplifiedResult[key] = `[${value.slice(0, 3).join(', ')}, ... (${value.length - 3} more)]`;
+        }
+        
+        // Summarize large objects
+        if (typeof value === 'object' && value !== null && !Array.isArray(value) && Object.keys(value).length > 5) {
+          const keys = Object.keys(value);
+          simplifiedResult[key] = `{${keys.slice(0, 5).join(', ')}, ... (${keys.length - 5} more fields)}`;
+        }
+      });
+      
+      return simplifiedResult;
+    });
+    
+    // Prepare conversation history
+    const conversationHistory = history.map(h => ({
+      role: h.role === 'user' ? 'human' : 'assistant',
+      content: h.content
+    }));
+    
+    // Determine if this is a report generation request and set appropriate prompt
+    let systemPrompt;
+    
+    if (isReportGeneration && reportParams) {
+      // Use the report generation prompt template
+      systemPrompt = REPORT_GENERATION_PROMPT
+        .replace('{reportTopic}', reportParams.reportTopic || 'General Business Report')
+        .replace('{company}', reportParams.company || 'Company')
+        .replace('{location}', reportParams.location || 'N/A')
+        .replace('{website}', reportParams.website || 'N/A')
+        .replace('{additionalContext}', reportParams.additionalContext || 'N/A')
+        .replace('{stakeholders}', reportParams.stakeholders || 'Management')
+        .replace('{targetAudience}', reportParams.targetAudience || 'Business')
+        .replace('{timeframe}', reportParams.timeframe || 'Current')
+        .replace('{databaseInfo}', JSON.stringify(searchResults, null, 2));
+    } else {
+      // Add special instruction for broader search results
+      let specialInstruction = '';
+      if (hasBroadMatches) {
+        specialInstruction = `
+IMPORTANT: Some results came from a broader search since exact matches weren't found. 
+When recommending people or items, explain why they might be relevant even if they don't exactly match all criteria.
+Focus on finding transferable skills, related experience, or adjacent expertise that could apply to the user's query.`;
+      }
+      
+      // Use the standard query prompt
+      systemPrompt = `You are an AI assistant providing information from a company database.
+
+User Query: "${query}"
+
+Search Results (${searchResults.length} items found):
+${JSON.stringify(resultsContext, null, 2)}
+${specialInstruction}
+
+Please provide a natural, conversational response that:
+1. Directly answers the user's query based on the search results
+2. Organizes the information in clear paragraphs
+3. Provides specific details when available
+4. For employee recommendations, explain WHY they might be suitable, focusing on their skills, experience, and expertise
+5. Be helpful and professional, avoiding overly technical language
+6. If results aren't perfect matches, acknowledge this but still provide the best recommendations based on available data
+7. For employee recommendations, consider their role, department, skills, and any related experience
+
+Do not mention database structure, search methods, or query details. Just provide the information as if you know it directly.`;
+    }
+
+    const result = await model.generateContent(prompt);
+    const geminiResponse = result.response.text();
+    
+    // Check if Gemini response seems good
+    if (geminiResponse && geminiResponse.length > 50 && !geminiResponse.includes("I don't have enough information")) {
+      console.log('Gemini response generation successful');
+      return geminiResponse;
+    }
+    
+    // Fall back to Claude if Gemini response is inadequate
+    console.log('Falling back to Claude for response generation...');
+    
+    // Claude prompt
+    const claudePrompt = `You are an AI assistant providing information from a company database.
+
+User Query: "${query}"
+
+Search Results (${searchResults.length} items found):
+${JSON.stringify(resultsContext, null, 2)}
+${specialInstruction}
+
+Please provide a natural, conversational response that:
+1. Directly answers the user's query based on the search results
+2. Organizes the information in clear paragraphs
+3. Provides specific details when available
+4. For employee recommendations, explain WHY they might be suitable, focusing on their skills, experience, and expertise
+5. Be helpful and professional, avoiding overly technical language
+6. If results aren't perfect matches, acknowledge this but still provide the best recommendations based on available data
+7. For employee recommendations, consider their role, department, skills, and any related experience
+
+Do not mention database structure, search methods, or query details. Just provide the information as if you know it directly.`;
+    
+    const claudeResponse = await claudeClient.messages.create({
+      model: CLAUDE_MODEL,
+      max_tokens: 1500,
+      messages: [{ role: 'user', content: claudePrompt }]
+    });
+    
+    console.log('Claude response generation successful');
+    return claudeResponse.content[0].text;
+  } catch (error) {
+    console.error('Error generating response with LLM:', error);
+    
+    // Basic fallback response
+    return `I found ${searchResults.length} results matching your query about "${query}". ${
+      searchResults.length > 0 
+        ? `This includes information from ${[...new Set(searchResults.map(r => r.__collection))].join(', ')}.`
+        : 'Unfortunately, I could not generate a detailed response.'
+    }`;
+  }
+}
+
+// Generate fallback response when no results found
+async function generateFallbackWithLLM(claudeClient, model, query, history, enhancedSchema, isReportGeneration = false, reportParams = null) {
+  try {
+    // First try with Gemini
+    console.log('Attempting fallback response with Gemini...');
+    
+    // Create simple schema summary
+    const schemaSummary = Object.entries(enhancedSchema)
+      .map(([collectionName, info]) => `${collectionName} (${Object.keys(info.fields).length} fields)`)
+      .join(', ');
+    
+    const prompt = `You are an AI assistant helping users query a company database. The user's query returned no results.
+
+User Query: "${query}"
+
+Available collections: ${schemaSummary}
+
+Please provide a helpful response that:
+1. Acknowledges that no specific results were found for their query
+2. Suggests possible reasons (spelling, terminology, data availability)
+3. Recommends how they might rephrase their query to get better results
+4. Mentions what kind of information IS available in the database
+5. Remains encouraging and helpful
+
+Be conversational and don't mention technical database details.`;
+
+    const result = await model.generateContent(prompt);
+    const geminiResponse = result.response.text();
+    
+    // Check if Gemini response seems good
+    if (geminiResponse && geminiResponse.length > 100) {
+      console.log('Gemini fallback response generated');
+      return geminiResponse;
+    }
+    
+    // Fall back to Claude if Gemini response is inadequate
+    console.log('Trying Claude for fallback response...');
+    
+    const claudeResponse = await claudeClient.messages.create({
+      model: CLAUDE_MODEL,
+      max_tokens: 800,
+      messages: [{ role: 'user', content: prompt }]
+    });
+    
+    console.log('Claude fallback response generated');
+    return claudeResponse.content[0].text;
+  } catch (error) {
+    console.error('Error generating fallback response:', error);
+    
+    // Ultra-simple fallback
+    return `I couldn't find any information related to your query about "${query}". Please try rephrasing your question or ask about a different topic.`;
+  }
+}
+
+// --- Core Helper Functions ---
+
+// Get conversation history
+async function getConversationHistory(collection, sessionId, limit = 10) {
+  try {
+    const history = await collection.find({ session_id: sessionId })
+      .sort({ timestamp: -1 })
+      .limit(limit)
+      .toArray();
+    return history.reverse(); // Chronological order
+  } catch (error) {
+    return []; // Return empty array on error
+  }
+}
+
+// Save conversation
+async function saveConversation(collection, sessionId, userQuery, aiResponse) {
+  try {
+    await collection.updateOne(
+      { session_id: sessionId },
+      {
+        $push: {
+          messages: {
+            role: 'user',
+            text: userQuery,
+            timestamp: new Date()
+          }
+        },
+        $set: { last_updated: new Date() },
+        $setOnInsert: { 
+          session_id: sessionId,
+          created_at: new Date()
+        }
+      },
+      { upsert: true }
+    );
+    
+    await collection.updateOne(
+      { session_id: sessionId },
+      {
+        $push: {
+          messages: {
+            role: 'assistant',
+            text: aiResponse,
+            timestamp: new Date()
+          }
+        },
+        $set: { last_updated: new Date() }
+      }
+    );
+  } catch (error) {
+    console.error('Error saving conversation:', error);
+  }
+}
+
+// Introspect database to get schema and sample data
+async function introspectDatabase(db) {
+  try {
+    // List all collections in the database
+    const collections = await db.listCollections().toArray();
+    console.log(`Found ${collections.length} collections in database`);
+    
+    const schema = {};
+    const sampleData = {};
+    const relationships = [];
+    
+    // Process each collection
+    for (const collection of collections) {
+      const collectionName = collection.name;
+      
+      // Skip system collections
+      if (collectionName.startsWith('system.')) {
+        console.log(`Skipping system collection: ${collectionName}`);
+        continue;
+      }
+      
+      await (async () => {
+        try {
+          const col = db.collection(collectionName);
+          
+          // Get sample documents (up to 5)
+          const sampleDocs = await col.find({}).limit(5).toArray();
+          
+          // Initialize schema for this collection if it doesn't exist
+          if (!schema[collectionName]) {
+            schema[collectionName] = [];
+          }
+          
+          // Extract schema from sample documents
+          if (sampleDocs.length > 0) {
+            const fields = new Set();
+            const collectionRelationships = [];
+            
+            // First pass: identify all fields
+            sampleDocs.forEach(doc => {
+              extractAllFields(doc, '', fields);
+            });
+            
+            // Second pass: identify relationships
+            sampleDocs.forEach(doc => {
+              // Look for explicit relationships (fields ending with Id or _id)
+              Object.entries(doc).forEach(([key, value]) => {
+                // Skip _id field
+                if (key === '_id') return;
+                
+                // Check for potential relationships (fields ending with Id or _id)
+                if (typeof value === 'string' && (key.endsWith('Id') || key.endsWith('_id'))) {
+                  const targetCollection = key.endsWith('Id') 
+                    ? key.slice(0, -2) 
+                    : key.slice(0, -3);
+                  
+                  collectionRelationships.push({
+                    from: collectionName,
+                    fromField: key,
+                    possibleTo: targetCollection,
+                    isArray: false
+                  });
+                }
+                
+                // Check for array of IDs
+                if (Array.isArray(value) && value.length > 0 && 
+                    (key.endsWith('Ids') || key.endsWith('_ids'))) {
+                  const targetCollection = key.replace('Ids', '').replace('_ids', '');
+                  
+                  collectionRelationships.push({
+                    from: collectionName,
+                    fromField: key,
+                    possibleTo: targetCollection,
+                    isArray: true
+                  });
+                }
+              });
+            });
+            
+            // Store sample data for reference
+            sampleData[collectionName] = sampleDocs;
+            
+            // Update schema with fields from this collection
+            schema[collectionName] = Array.from(fields);
+            
+            // Add relationships to global relationships array
+            relationships.push(...collectionRelationships);
+            
+            if (schema[collectionName].length > 0) {
+              console.log(`Extracted ${schema[collectionName].length} fields from ${collectionName}`);
+              console.log(`Sample fields from ${collectionName}: ${schema[collectionName].slice(0, 5).join(', ')}${schema[collectionName].length > 5 ? '...' : ''}`);
+            } else {
+              console.log(`No fields extracted from collection ${collectionName}`);
+            }
+          } else {
+            console.log(`No documents found in collection ${collectionName}`);
+            schema[collectionName] = [];
+            sampleData[collectionName] = [];
+          }
+        } catch (collectionError) {
+          console.error(`ERROR accessing collection ${collectionName}:`, collectionError);
+          if (collectionError instanceof Error && collectionError.stack) {
+            console.error(`Collection error stack for ${collectionName}:`, collectionError.stack);
+          }
+          // Skip collections that can't be accessed
+          schema[collectionName] = [];
+          sampleData[collectionName] = [];
+        }
+      })(); // Immediately invoked async function expression
+    }
+    
+    // Attempt to infer more relationships (especially many-to-many)
+    identifyImplicitRelationships(schema, relationships);
+    
+    return { schema, sampleData, relationships };
+  } catch (error) {
+    console.error('ERROR in database introspection:', error);
+    if (error instanceof Error && error.stack) {
+      console.error('Introspection error stack:', error.stack);
+    }
+    // Ensure we return a valid structure even in case of error
+    return { schema: {}, sampleData: {}, relationships: [] };
+  }
+}
+
+// Extract all fields from a document, including nested fields
+function extractAllFields(obj, prefix, fields) {
+  if (!obj || typeof obj !== 'object') return;
+  
+  // For null, just add the field
+  if (obj === null) {
+    if (prefix) fields.add(prefix);
+    return;
+  }
+  
+  // For arrays, add the array field and examine first few elements if they're objects
+  if (Array.isArray(obj)) {
+    if (prefix) fields.add(prefix);
+    
+    // Check first element if it's an object
+    if (obj.length > 0 && typeof obj[0] === 'object' && obj[0] !== null) {
+      extractAllFields(obj[0], prefix ? `${prefix}.0` : '0', fields);
+    }
+    return;
+  }
+  
+  // For objects, recursively process each field
+  Object.entries(obj).forEach(([key, value]) => {
+    const fieldPath = prefix ? `${prefix}.${key}` : key;
+    fields.add(fieldPath);
+    
+    // Recursively process nested objects (with depth limit)
+    if (value !== null && typeof value === 'object' && fieldPath.split('.').length < 4) {
+      extractAllFields(value, fieldPath, fields);
+    }
+  });
+}
+
+// Identify implicit relationships between collections
+function identifyImplicitRelationships(schema, relationships) {
+  // Check for collection names that might be related
+  const collections = Object.keys(schema);
+  
+  collections.forEach(collection => {
+    const singularName = collection.endsWith('s') ? collection.slice(0, -1) : collection;
+    
+    // Look for fields in other collections that might reference this collection
+    collections.forEach(otherCollection => {
+      if (otherCollection === collection) return;
+      
+      schema[otherCollection].forEach(field => {
+        const fieldLower = field.toLowerCase();
+        
+        // Check if field name contains the collection name
+        if (fieldLower.includes(singularName.toLowerCase()) && 
+            !relationships.some(r => 
+              r.from === otherCollection && 
+              r.fromField === field && 
+              r.possibleTo === collection)) {
+          
+          relationships.push({
+            from: otherCollection,
+            fromField: field,
+            possibleTo: collection,
+            isImplicit: true
+          });
+        }
+      });
+    });
+  });
+}
+
+// Function to get the user's company code from their session or auth token
+// This ensures users can only access their own company's data
+async function getUserCompanyFromSession(req) {
+  try {
+    // Get authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.error('No valid authorization header found');
+      
+      // DEVELOPMENT ONLY: Allow fallback to environment variable
+      // This should NEVER be enabled in production
+      if (process.env.NODE_ENV !== 'production') {
+        // Only use environment variable as last resort
+        if (process.env.NEXT_PUBLIC_COMPANY_CODE) {
+          console.warn('⚠️ SECURITY WARNING: Using company code from environment variable. This is UNSAFE for production!');
+          return process.env.NEXT_PUBLIC_COMPANY_CODE.toString().toLowerCase();
+        }
+      }
+      
+      return null;
+    }
+    
+    // Extract token
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      console.error('No token found in authorization header');
+      return null;
+    }
+    
+    console.log('Verifying auth token...');
+    // Use the existing auth verification system
+    const decodedToken = await verifyAuth(token);
+    
+    if (!decodedToken) {
+      console.error('Token verification failed');
+      return null;
+    }
+    
+    // Check for company code in token
+    if (decodedToken.companyCode) {
+      console.log('Found company code in token:', decodedToken.companyCode);
+      return decodedToken.companyCode.toString().toLowerCase();
+    }
+    
+    // Fallback to company field if companyCode is not available
+    if (decodedToken.company) {
+      console.log('Using company field as fallback:', decodedToken.company);
+      return decodedToken.company.toString().toLowerCase();
+    }
+    
+    // If we reach here with a valid token but no company info, log an error
+    console.error('Valid token but no company information found:', decodedToken);
+    return null;
+  } catch (error) {
+    console.error('Error getting user company from token:', error);
+    return null;
+  }
+}

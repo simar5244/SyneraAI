@@ -1,0 +1,4 @@
+Wed Jun 18 09:37:01 CDT 2025: Checking if NextJS server is running...
+Wed Jun 18 09:37:01 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Wed Jun 18 09:37:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.

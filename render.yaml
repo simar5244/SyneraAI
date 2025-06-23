@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: synera-ai
+    env: node
+    build:
+      dockerfile: Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: 1
+    # Update the command to match what's needed for production
+    # You might need to adjust this based on your specific requirements
+    command: sh -c "npm run start"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+    plan: free
+    numInstances: 1
+    autoDeploy: yes
+    region: oregon
+    healthCheckPath: /api/health
+    # Add your environment variables here or in the Render dashboard
+    # - key: MONGODB_URI
+    #   value: your-mongodb-uri
+    # - key: NEXTAUTH_SECRET
+    #   generateValue: true
+    # - key: NEXTAUTH_URL
+    #   value: https://your-app.onrender.com

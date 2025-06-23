@@ -1,0 +1,4220 @@
+[{
+  "_id": {
+    "$oid": "68152a00b23a0fc1ecbb3e90"
+  },
+  "email": "IA@SU.com",
+  "company": "SU",
+  "createdAt": {
+    "$date": "2025-05-01T01:15:14.561Z"
+  },
+  "emailVerified": false,
+  "firstName": "",
+  "lastName": "",
+  "phone": "1111111111",
+  "projects": [],
+  "reportsTo": null,
+  "role": "superadmin",
+  "updatedAt": {
+    "$date": "2025-05-01T01:19:59.999Z"
+  },
+  "user_id": {
+    "$oid": "6812cb22f48f37614a5a376e"
+  },
+  "user_status": "active",
+  "username": "SUU",
+  "collaboration_analysis": {
+    "collaboration_score": 0,
+    "feedback_activity_score": 0,
+    "feedback_quality_score": 0,
+    "has_feedback_data": false
+  },
+  "utilizationAssessment": {
+    "timestamp": "2025-05-02T15:27:59.780489",
+    "email": "IA@SU.com",
+    "tool_complexity_analysis": {
+      "overall_score": 0,
+      "tool_details": [],
+      "avg_complexity": 0,
+      "max_complexity": 0,
+      "tool_count": 0
+    },
+    "role_complexity_analysis": {
+      "complexity": 0.5,
+      "matched_role": "default",
+      "input_job_title": "",
+      "input_role": "",
+      "categories": [],
+      "analysis_method": "default"
+    },
+    "project_load_analysis": {
+      "project_count": 0,
+      "active_project_count": 0,
+      "average_priority": 0,
+      "time_pressure_score": 0,
+      "overlap_score": 0,
+      "overall_load_score": 0,
+      "pressure_handling_score": 0,
+      "project_details": []
+    },
+    "responsibility_breadth_analysis": {
+      "breadth_score": 0,
+      "expected_breadth": 0.5,
+      "breadth_gap": -0.5,
+      "is_management_role": false,
+      "seniority_level": 0.5,
+      "role_distribution": {
+        "management": 0,
+        "mentoring": 0,
+        "technical_leadership": 0,
+        "execution": 0
+      },
+      "expected_distribution": {
+        "execution": 0.6,
+        "technical_leadership": 0.2,
+        "mentoring": 0.1,
+        "management": 0.1
+      },
+      "distribution_gaps": {
+        "execution": -0.6,
+        "technical_leadership": -0.2,
+        "mentoring": -0.1,
+        "management": -0.1
+      },
+      "domain_variety": {
+        "unique_domains": 0,
+        "domains": []
+      },
+      "role_overlaps": {
+        "overlap_count": 0,
+        "overlap_factor": 0,
+        "role_types": [],
+        "domain_overlaps": {},
+        "responsibility_overlaps": [],
+        "is_overutilized": false,
+        "role_mismatch_score": 0
+      }
+    },
+    "utilization_assessment": {
+      "utilization_score": 0,
+      "utilization_status": "severely_underutilized",
+      "confidence_score": 0.37500000000000006,
+      "raw_score": 0.1,
+      "workload_factor": 1,
+      "workload_adjusted_score": 0.1,
+      "breadth_adjustment": -0.1,
+      "role_overlap_adjustment": 0,
+      "dimensional_breakdown": {
+        "tool_complexity": 0,
+        "project_load": 0,
+        "pressure_handling": 0,
+        "responsibility_breadth": 0,
+        "role_complexity": 0.5
+      },
+      "role_overlap_analysis": {
+        "is_overutilized_by_roles": false,
+        "overlap_factor": 0,
+        "role_mismatch_score": 0,
+        "responsibility_overlaps": []
+      },
+      "includes_job_intensity": false
+    },
+    "utilization_score": 0,
+    "collaboration_analysis": {
+      "collaboration_score": 0,
+      "feedback_activity_score": 0,
+      "feedback_quality_score": 0,
+      "has_feedback_data": false
+    }
+  },
+  "utilization_score": 0,
+  "attritionAssessment": {
+    "timestamp": "2025-05-04T14:38:02.555577",
+    "email": "IA@SU.com",
+    "attrition_score": 0.549113880976635,
+    "attrition_risk": "medium",
+    "primary_explanation": "Utilization level affecting retention risk",
+    "primary_risk_factors": [
+      {
+        "factor": "utilization_factor",
+        "score": 1,
+        "explanation": "Utilization level affecting retention risk"
+      },
+      {
+        "factor": "collaboration_index",
+        "score": 0.85,
+        "explanation": "Collaboration patterns affecting retention"
+      }
+    ],
+    "factor_scores": {
+      "responsibility_mismatch": 0.04742587317756678,
+      "tenure_factor": 0.5,
+      "utilization_factor": 1,
+      "seniority_factor": 0.5,
+      "task_variety_index": 0.5,
+      "job_intensity": 0.5,
+      "role_project_ratio": 0.5,
+      "collaboration_index": 0.85,
+      "salary_satisfaction": 0.5
+    },
+    "factor_details": {
+      "responsibility_mismatch": {
+        "mismatch_score": 0.04742587317756678,
+        "avg_gap": 0.04666666666666669,
+        "positive_gaps": 0,
+        "negative_gaps": 0,
+        "detailed_mismatches": [
+          {
+            "role_type": "management",
+            "expected": 0.15,
+            "actual": 0.1,
+            "gap": -0.04999999999999999
+          },
+          {
+            "role_type": "technical_leadership",
+            "expected": 0.2,
+            "actual": 0.2,
+            "gap": 0
+          },
+          {
+            "role_type": "execution",
+            "expected": 0.79,
+            "actual": 0.7,
+            "gap": -0.09000000000000008
+          }
+        ],
+        "explanation": "Responsibilities align with seniority level"
+      },
+      "tenure_factor": {
+        "tenure_score": 0.5,
+        "explanation": "No tenure data available",
+        "company_tenure_months": 0,
+        "role_tenure_months": 0
+      },
+      "utilization_factor": {
+        "utilization_attrition_score": 1,
+        "current_utilization": 0,
+        "utilization_status": "severely_underutilized",
+        "explanation": "Severely underutilized employees are at high risk of leaving due to boredom or feeling unvalued"
+      },
+      "seniority_factor": {
+        "seniority_attrition_score": 0.5,
+        "seniority_level": 0.3,
+        "seniority_category": "mid",
+        "explanation": "Mid-level employees often seeking advancement opportunities"
+      },
+      "task_variety": {
+        "variety_score": 0.5,
+        "entropy": 0,
+        "explanation": "No data available for task variety analysis"
+      },
+      "job_intensity_factor": {
+        "intensity_attrition_score": 0.5,
+        "explanation": "No job intensity data available"
+      },
+      "role_project_ratio": {
+        "role_project_attrition_score": 0.5,
+        "explanation": "No project data available"
+      },
+      "collaboration_index": {
+        "collaboration_attrition_score": 0.85,
+        "collaboration_score": 0.15,
+        "feedback_activity": 0,
+        "feedback_quality": 0.5,
+        "has_feedback_data": true,
+        "explanation": "Limited collaboration may increase attrition risk"
+      },
+      "salary_satisfaction": {
+        "salary_score": 0.5,
+        "explanation": "No salary data available"
+      }
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "68152a00b23a0fc1ecbb3e91"
+  },
+  "email": "a@company.com",
+  "company": "Company",
+  "createdAt": {
+    "$date": "2025-05-01T01:39:30.692Z"
+  },
+  "currentroleduration": "36",
+  "emailVerified": false,
+  "feedbackMetrics": {
+    "given": {
+      "count": 2,
+      "averageRating": 2.6
+    },
+    "received": {
+      "count": 1,
+      "averageRating": 3.4,
+      "weightedAverageRating": 3.4
+    }
+  },
+  "firstName": "Sim,Singh",
+  "jobResponsibilities": [
+    {
+      "duty": "Manage web tools and databases",
+      "hours": 10,
+      "_id": {
+        "$oid": "6815404cc5ed587897cf42d8"
+      }
+    },
+    {
+      "duty": "Supervise call centre",
+      "hours": 30,
+      "_id": {
+        "$oid": "6815404cc5ed587897cf42d9"
+      }
+    }
+  ],
+  "jobTitle": "Software assistant",
+  "lastName": "Singh",
+  "projects": [
+    {
+      "project_title": "Project2",
+      "project_description": "manage reporting in TTU",
+      "budget": 20000,
+      "tech_stack": [
+        "FIgma"
+      ],
+      "project_id": {
+        "$oid": "6812ea788680098730eae319"
+      },
+      "project_status": "ongoing",
+      "project_priority": "medium",
+      "project_criticality": "",
+      "project_start_date": "2025-03-31",
+      "project_end_date": "2025-04-17",
+      "project_department": "Reporting",
+      "total_hours": 6,
+      "collaborators": [
+        {
+          "email": "i@company.com",
+          "name": "Sarah Thee",
+          "role_in_project": "IT",
+          "tasks": [
+            "manages reporting for reception"
+          ],
+          "hours_per_week": 1,
+          "tools_used": [
+            "ADOBE"
+          ],
+          "contribution_start_date": "2025-05-01T04:18:14.981Z"
+        }
+      ],
+      "user_contribution": {
+        "role_in_project": "IT ",
+        "tasks": [
+          "create SQL reports"
+        ],
+        "hours_per_week": 5,
+        "tools_used": [
+          "SQL Server"
+        ],
+        "contribution_start_date": "2025-05-01T04:18:14.981Z"
+      }
+    }
+  ],
+  "reportsTo": {
+    "email": "b@company.com",
+    "name": "Anthony Kasey"
+  },
+  "role": "employee_tier_3",
+  "salary": "222200",
+  "skillsFeedback": {
+    "given": [
+      "caring",
+      "skillful in IT"
+    ],
+    "received": [
+      "java"
+    ]
+  },
+  "toolsProficient": "Java, Python",
+  "totalduration": "36",
+  "updatedAt": {
+    "$date": "2025-05-04T16:39:25.706Z"
+  },
+  "user_id": {
+    "$oid": "6812d0d2d3569711ee93971d"
+  },
+  "user_status": "active",
+  "username": "simsingh",
+  "timeInCurrentRoleMonths": 36,
+  "timeInCurrentRoleParsed": {
+    "total_months": 36,
+    "years": 3,
+    "months": 0
+  },
+  "timeWithCompanyMonths": 36,
+  "timeWithCompanyParsed": {
+    "total_months": 36,
+    "years": 3,
+    "months": 0
+  },
+  "collaboration_analysis": {
+    "collaboration_score": 0,
+    "feedback_activity_score": 0,
+    "feedback_quality_score": 0,
+    "feedback_given": 0,
+    "feedback_received": 0,
+    "average_rating": 0,
+    "weighted_rating": 0,
+    "has_feedback_data": true
+  },
+  "job_intensity_analysis": {
+    "overall_intensity": 0.48724494606654345,
+    "duties_analysis": [
+      {
+        "original_task": "Manage web tools and databases",
+        "compound_task": true,
+        "sub_tasks": [
+          {
+            "original_task": "manage web tools",
+            "top_matches": [
+              {
+                "matched_task": "database management",
+                "similarity": 0.4063671827316284,
+                "intensity_score": 0.6,
+                "rank": 1
+              },
+              {
+                "matched_task": "database management",
+                "similarity": 0.4063671827316284,
+                "intensity_score": 0.6,
+                "rank": 2
+              },
+              {
+                "matched_task": "user account management",
+                "similarity": 0.3769867420196533,
+                "intensity_score": 0.5,
+                "rank": 3
+              }
+            ],
+            "similarity": 0.4063671827316284,
+            "intensity_score": 0.5683130155757896,
+            "analysis_method": "vector_search_weighted_average"
+          },
+          {
+            "original_task": "databases",
+            "matched_task": "database management",
+            "similarity": 0.8000168204307556,
+            "intensity_score": 0.6,
+            "analysis_method": "vector_search_direct_match"
+          }
+        ],
+        "intensity_score": 0.5893263251535389,
+        "analysis_method": "vector_search_compound_analysis",
+        "hours": 10,
+        "original_description": "Manage web tools and databases"
+      },
+      {
+        "original_task": "Supervise call centre",
+        "top_matches": [
+          {
+            "matched_task": "answering phone calls",
+            "similarity": 0.516054630279541,
+            "intensity_score": 0.2,
+            "rank": 1
+          },
+          {
+            "matched_task": "customer service",
+            "similarity": 0.416113018989563,
+            "intensity_score": 0.6,
+            "rank": 2
+          },
+          {
+            "matched_task": "reception duties",
+            "similarity": 0.41507816314697266,
+            "intensity_score": 0.4,
+            "rank": 3
+          }
+        ],
+        "similarity": 0.516054630279541,
+        "intensity_score": 0.38516356697954796,
+        "analysis_method": "vector_search_weighted_average",
+        "hours": 30,
+        "original_description": "Supervise call centre"
+      }
+    ],
+    "weighted_intensity": 0.4362042565230457,
+    "adjusted_intensity": 0.4362042565230457,
+    "total_hours": 40,
+    "workload_factor": 1,
+    "standard_work_week": 40
+  },
+  "utilizationAssessment": {
+    "timestamp": "2025-05-02T15:28:00.069355",
+    "email": "a@company.com",
+    "tool_complexity_analysis": {
+      "overall_score": 0.7,
+      "tool_details": [
+        {
+          "tool": "Java",
+          "complexity": 0.7
+        },
+        {
+          "tool": "Python",
+          "complexity": 0.7
+        }
+      ],
+      "avg_complexity": 0.7,
+      "max_complexity": 0.7,
+      "tool_count": 2
+    },
+    "role_complexity_analysis": {
+      "complexity": 0.4,
+      "matched_role": "junior developer",
+      "input_job_title": "Software assistant",
+      "canonical_title": "junior software developer",
+      "categories": [
+        "software_development",
+        "administrative"
+      ],
+      "vector_match": {
+        "role": "junior developer",
+        "similarity": 0.9145448207855225,
+        "complexity": 0.4,
+        "rank": 1
+      },
+      "all_matches": [
+        {
+          "role": "junior developer",
+          "similarity": 0.9145448207855225,
+          "complexity": 0.4,
+          "rank": 1
+        },
+        {
+          "role": "senior developer",
+          "similarity": 0.7499567270278931,
+          "complexity": 0.8,
+          "rank": 2
+        },
+        {
+          "role": "senior software engineer",
+          "similarity": 0.7408874034881592,
+          "complexity": 0.8,
+          "rank": 3
+        }
+      ],
+      "analysis_method": "vector_search_match"
+    },
+    "project_load_analysis": {
+      "project_count": 1,
+      "active_project_count": 1,
+      "average_priority": 0.6,
+      "time_pressure_score": 0,
+      "project_count_factor": 0.4079441541679836,
+      "overlap_score": 0,
+      "max_concurrent_projects": 1,
+      "overall_load_score": 0.2219860385419959,
+      "project_details": [
+        {
+          "project_id": {
+            "$oid": "6812ea788680098730eae319"
+          },
+          "project_title": "Project2",
+          "status": "ongoing",
+          "status_weight": 0.5,
+          "priority": "medium",
+          "priority_weight": 0.6,
+          "role": "it",
+          "role_factor": 1
+        }
+      ]
+    },
+    "responsibility_breadth_analysis": {
+      "breadth_score": 0.27,
+      "expected_breadth": 0.4,
+      "breadth_gap": -0.13,
+      "is_management_role": false,
+      "seniority_level": 0.5,
+      "role_distribution": {
+        "management": 0,
+        "mentoring": 0,
+        "technical_leadership": 0,
+        "execution": 1
+      },
+      "expected_distribution": {
+        "execution": 0.6,
+        "technical_leadership": 0.2,
+        "mentoring": 0.1,
+        "management": 0.1
+      },
+      "distribution_gaps": {
+        "execution": 0.4,
+        "technical_leadership": -0.2,
+        "mentoring": -0.1,
+        "management": -0.1
+      },
+      "domain_variety": {
+        "unique_domains": 1,
+        "domains": [
+          "FIgma"
+        ]
+      },
+      "role_overlaps": {
+        "overlap_count": 1,
+        "overlap_factor": 0.3333333333333333,
+        "role_types": [
+          "execution"
+        ],
+        "domain_overlaps": {},
+        "responsibility_overlaps": [
+          "Overloaded with execution responsibilities (+0.40)"
+        ],
+        "is_overutilized": true,
+        "role_mismatch_score": 0.4
+      }
+    },
+    "utilization_assessment": {
+      "utilization_score": 0.41463805901300826,
+      "utilization_status": "highly_utilized",
+      "confidence_score": 0.85,
+      "raw_score": 0.4006380590130083,
+      "workload_factor": 1,
+      "workload_adjusted_score": 0.4006380590130083,
+      "breadth_adjustment": -0.026000000000000002,
+      "role_overlap_adjustment": 0.04,
+      "dimensional_breakdown": {
+        "tool_complexity": 0.7,
+        "project_load": 0.2219860385419959,
+        "pressure_handling": 0.5,
+        "responsibility_breadth": 0.27,
+        "role_complexity": 0.4,
+        "job_intensity": 0.4362042565230457
+      },
+      "role_overlap_analysis": {
+        "is_overutilized_by_roles": true,
+        "overlap_factor": 0.3333333333333333,
+        "role_mismatch_score": 0.4,
+        "responsibility_overlaps": [
+          "Overloaded with execution responsibilities (+0.40)"
+        ]
+      },
+      "includes_job_intensity": true
+    },
+    "utilization_score": 0.41463805901300826,
+    "collaboration_analysis": {
+      "collaboration_score": 0,
+      "feedback_activity_score": 0,
+      "feedback_quality_score": 0,
+      "feedback_given": 0,
+      "feedback_received": 0,
+      "average_rating": 0,
+      "weighted_rating": 0,
+      "has_feedback_data": true
+    },
+    "job_intensity_analysis": {
+      "overall_intensity": 0.48724494606654345,
+      "duties_analysis": [
+        {
+          "original_task": "Manage web tools and databases",
+          "compound_task": true,
+          "sub_tasks": [
+            {
+              "original_task": "manage web tools",
+              "top_matches": [
+                {
+                  "matched_task": "database management",
+                  "similarity": 0.4063671827316284,
+                  "intensity_score": 0.6,
+                  "rank": 1
+                },
+                {
+                  "matched_task": "database management",
+                  "similarity": 0.4063671827316284,
+                  "intensity_score": 0.6,
+                  "rank": 2
+                },
+                {
+                  "matched_task": "user account management",
+                  "similarity": 0.3769867420196533,
+                  "intensity_score": 0.5,
+                  "rank": 3
+                }
+              ],
+              "similarity": 0.4063671827316284,
+              "intensity_score": 0.5683130155757896,
+              "analysis_method": "vector_search_weighted_average"
+            },
+            {
+              "original_task": "databases",
+              "matched_task": "database management",
+              "similarity": 0.8000168204307556,
+              "intensity_score": 0.6,
+              "analysis_method": "vector_search_direct_match"
+            }
+          ],
+          "intensity_score": 0.5893263251535389,
+          "analysis_method": "vector_search_compound_analysis",
+          "hours": 10,
+          "original_description": "Manage web tools and databases"
+        },
+        {
+          "original_task": "Supervise call centre",
+          "top_matches": [
+            {
+              "matched_task": "answering phone calls",
+              "similarity": 0.516054630279541,
+              "intensity_score": 0.2,
+              "rank": 1
+            },
+            {
+              "matched_task": "customer service",
+              "similarity": 0.416113018989563,
+              "intensity_score": 0.6,
+              "rank": 2
+            },
+            {
+              "matched_task": "reception duties",
+              "similarity": 0.41507816314697266,
+              "intensity_score": 0.4,
+              "rank": 3
+            }
+          ],
+          "similarity": 0.516054630279541,
+          "intensity_score": 0.38516356697954796,
+          "analysis_method": "vector_search_weighted_average",
+          "hours": 30,
+          "original_description": "Supervise call centre"
+        }
+      ],
+      "weighted_intensity": 0.4362042565230457,
+      "adjusted_intensity": 0.4362042565230457,
+      "total_hours": 40,
+      "workload_factor": 1,
+      "standard_work_week": 40
+    }
+  },
+  "utilization_score": 0.41463805901300826,
+  "attritionAssessment": {
+    "timestamp": "2025-05-04T14:38:02.450253",
+    "email": "a@company.com",
+    "attrition_score": 0.4703403262433215,
+    "attrition_risk": "medium",
+    "primary_explanation": "Tenure patterns suggesting potential attrition risk",
+    "primary_risk_factors": [
+      {
+        "factor": "tenure_factor",
+        "score": 0.7999999999999999,
+        "explanation": "Tenure patterns suggesting potential attrition risk"
+      },
+      {
+        "factor": "utilization_factor",
+        "score": 0.7,
+        "explanation": "Utilization level affecting retention risk"
+      },
+      {
+        "factor": "collaboration_index",
+        "score": 0.6830075608481182,
+        "explanation": "Collaboration patterns affecting retention"
+      }
+    ],
+    "factor_scores": {
+      "responsibility_mismatch": 0.2501148216976895,
+      "tenure_factor": 0.7999999999999999,
+      "utilization_factor": 0.7,
+      "seniority_factor": 0.4,
+      "task_variety_index": 0.3,
+      "job_intensity": 0.5982774460861726,
+      "role_project_ratio": 0.3,
+      "collaboration_index": 0.6830075608481182,
+      "salary_satisfaction": 0.1
+    },
+    "factor_details": {
+      "responsibility_mismatch": {
+        "mismatch_score": 0.2501148216976895,
+        "avg_gap": 0.29333333333333333,
+        "positive_gaps": 0.23,
+        "negative_gaps": 0.52,
+        "detailed_mismatches": [
+          {
+            "role_type": "management",
+            "expected": 0.1,
+            "actual": 0.33,
+            "gap": 0.23
+          },
+          {
+            "role_type": "technical_leadership",
+            "expected": 0.2,
+            "actual": 0.33,
+            "gap": 0.13
+          },
+          {
+            "role_type": "execution",
+            "expected": 0.86,
+            "actual": 0.34,
+            "gap": -0.52
+          }
+        ],
+        "explanation": "Not being utilized at appropriate seniority level"
+      },
+      "tenure_factor": {
+        "tenure_score": 0.7999999999999999,
+        "company_tenure_months": 36,
+        "role_tenure_months": 36,
+        "company_risk": 1,
+        "role_risk": 0.7,
+        "stagnation_factor": 0.6,
+        "explanation": "Potential growth plateau"
+      },
+      "utilization_factor": {
+        "utilization_attrition_score": 0.7,
+        "current_utilization": 0.41463805901300826,
+        "utilization_status": "highly_utilized",
+        "explanation": "Highly utilized employees are at increased risk of burnout and seeking better work-life balance"
+      },
+      "seniority_factor": {
+        "seniority_attrition_score": 0.4,
+        "seniority_level": 0.2,
+        "seniority_category": "junior",
+        "explanation": "Junior employees typically building experience before moving"
+      },
+      "task_variety": {
+        "task_variety_index": 1,
+        "attrition_risk": 0.3,
+        "entropy": 2.584962500721156,
+        "normalized_entropy": 1,
+        "unique_task_count": 6,
+        "total_tasks": 6,
+        "unique_categories": {
+          "duties": 0,
+          "projects": 1,
+          "tools": 3
+        },
+        "explanation": "Very high task variety - potentially unfocused but engaging"
+      },
+      "job_intensity_factor": {
+        "intensity_attrition_score": 0.5982774460861726,
+        "current_intensity": 0.4362042565230457,
+        "original_intensity": 0.4362042565230457,
+        "manager_category": "non_manager",
+        "manager_adjustment": 0,
+        "workload_factor": 1,
+        "total_hours": 40,
+        "explanation": "Slightly below optimal job intensity (0.44) for Software assistant"
+      },
+      "role_project_ratio": {
+        "role_project_attrition_score": 0.3,
+        "active_projects": 1,
+        "expected_projects": 1,
+        "project_ratio": 1,
+        "explanation": "Optimal project load (1) for seniority level"
+      },
+      "collaboration_index": {
+        "collaboration_attrition_score": 0.6830075608481182,
+        "collaboration_score": 0.3169924391518818,
+        "feedback_activity": 0.23856062735983122,
+        "feedback_quality": 0.5,
+        "has_feedback_data": true,
+        "explanation": "Limited collaboration may increase attrition risk"
+      },
+      "salary_satisfaction": {
+        "salary_score": 0.1,
+        "ratio_to_expected": 3.0993070761768964,
+        "expected_salary": 71693.4445469958,
+        "actual_salary": 222200,
+        "seniority_level": 0.2,
+        "location": "unspecified location (estimated)",
+        "location_factor": 1.1809005911874482,
+        "work_mode": "hybrid (default)",
+        "work_mode_factor": 1,
+        "industry": "unspecified industry (estimated)",
+        "industry_factor": 1.0841218056373527,
+        "base_salary_reference": 80000,
+        "explanation": "Salary significantly above market rate (210% premium) (Considering: moderate-cost location (unspecified location (estimated), 1.2x), unspecified industry (estimated) industry (1.1x), junior-level position (level 0.2))"
+      }
+    }
+  },
+  "industry": "Transportation",
+  "officeLocation": "Austin",
+  "workMode": "Hybrid",
+  "department": "IT"
+},
+{
+  "_id": {
+    "$oid": "68152a00b23a0fc1ecbb3e92"
+  },
+  "email": "b@company.com",
+  "company": "Company",
+  "createdAt": {
+    "$date": "2025-05-01T01:39:30.692Z"
+  },
+  "emailVerified": false,
+  "feedbackMetrics": {
+    "given": {
+      "count": 3,
+      "averageRating": 2.4666666666666663
+    },
+    "received": {
+      "count": 1,
+      "averageRating": 1.8,
+      "weightedAverageRating": 0.9720000000000001
+    }
+  },
+  "firstName": "Anthony",
+  "jobResponsibilities": [
+    {
+      "duty": "manage teams of 15",
+      "hours": 40,
+      "_id": {
+        "$oid": "6812e8b98680098730eae2be"
+      }
+    }
+  ],
+  "jobTitle": "managing director",
+  "lastName": "Kasey",
+  "projects": [],
+  "reportsTo": {
+    "email": "f@company.com",
+    "name": "Brian Still"
+  },
+  "role": "top_management_tier_1",
+  "skillsFeedback": {
+    "given": [
+      "java",
+      "figma",
+      "best boss"
+    ],
+    "received": [
+      "adobe skills "
+    ]
+  },
+  "toolsProficient": "IT",
+  "updatedAt": {
+    "$date": "2025-05-01T04:08:35.241Z"
+  },
+  "user_id": {
+    "$oid": "6812d11683ee38ea392bfdf9"
+  },
+  "user_status": "active",
+  "username": "anthonykasey",
+  "collaboration_analysis": {
+    "collaboration_score": 0,
+    "feedback_activity_score": 0,
+    "feedback_quality_score": 0,
+    "feedback_given": 0,
+    "feedback_received": 0,
+    "average_rating": 0,
+    "weighted_rating": 0,
+    "has_feedback_data": true
+  },
+  "job_intensity_analysis": {
+    "overall_intensity": 0.39999999999999997,
+    "duties_analysis": [
+      {
+        "original_task": "manage teams of 15",
+        "top_matches": [
+          {
+            "matched_task": "team meetings",
+            "similarity": 0.5686591267585754,
+            "intensity_score": 0.4,
+            "rank": 1
+          },
+          {
+            "matched_task": "meeting coordination",
+            "similarity": 0.382546067237854,
+            "intensity_score": 0.4,
+            "rank": 2
+          },
+          {
+            "matched_task": "meeting coordination",
+            "similarity": 0.382546067237854,
+            "intensity_score": 0.4,
+            "rank": 3
+          }
+        ],
+        "similarity": 0.5686591267585754,
+        "intensity_score": 0.39999999999999997,
+        "analysis_method": "vector_search_weighted_average",
+        "hours": 40,
+        "original_description": "manage teams of 15"
+      }
+    ],
+    "weighted_intensity": 0.39999999999999997,
+    "adjusted_intensity": 0.39999999999999997,
+    "total_hours": 40,
+    "workload_factor": 1,
+    "standard_work_week": 40
+  },
+  "utilizationAssessment": {
+    "timestamp": "2025-05-02T15:28:00.737763",
+    "email": "b@company.com",
+    "tool_complexity_analysis": {
+      "overall_score": 0.5,
+      "tool_details": [
+        {
+          "tool": "IT",
+          "complexity": 0.5
+        }
+      ],
+      "avg_complexity": 0.5,
+      "max_complexity": 0.5,
+      "tool_count": 1
+    },
+    "role_complexity_analysis": {
+      "complexity": 0.9,
+      "matched_role": "chief operating officer",
+      "input_job_title": "managing director",
+      "canonical_title": "chief technology officer",
+      "categories": [
+        "management"
+      ],
+      "vector_match": {
+        "role": "chief operating officer",
+        "similarity": 0.7820816040039062,
+        "complexity": 0.9,
+        "rank": 1
+      },
+      "all_matches": [
+        {
+          "role": "chief operating officer",
+          "similarity": 0.7820816040039062,
+          "complexity": 0.9,
+          "rank": 1
+        },
+        {
+          "role": "chief",
+          "similarity": 0.6513842344284058,
+          "complexity": 0.9,
+          "rank": 2
+        },
+        {
+          "role": "ceo",
+          "similarity": 0.6352788209915161,
+          "complexity": 0.9,
+          "rank": 3
+        }
+      ],
+      "analysis_method": "vector_search_match"
+    },
+    "project_load_analysis": {
+      "project_count": 0,
+      "active_project_count": 0,
+      "average_priority": 0,
+      "time_pressure_score": 0,
+      "overlap_score": 0,
+      "overall_load_score": 0,
+      "pressure_handling_score": 0,
+      "project_details": []
+    },
+    "responsibility_breadth_analysis": {
+      "breadth_score": 0.48999999999999994,
+      "expected_breadth": 0.9,
+      "breadth_gap": -0.4100000000000001,
+      "is_management_role": true,
+      "seniority_level": 0.9,
+      "role_distribution": {
+        "management": 0,
+        "mentoring": 0,
+        "technical_leadership": 0,
+        "execution": 0
+      },
+      "expected_distribution": {
+        "execution": 0.2,
+        "technical_leadership": 0.3,
+        "mentoring": 0.2,
+        "management": 0.3
+      },
+      "distribution_gaps": {
+        "execution": -0.2,
+        "technical_leadership": -0.3,
+        "mentoring": -0.2,
+        "management": -0.3
+      },
+      "domain_variety": {
+        "unique_domains": 0,
+        "domains": []
+      },
+      "role_overlaps": {
+        "overlap_count": 0,
+        "overlap_factor": 0,
+        "role_types": [],
+        "domain_overlaps": {},
+        "responsibility_overlaps": [],
+        "is_overutilized": false,
+        "role_mismatch_score": 0
+      }
+    },
+    "utilization_assessment": {
+      "utilization_score": 0.306,
+      "utilization_status": "underutilized",
+      "confidence_score": 0.775,
+      "raw_score": 0.388,
+      "workload_factor": 1,
+      "workload_adjusted_score": 0.388,
+      "breadth_adjustment": -0.08200000000000002,
+      "role_overlap_adjustment": 0,
+      "dimensional_breakdown": {
+        "tool_complexity": 0.5,
+        "project_load": 0,
+        "pressure_handling": 0,
+        "responsibility_breadth": 0.48999999999999994,
+        "role_complexity": 0.9,
+        "job_intensity": 0.39999999999999997
+      },
+      "role_overlap_analysis": {
+        "is_overutilized_by_roles": false,
+        "overlap_factor": 0,
+        "role_mismatch_score": 0,
+        "responsibility_overlaps": []
+      },
+      "includes_job_intensity": true
+    },
+    "utilization_score": 0.306,
+    "collaboration_analysis": {
+      "collaboration_score": 0,
+      "feedback_activity_score": 0,
+      "feedback_quality_score": 0,
+      "feedback_given": 0,
+      "feedback_received": 0,
+      "average_rating": 0,
+      "weighted_rating": 0,
+      "has_feedback_data": true
+    },
+    "job_intensity_analysis": {
+      "overall_intensity": 0.39999999999999997,
+      "duties_analysis": [
+        {
+          "original_task": "manage teams of 15",
+          "top_matches": [
+            {
+              "matched_task": "team meetings",
+              "similarity": 0.5686591267585754,
+              "intensity_score": 0.4,
+              "rank": 1
+            },
+            {
+              "matched_task": "meeting coordination",
+              "similarity": 0.382546067237854,
+              "intensity_score": 0.4,
+              "rank": 2
+            },
+            {
+              "matched_task": "meeting coordination",
+              "similarity": 0.382546067237854,
+              "intensity_score": 0.4,
+              "rank": 3
+            }
+          ],
+          "similarity": 0.5686591267585754,
+          "intensity_score": 0.39999999999999997,
+          "analysis_method": "vector_search_weighted_average",
+          "hours": 40,
+          "original_description": "manage teams of 15"
+        }
+      ],
+      "weighted_intensity": 0.39999999999999997,
+      "adjusted_intensity": 0.39999999999999997,
+      "total_hours": 40,
+      "workload_factor": 1,
+      "standard_work_week": 40
+    }
+  },
+  "utilization_score": 0.306,
+  "attritionAssessment": {
+    "timestamp": "2025-05-04T14:38:01.600718",
+    "email": "b@company.com",
+    "attrition_score": 0.49960383182894524,
+    "attrition_risk": "medium",
+    "primary_explanation": "Collaboration patterns affecting retention",
+    "primary_risk_factors": [
+      {
+        "factor": "collaboration_index",
+        "score": 0.85,
+        "explanation": "Collaboration patterns affecting retention"
+      },
+      {
+        "factor": "seniority_factor",
+        "score": 0.7,
+        "explanation": "Seniority level with characteristic attrition pattern"
+      }
+    ],
+    "factor_scores": {
+      "responsibility_mismatch": 0.08002554552630155,
+      "tenure_factor": 0.5,
+      "utilization_factor": 0.6,
+      "seniority_factor": 0.7,
+      "task_variety_index": 0.3,
+      "job_intensity": 0.62,
+      "role_project_ratio": 0.5,
+      "collaboration_index": 0.85,
+      "salary_satisfaction": 0.5
+    },
+    "factor_details": {
+      "responsibility_mismatch": {
+        "mismatch_score": 0.08002554552630155,
+        "avg_gap": 0.17333333333333334,
+        "positive_gaps": 0,
+        "negative_gaps": 0.31,
+        "detailed_mismatches": [
+          {
+            "role_type": "management",
+            "expected": 0.25,
+            "actual": 0.33,
+            "gap": 0.08000000000000002
+          },
+          {
+            "role_type": "technical_leadership",
+            "expected": 0.2,
+            "actual": 0.33,
+            "gap": 0.13
+          },
+          {
+            "role_type": "execution",
+            "expected": 0.65,
+            "actual": 0.34,
+            "gap": -0.31
+          }
+        ],
+        "explanation": "Not being utilized at appropriate seniority level"
+      },
+      "tenure_factor": {
+        "tenure_score": 0.5,
+        "explanation": "No tenure data available",
+        "company_tenure_months": 0,
+        "role_tenure_months": 0
+      },
+      "utilization_factor": {
+        "utilization_attrition_score": 0.6,
+        "current_utilization": 0.306,
+        "utilization_status": "underutilized",
+        "explanation": "Underutilized employees are at increased risk of seeking more engaging opportunities"
+      },
+      "seniority_factor": {
+        "seniority_attrition_score": 0.7,
+        "seniority_level": 0.5,
+        "seniority_category": "senior",
+        "explanation": "Senior employees highly marketable and seeking growth"
+      },
+      "task_variety": {
+        "task_variety_index": 1,
+        "attrition_risk": 0.3,
+        "entropy": 1,
+        "normalized_entropy": 1,
+        "unique_task_count": 2,
+        "total_tasks": 2,
+        "unique_categories": {
+          "duties": 0,
+          "projects": 0,
+          "tools": 1
+        },
+        "explanation": "Very high task variety - potentially unfocused but engaging"
+      },
+      "job_intensity_factor": {
+        "intensity_attrition_score": 0.62,
+        "current_intensity": 0.39999999999999997,
+        "original_intensity": 0.39999999999999997,
+        "manager_category": "non_manager",
+        "manager_adjustment": 0,
+        "workload_factor": 1,
+        "total_hours": 40,
+        "explanation": "Low job intensity (0.40) may lead to boredom and disengagement for managing director"
+      },
+      "role_project_ratio": {
+        "role_project_attrition_score": 0.5,
+        "explanation": "No project data available"
+      },
+      "collaboration_index": {
+        "collaboration_attrition_score": 0.85,
+        "collaboration_score": 0.15,
+        "feedback_activity": 0,
+        "feedback_quality": 0.5,
+        "has_feedback_data": true,
+        "explanation": "Limited collaboration may increase attrition risk"
+      },
+      "salary_satisfaction": {
+        "salary_score": 0.5,
+        "explanation": "No salary data available"
+      }
+    }
+  },
+  "successorAnalysis": {
+    "lastUpdated": "2025-05-02T20:32:21.423321",
+    "successorCandidates": [
+      {
+        "email": "g@company.com",
+        "name": "Candess Keane",
+        "score": 0.027147899454874367,
+        "readinessLevel": "non_viable",
+        "factors": {
+          "stability_index": 0.4781543729346034,
+          "competency_similarity": 0.038782713506963384,
+          "project_complexity": 0.44989700043360187,
+          "cognitive_load": 0.6547486742608578,
+          "promotion_velocity": 0.5
+        },
+        "strengths": [],
+        "development_areas": [
+          {
+            "factor": "competency",
+            "score": 0.038782713506963384,
+            "description": "Limited skill overlap"
+          }
+        ],
+        "summary": "Candess Keane is a non_viable successor candidate (0.03 score). Development needed: Limited skill overlap"
+      },
+      {
+        "email": "f@company.com",
+        "name": "Brian Still",
+        "score": 0.004690241679575496,
+        "readinessLevel": "non_viable",
+        "factors": {
+          "stability_index": 0.48239841755390833,
+          "competency_similarity": 0.006700345256536424,
+          "project_complexity": 0.3,
+          "cognitive_load": 0.6613576253508935,
+          "promotion_velocity": 0.5
+        },
+        "strengths": [],
+        "development_areas": [
+          {
+            "factor": "competency",
+            "score": 0.006700345256536424,
+            "description": "Limited skill overlap"
+          },
+          {
+            "factor": "complexity",
+            "score": 0.3,
+            "description": "Limited exposure to complex projects"
+          }
+        ],
+        "summary": "Brian Still is a non_viable successor candidate (0.00 score). Development needed: Limited skill overlap and limited skill overlap"
+      },
+      {
+        "email": "i@company.com",
+        "name": "Sarah Thee",
+        "score": 0.004680225593717303,
+        "readinessLevel": "non_viable",
+        "factors": {
+          "stability_index": 0.4562586210061398,
+          "competency_similarity": 0.006686036562453291,
+          "project_complexity": 0.3850514997831991,
+          "cognitive_load": 0.4374741399714036,
+          "promotion_velocity": 0.5
+        },
+        "strengths": [],
+        "development_areas": [
+          {
+            "factor": "competency",
+            "score": 0.006686036562453291,
+            "description": "Limited skill overlap"
+          },
+          {
+            "factor": "complexity",
+            "score": 0.3850514997831991,
+            "description": "Limited exposure to complex projects"
+          }
+        ],
+        "summary": "Sarah Thee is a non_viable successor candidate (0.00 score). Development needed: Limited skill overlap and limited skill overlap"
+      }
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "68152a00b23a0fc1ecbb3e93"
+  },
+  "email": "c@company.com",
+  "company": "Company",
+  "createdAt": {
+    "$date": "2025-05-01T01:39:30.692Z"
+  },
+  "emailVerified": false,
+  "feedbackMetrics": {
+    "given": {
+      "count": 2,
+      "averageRating": 3
+    },
+    "received": {
+      "count": 2,
+      "averageRating": 1,
+      "weightedAverageRating": 0.675
+    }
+  },
+  "firstName": "David",
+  "jobResponsibilities": [
+    {
+      "duty": "Prints certificate for TTU",
+      "hours": 37,
+      "_id": {
+        "$oid": "6812e96c8680098730eae30b"
+      }
+    }
+  ],
+  "jobTitle": "Certificate Manager",
+  "lastName": "Cardenas",
+  "projects": [],
+  "reportsTo": {
+    "email": "d@company.com",
+    "name": "Bonnie Cordell"
+  },
+  "role": "employee_tier_1",
+  "skillsFeedback": {
+    "given": [
+      "everything",
+      "IT"
+    ],
+    "received": [
+      "caring",
+      "good time management skills"
+    ]
+  },
+  "toolsProficient": "Printers, label makers, scanner",
+  "updatedAt": {
+    "$date": "2025-05-01T04:20:19.495Z"
+  },
+  "user_id": {
+    "$oid": "6812d1a883ee38ea392bfdfa"
+  },
+  "user_status": "active",
+  "username": "DavidCardenas",
+  "collaboration_analysis": {
+    "collaboration_score": 0,
+    "feedback_activity_score": 0,
+    "feedback_quality_score": 0,
+    "feedback_given": 0,
+    "feedback_received": 0,
+    "average_rating": 0,
+    "weighted_rating": 0,
+    "has_feedback_data": true
+  },
+  "job_intensity_analysis": {
+    "overall_intensity": 0.44354131873937,
+    "duties_analysis": [
+      {
+        "original_task": "Prints certificate for TTU",
+        "top_matches": [
+          {
+            "matched_task": "permit processing",
+            "similarity": 0.30610132217407227,
+            "intensity_score": 0.5,
+            "rank": 1
+          },
+          {
+            "matched_task": "permit processing",
+            "similarity": 0.30610132217407227,
+            "intensity_score": 0.5,
+            "rank": 2
+          },
+          {
+            "matched_task": "document scanning",
+            "similarity": 0.24079585075378418,
+            "intensity_score": 0.3,
+            "rank": 3
+          }
+        ],
+        "similarity": 0.30610132217407227,
+        "intensity_score": 0.44354131873937,
+        "analysis_method": "vector_search_weighted_average",
+        "hours": 37,
+        "original_description": "Prints certificate for TTU"
+      }
+    ],
+    "weighted_intensity": 0.4435413187393701,
+    "adjusted_intensity": 0.4435413187393701,
+    "total_hours": 37,
+    "workload_factor": 1,
+    "standard_work_week": 40
+  },
+  "utilizationAssessment": {
+    "timestamp": "2025-05-02T15:28:01.224805",
+    "email": "c@company.com",
+    "tool_complexity_analysis": {
+      "overall_score": 0.5,
+      "tool_details": [
+        {
+          "tool": "Printers",
+          "complexity": 0.5
+        },
+        {
+          "tool": "label makers",
+          "complexity": 0.5
+        },
+        {
+          "tool": "scanner",
+          "complexity": 0.5
+        }
+      ],
+      "avg_complexity": 0.5,
+      "max_complexity": 0.5,
+      "tool_count": 3
+    },
+    "role_complexity_analysis": {
+      "complexity": 0.7,
+      "matched_role": "personnel coordinator",
+      "input_job_title": "Certificate Manager",
+      "canonical_title": "administrative coordinator",
+      "categories": [
+        "management"
+      ],
+      "vector_match": {
+        "role": "personnel coordinator",
+        "similarity": 0.8526134490966797,
+        "complexity": 0.7,
+        "rank": 1
+      },
+      "all_matches": [
+        {
+          "role": "personnel coordinator",
+          "similarity": 0.8526134490966797,
+          "complexity": 0.7,
+          "rank": 1
+        },
+        {
+          "role": "administrative manager",
+          "similarity": 0.8264432549476624,
+          "complexity": 0.7,
+          "rank": 2
+        },
+        {
+          "role": "hr coordinator",
+          "similarity": 0.7835414409637451,
+          "complexity": 0.5,
+          "rank": 3
+        }
+      ],
+      "analysis_method": "vector_search_match"
+    },
+    "project_load_analysis": {
+      "project_count": 0,
+      "active_project_count": 0,
+      "average_priority": 0,
+      "time_pressure_score": 0,
+      "overlap_score": 0,
+      "overall_load_score": 0,
+      "pressure_handling_score": 0,
+      "project_details": []
+    },
+    "responsibility_breadth_analysis": {
+      "breadth_score": 0.48999999999999994,
+      "expected_breadth": 0.7,
+      "breadth_gap": -0.21000000000000002,
+      "is_management_role": true,
+      "seniority_level": 0.8,
+      "role_distribution": {
+        "management": 0,
+        "mentoring": 0,
+        "technical_leadership": 0,
+        "execution": 0
+      },
+      "expected_distribution": {
+        "execution": 0.4,
+        "technical_leadership": 0.3,
+        "mentoring": 0.2,
+        "management": 0.1
+      },
+      "distribution_gaps": {
+        "execution": -0.4,
+        "technical_leadership": -0.3,
+        "mentoring": -0.2,
+        "management": -0.1
+      },
+      "domain_variety": {
+        "unique_domains": 0,
+        "domains": []
+      },
+      "role_overlaps": {
+        "overlap_count": 0,
+        "overlap_factor": 0,
+        "role_types": [],
+        "domain_overlaps": {},
+        "responsibility_overlaps": [],
+        "is_overutilized": false,
+        "role_mismatch_score": 0
+      }
+    },
+    "utilization_assessment": {
+      "utilization_score": 0.324708263747874,
+      "utilization_status": "underutilized",
+      "confidence_score": 0.85,
+      "raw_score": 0.366708263747874,
+      "workload_factor": 1,
+      "workload_adjusted_score": 0.366708263747874,
+      "breadth_adjustment": -0.04200000000000001,
+      "role_overlap_adjustment": 0,
+      "dimensional_breakdown": {
+        "tool_complexity": 0.5,
+        "project_load": 0,
+        "pressure_handling": 0,
+        "responsibility_breadth": 0.48999999999999994,
+        "role_complexity": 0.7,
+        "job_intensity": 0.4435413187393701
+      },
+      "role_overlap_analysis": {
+        "is_overutilized_by_roles": false,
+        "overlap_factor": 0,
+        "role_mismatch_score": 0,
+        "responsibility_overlaps": []
+      },
+      "includes_job_intensity": true
+    },
+    "utilization_score": 0.324708263747874,
+    "collaboration_analysis": {
+      "collaboration_score": 0,
+      "feedback_activity_score": 0,
+      "feedback_quality_score": 0,
+      "feedback_given": 0,
+      "feedback_received": 0,
+      "average_rating": 0,
+      "weighted_rating": 0,
+      "has_feedback_data": true
+    },
+    "job_intensity_analysis": {
+      "overall_intensity": 0.44354131873937,
+      "duties_analysis": [
+        {
+          "original_task": "Prints certificate for TTU",
+          "top_matches": [
+            {
+              "matched_task": "permit processing",
+              "similarity": 0.30610132217407227,
+              "intensity_score": 0.5,
+              "rank": 1
+            },
+            {
+              "matched_task": "permit processing",
+              "similarity": 0.30610132217407227,
+              "intensity_score": 0.5,
+              "rank": 2
+            },
+            {
+              "matched_task": "document scanning",
+              "similarity": 0.24079585075378418,
+              "intensity_score": 0.3,
+              "rank": 3
+            }
+          ],
+          "similarity": 0.30610132217407227,
+          "intensity_score": 0.44354131873937,
+          "analysis_method": "vector_search_weighted_average",
+          "hours": 37,
+          "original_description": "Prints certificate for TTU"
+        }
+      ],
+      "weighted_intensity": 0.4435413187393701,
+      "adjusted_intensity": 0.4435413187393701,
+      "total_hours": 37,
+      "workload_factor": 1,
+      "standard_work_week": 40
+    }
+  },
+  "utilization_score": 0.3,
+  "attritionAssessment": {
+    "timestamp": "2025-05-04T14:38:00.703187",
+    "email": "c@company.com",
+    "attrition_score": 0.5071138485294555,
+    "attrition_risk": "medium",
+    "primary_explanation": "Collaboration patterns affecting retention",
+    "primary_risk_factors": [
+      {
+        "factor": "collaboration_index",
+        "score": 0.85,
+        "explanation": "Collaboration patterns affecting retention"
+      },
+      {
+        "factor": "job_intensity",
+        "score": 0.713875208756378,
+        "explanation": "Low job intensity (0.24) may lead to boredom and disengagement for Certificate Manager (a low intensity management role)"
+      },
+      {
+        "factor": "seniority_factor",
+        "score": 0.7,
+        "explanation": "Seniority level with characteristic attrition pattern"
+      }
+    ],
+    "factor_scores": {
+      "responsibility_mismatch": 0.08002554552630155,
+      "tenure_factor": 0.5,
+      "utilization_factor": 0.6,
+      "seniority_factor": 0.7,
+      "task_variety_index": 0.3,
+      "job_intensity": 0.713875208756378,
+      "role_project_ratio": 0.5,
+      "collaboration_index": 0.85,
+      "salary_satisfaction": 0.5
+    },
+    "factor_details": {
+      "responsibility_mismatch": {
+        "mismatch_score": 0.08002554552630155,
+        "avg_gap": 0.17333333333333334,
+        "positive_gaps": 0,
+        "negative_gaps": 0.31,
+        "detailed_mismatches": [
+          {
+            "role_type": "management",
+            "expected": 0.25,
+            "actual": 0.33,
+            "gap": 0.08000000000000002
+          },
+          {
+            "role_type": "technical_leadership",
+            "expected": 0.2,
+            "actual": 0.33,
+            "gap": 0.13
+          },
+          {
+            "role_type": "execution",
+            "expected": 0.65,
+            "actual": 0.34,
+            "gap": -0.31
+          }
+        ],
+        "explanation": "Not being utilized at appropriate seniority level"
+      },
+      "tenure_factor": {
+        "tenure_score": 0.5,
+        "explanation": "No tenure data available",
+        "company_tenure_months": 0,
+        "role_tenure_months": 0
+      },
+      "utilization_factor": {
+        "utilization_attrition_score": 0.6,
+        "current_utilization": 0.324708263747874,
+        "utilization_status": "underutilized",
+        "explanation": "Underutilized employees are at increased risk of seeking more engaging opportunities"
+      },
+      "seniority_factor": {
+        "seniority_attrition_score": 0.7,
+        "seniority_level": 0.5,
+        "seniority_category": "senior",
+        "explanation": "Senior employees highly marketable and seeking growth"
+      },
+      "task_variety": {
+        "task_variety_index": 1,
+        "attrition_risk": 0.3,
+        "entropy": 2,
+        "normalized_entropy": 1,
+        "unique_task_count": 4,
+        "total_tasks": 4,
+        "unique_categories": {
+          "duties": 0,
+          "projects": 0,
+          "tools": 3
+        },
+        "explanation": "Very high task variety - potentially unfocused but engaging"
+      },
+      "job_intensity_factor": {
+        "intensity_attrition_score": 0.713875208756378,
+        "current_intensity": 0.24354131873937007,
+        "original_intensity": 0.4435413187393701,
+        "manager_category": "low_intensity",
+        "manager_adjustment": -0.2,
+        "workload_factor": 1,
+        "total_hours": 37,
+        "explanation": "Low job intensity (0.24) may lead to boredom and disengagement for Certificate Manager (a low intensity management role)"
+      },
+      "role_project_ratio": {
+        "role_project_attrition_score": 0.5,
+        "explanation": "No project data available"
+      },
+      "collaboration_index": {
+        "collaboration_attrition_score": 0.85,
+        "collaboration_score": 0.15,
+        "feedback_activity": 0,
+        "feedback_quality": 0.5,
+        "has_feedback_data": true,
+        "explanation": "Limited collaboration may increase attrition risk"
+      },
+      "salary_satisfaction": {
+        "salary_score": 0.5,
+        "explanation": "No salary data available"
+      }
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "68152a00b23a0fc1ecbb3e94"
+  },
+  "email": "d@company.com",
+  "company": "Company",
+  "createdAt": {
+    "$date": "2025-05-01T01:39:30.692Z"
+  },
+  "emailVerified": false,
+  "feedbackMetrics": {
+    "given": {
+      "count": 1,
+      "averageRating": 1
+    },
+    "received": {
+      "count": 1,
+      "averageRating": 4.2,
+      "weightedAverageRating": 1.8900000000000001
+    }
+  },
+  "firstName": "Bonnie",
+  "jobResponsibilities": [
+    {
+      "duty": "manage the department of microcredentials",
+      "hours": 10,
+      "_id": {
+        "$oid": "6812f4d48680098730eae42e"
+      }
+    }
+  ],
+  "jobTitle": "microcredentials director",
+  "lastName": "Cordell",
+  "projects": [],
+  "reportsTo": {
+    "email": "f@company.com",
+    "name": "Brian Still"
+  },
+  "role": "top_management_tier_2",
+  "skillsFeedback": {
+    "given": [
+      "good time management skills"
+    ],
+    "received": [
+      "skillful in IT"
+    ]
+  },
+  "toolsProficient": "online databases",
+  "updatedAt": {
+    "$date": "2025-05-01T04:20:19.336Z"
+  },
+  "user_id": {
+    "$oid": "6812d1d983ee38ea392bfdfb"
+  },
+  "user_status": "active",
+  "username": "bonniecordell",
+  "collaboration_analysis": {
+    "collaboration_score": 0,
+    "feedback_activity_score": 0,
+    "feedback_quality_score": 0,
+    "feedback_given": 0,
+    "feedback_received": 0,
+    "average_rating": 0,
+    "weighted_rating": 0,
+    "has_feedback_data": true
+  },
+  "job_intensity_analysis": {
+    "overall_intensity": 0.6,
+    "duties_analysis": [
+      {
+        "original_task": "manage the department of microcredentials",
+        "top_matches": [
+          {
+            "matched_task": "grant administration",
+            "similarity": 0.38096266984939575,
+            "intensity_score": 0.6,
+            "rank": 1
+          },
+          {
+            "matched_task": "grant administration",
+            "similarity": 0.38096266984939575,
+            "intensity_score": 0.6,
+            "rank": 2
+          },
+          {
+            "matched_task": "fund administration",
+            "similarity": 0.3699544668197632,
+            "intensity_score": 0.6,
+            "rank": 3
+          }
+        ],
+        "similarity": 0.38096266984939575,
+        "intensity_score": 0.6,
+        "analysis_method": "vector_search_weighted_average",
+        "hours": 10,
+        "original_description": "manage the department of microcredentials"
+      }
+    ],
+    "weighted_intensity": 0.6,
+    "adjusted_intensity": 0.2189106285676276,
+    "total_hours": 10,
+    "workload_factor": 0.3648510476127127,
+    "standard_work_week": 40
+  },
+  "utilizationAssessment": {
+    "timestamp": "2025-05-02T15:28:01.488782",
+    "email": "d@company.com",
+    "tool_complexity_analysis": {
+      "overall_score": 0.5,
+      "tool_details": [
+        {
+          "tool": "online databases",
+          "complexity": 0.5
+        }
+      ],
+      "avg_complexity": 0.5,
+      "max_complexity": 0.5,
+      "tool_count": 1
+    },
+    "role_complexity_analysis": {
+      "complexity": 0.9,
+      "matched_role": "chief operating officer",
+      "input_job_title": "microcredentials director",
+      "canonical_title": "chief technology officer",
+      "categories": [
+        "management"
+      ],
+      "vector_match": {
+        "role": "chief operating officer",
+        "similarity": 0.7820816040039062,
+        "complexity": 0.9,
+        "rank": 1
+      },
+      "all_matches": [
+        {
+          "role": "chief operating officer",
+          "similarity": 0.7820816040039062,
+          "complexity": 0.9,
+          "rank": 1
+        },
+        {
+          "role": "chief",
+          "similarity": 0.6513842344284058,
+          "complexity": 0.9,
+          "rank": 2
+        },
+        {
+          "role": "ceo",
+          "similarity": 0.6352788209915161,
+          "complexity": 0.9,
+          "rank": 3
+        }
+      ],
+      "analysis_method": "vector_search_match"
+    },
+    "project_load_analysis": {
+      "project_count": 0,
+      "active_project_count": 0,
+      "average_priority": 0,
+      "time_pressure_score": 0,
+      "overlap_score": 0,
+      "overall_load_score": 0,
+      "pressure_handling_score": 0,
+      "project_details": []
+    },
+    "responsibility_breadth_analysis": {
+      "breadth_score": 0.48999999999999994,
+      "expected_breadth": 0.9,
+      "breadth_gap": -0.4100000000000001,
+      "is_management_role": true,
+      "seniority_level": 0.9,
+      "role_distribution": {
+        "management": 0,
+        "mentoring": 0,
+        "technical_leadership": 0,
+        "execution": 0
+      },
+      "expected_distribution": {
+        "execution": 0.2,
+        "technical_leadership": 0.3,
+        "mentoring": 0.2,
+        "management": 0.3
+      },
+      "distribution_gaps": {
+        "execution": -0.2,
+        "technical_leadership": -0.3,
+        "mentoring": -0.2,
+        "management": -0.3
+      },
+      "domain_variety": {
+        "unique_domains": 0,
+        "domains": []
+      },
+      "role_overlaps": {
+        "overlap_count": 0,
+        "overlap_factor": 0,
+        "role_types": [],
+        "domain_overlaps": {},
+        "responsibility_overlaps": [],
+        "is_overutilized": false,
+        "role_mismatch_score": 0
+      }
+    },
+    "utilization_assessment": {
+      "utilization_score": 0.04634807709800676,
+      "utilization_status": "severely_underutilized",
+      "confidence_score": 0.68125,
+      "raw_score": 0.3517821257135255,
+      "workload_factor": 0.3648510476127127,
+      "workload_adjusted_score": 0.12834807709800677,
+      "breadth_adjustment": -0.08200000000000002,
+      "role_overlap_adjustment": 0,
+      "dimensional_breakdown": {
+        "tool_complexity": 0.5,
+        "project_load": 0,
+        "pressure_handling": 0,
+        "responsibility_breadth": 0.48999999999999994,
+        "role_complexity": 0.9,
+        "job_intensity": 0.2189106285676276
+      },
+      "role_overlap_analysis": {
+        "is_overutilized_by_roles": false,
+        "overlap_factor": 0,
+        "role_mismatch_score": 0,
+        "responsibility_overlaps": []
+      },
+      "includes_job_intensity": true
+    },
+    "utilization_score": 0.04634807709800676,
+    "collaboration_analysis": {
+      "collaboration_score": 0,
+      "feedback_activity_score": 0,
+      "feedback_quality_score": 0,
+      "feedback_given": 0,
+      "feedback_received": 0,
+      "average_rating": 0,
+      "weighted_rating": 0,
+      "has_feedback_data": true
+    },
+    "job_intensity_analysis": {
+      "overall_intensity": 0.6,
+      "duties_analysis": [
+        {
+          "original_task": "manage the department of microcredentials",
+          "top_matches": [
+            {
+              "matched_task": "grant administration",
+              "similarity": 0.38096266984939575,
+              "intensity_score": 0.6,
+              "rank": 1
+            },
+            {
+              "matched_task": "grant administration",
+              "similarity": 0.38096266984939575,
+              "intensity_score": 0.6,
+              "rank": 2
+            },
+            {
+              "matched_task": "fund administration",
+              "similarity": 0.3699544668197632,
+              "intensity_score": 0.6,
+              "rank": 3
+            }
+          ],
+          "similarity": 0.38096266984939575,
+          "intensity_score": 0.6,
+          "analysis_method": "vector_search_weighted_average",
+          "hours": 10,
+          "original_description": "manage the department of microcredentials"
+        }
+      ],
+      "weighted_intensity": 0.6,
+      "adjusted_intensity": 0.2189106285676276,
+      "total_hours": 10,
+      "workload_factor": 0.3648510476127127,
+      "standard_work_week": 40
+    }
+  },
+  "utilization_score": 0.04634807709800676,
+  "attritionAssessment": {
+    "timestamp": "2025-05-04T14:38:02.110191",
+    "email": "d@company.com",
+    "attrition_score": 0.5677821408412375,
+    "attrition_risk": "medium",
+    "primary_explanation": "Utilization level affecting retention risk",
+    "primary_risk_factors": [
+      {
+        "factor": "utilization_factor",
+        "score": 0.9965734612235877,
+        "explanation": "Utilization level affecting retention risk"
+      },
+      {
+        "factor": "collaboration_index",
+        "score": 0.85,
+        "explanation": "Collaboration patterns affecting retention"
+      },
+      {
+        "factor": "job_intensity",
+        "score": 0.7286536228594234,
+        "explanation": "Low job intensity (0.22) may lead to boredom and disengagement for microcredentials director; low weekly hours (10) may indicate underemployment"
+      }
+    ],
+    "factor_scores": {
+      "responsibility_mismatch": 0.08002554552630155,
+      "tenure_factor": 0.5,
+      "utilization_factor": 0.9965734612235877,
+      "seniority_factor": 0.7,
+      "task_variety_index": 0.3,
+      "job_intensity": 0.7286536228594234,
+      "role_project_ratio": 0.5,
+      "collaboration_index": 0.85,
+      "salary_satisfaction": 0.5
+    },
+    "factor_details": {
+      "responsibility_mismatch": {
+        "mismatch_score": 0.08002554552630155,
+        "avg_gap": 0.17333333333333334,
+        "positive_gaps": 0,
+        "negative_gaps": 0.31,
+        "detailed_mismatches": [
+          {
+            "role_type": "management",
+            "expected": 0.25,
+            "actual": 0.33,
+            "gap": 0.08000000000000002
+          },
+          {
+            "role_type": "technical_leadership",
+            "expected": 0.2,
+            "actual": 0.33,
+            "gap": 0.13
+          },
+          {
+            "role_type": "execution",
+            "expected": 0.65,
+            "actual": 0.34,
+            "gap": -0.31
+          }
+        ],
+        "explanation": "Not being utilized at appropriate seniority level"
+      },
+      "tenure_factor": {
+        "tenure_score": 0.5,
+        "explanation": "No tenure data available",
+        "company_tenure_months": 0,
+        "role_tenure_months": 0
+      },
+      "utilization_factor": {
+        "utilization_attrition_score": 0.9965734612235877,
+        "current_utilization": 0.04634807709800676,
+        "utilization_status": "severely_underutilized",
+        "explanation": "Severely underutilized employees are at high risk of leaving due to boredom or feeling unvalued"
+      },
+      "seniority_factor": {
+        "seniority_attrition_score": 0.7,
+        "seniority_level": 0.5,
+        "seniority_category": "senior",
+        "explanation": "Senior employees highly marketable and seeking growth"
+      },
+      "task_variety": {
+        "task_variety_index": 1,
+        "attrition_risk": 0.3,
+        "entropy": 1,
+        "normalized_entropy": 1,
+        "unique_task_count": 2,
+        "total_tasks": 2,
+        "unique_categories": {
+          "duties": 0,
+          "projects": 0,
+          "tools": 1
+        },
+        "explanation": "Very high task variety - potentially unfocused but engaging"
+      },
+      "job_intensity_factor": {
+        "intensity_attrition_score": 0.7286536228594234,
+        "current_intensity": 0.2189106285676276,
+        "original_intensity": 0.6,
+        "manager_category": "non_manager",
+        "manager_adjustment": 0,
+        "workload_factor": 0.3648510476127127,
+        "total_hours": 10,
+        "explanation": "Low job intensity (0.22) may lead to boredom and disengagement for microcredentials director; low weekly hours (10) may indicate underemployment"
+      },
+      "role_project_ratio": {
+        "role_project_attrition_score": 0.5,
+        "explanation": "No project data available"
+      },
+      "collaboration_index": {
+        "collaboration_attrition_score": 0.85,
+        "collaboration_score": 0.15,
+        "feedback_activity": 0,
+        "feedback_quality": 0.5,
+        "has_feedback_data": true,
+        "explanation": "Limited collaboration may increase attrition risk"
+      },
+      "salary_satisfaction": {
+        "salary_score": 0.5,
+        "explanation": "No salary data available"
+      }
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "68152a00b23a0fc1ecbb3e95"
+  },
+  "email": "e@company.com",
+  "company": "Company",
+  "createdAt": {
+    "$date": "2025-05-01T01:39:30.692Z"
+  },
+  "emailVerified": false,
+  "feedbackMetrics": {
+    "given": {
+      "count": 0,
+      "averageRating": 0
+    },
+    "received": {
+      "count": 1,
+      "averageRating": 2.2,
+      "weightedAverageRating": 1.9800000000000002
+    }
+  },
+  "firstName": "Sydney",
+  "jobResponsibilities": [],
+  "jobTitle": "",
+  "lastName": "Brown",
+  "projects": [],
+  "reportsTo": {
+    "email": "g@company.com",
+    "name": "Candess Keane"
+  },
+  "role": "employee_tier_3",
+  "skillsFeedback": {
+    "given": [],
+    "received": [
+      "figma"
+    ]
+  },
+  "updatedAt": {
+    "$date": "2025-05-01T03:00:27.358Z"
+  },
+  "user_id": {
+    "$oid": "6812d21583ee38ea392bfdfc"
+  },
+  "user_status": "active",
+  "username": "sydneybrown",
+  "collaboration_analysis": {
+    "collaboration_score": 0,
+    "feedback_activity_score": 0,
+    "feedback_quality_score": 0,
+    "feedback_given": 0,
+    "feedback_received": 0,
+    "average_rating": 0,
+    "weighted_rating": 0,
+    "has_feedback_data": true
+  },
+  "utilizationAssessment": {
+    "timestamp": "2025-05-02T15:28:01.489075",
+    "email": "e@company.com",
+    "tool_complexity_analysis": {
+      "overall_score": 0,
+      "tool_details": [],
+      "avg_complexity": 0,
+      "max_complexity": 0,
+      "tool_count": 0
+    },
+    "role_complexity_analysis": {
+      "complexity": 0.5,
+      "matched_role": "default",
+      "input_job_title": "",
+      "input_role": "",
+      "categories": [],
+      "analysis_method": "default"
+    },
+    "project_load_analysis": {
+      "project_count": 0,
+      "active_project_count": 0,
+      "average_priority": 0,
+      "time_pressure_score": 0,
+      "overlap_score": 0,
+      "overall_load_score": 0,
+      "pressure_handling_score": 0,
+      "project_details": []
+    },
+    "responsibility_breadth_analysis": {
+      "breadth_score": 0,
+      "expected_breadth": 0.5,
+      "breadth_gap": -0.5,
+      "is_management_role": false,
+      "seniority_level": 0.5,
+      "role_distribution": {
+        "management": 0,
+        "mentoring": 0,
+        "technical_leadership": 0,
+        "execution": 0
+      },
+      "expected_distribution": {
+        "execution": 0.6,
+        "technical_leadership": 0.2,
+        "mentoring": 0.1,
+        "management": 0.1
+      },
+      "distribution_gaps": {
+        "execution": -0.6,
+        "technical_leadership": -0.2,
+        "mentoring": -0.1,
+        "management": -0.1
+      },
+      "domain_variety": {
+        "unique_domains": 0,
+        "domains": []
+      },
+      "role_overlaps": {
+        "overlap_count": 0,
+        "overlap_factor": 0,
+        "role_types": [],
+        "domain_overlaps": {},
+        "responsibility_overlaps": [],
+        "is_overutilized": false,
+        "role_mismatch_score": 0
+      }
+    },
+    "utilization_assessment": {
+      "utilization_score": 0,
+      "utilization_status": "severely_underutilized",
+      "confidence_score": 0.37500000000000006,
+      "raw_score": 0.1,
+      "workload_factor": 1,
+      "workload_adjusted_score": 0.1,
+      "breadth_adjustment": -0.1,
+      "role_overlap_adjustment": 0,
+      "dimensional_breakdown": {
+        "tool_complexity": 0,
+        "project_load": 0,
+        "pressure_handling": 0,
+        "responsibility_breadth": 0,
+        "role_complexity": 0.5
+      },
+      "role_overlap_analysis": {
+        "is_overutilized_by_roles": false,
+        "overlap_factor": 0,
+        "role_mismatch_score": 0,
+        "responsibility_overlaps": []
+      },
+      "includes_job_intensity": false
+    },
+    "utilization_score": 0,
+    "collaboration_analysis": {
+      "collaboration_score": 0,
+      "feedback_activity_score": 0,
+      "feedback_quality_score": 0,
+      "feedback_given": 0,
+      "feedback_received": 0,
+      "average_rating": 0,
+      "weighted_rating": 0,
+      "has_feedback_data": true
+    }
+  },
+  "utilization_score": 0.8,
+  "attritionAssessment": {
+    "timestamp": "2025-05-04T14:38:00.942331",
+    "email": "e@company.com",
+    "attrition_score": 0.549113880976635,
+    "attrition_risk": "medium",
+    "primary_explanation": "Utilization level affecting retention risk",
+    "primary_risk_factors": [
+      {
+        "factor": "utilization_factor",
+        "score": 1,
+        "explanation": "Utilization level affecting retention risk"
+      },
+      {
+        "factor": "collaboration_index",
+        "score": 0.85,
+        "explanation": "Collaboration patterns affecting retention"
+      }
+    ],
+    "factor_scores": {
+      "responsibility_mismatch": 0.04742587317756678,
+      "tenure_factor": 0.5,
+      "utilization_factor": 1,
+      "seniority_factor": 0.5,
+      "task_variety_index": 0.5,
+      "job_intensity": 0.5,
+      "role_project_ratio": 0.5,
+      "collaboration_index": 0.85,
+      "salary_satisfaction": 0.5
+    },
+    "factor_details": {
+      "responsibility_mismatch": {
+        "mismatch_score": 0.04742587317756678,
+        "avg_gap": 0.04666666666666669,
+        "positive_gaps": 0,
+        "negative_gaps": 0,
+        "detailed_mismatches": [
+          {
+            "role_type": "management",
+            "expected": 0.15,
+            "actual": 0.1,
+            "gap": -0.04999999999999999
+          },
+          {
+            "role_type": "technical_leadership",
+            "expected": 0.2,
+            "actual": 0.2,
+            "gap": 0
+          },
+          {
+            "role_type": "execution",
+            "expected": 0.79,
+            "actual": 0.7,
+            "gap": -0.09000000000000008
+          }
+        ],
+        "explanation": "Responsibilities align with seniority level"
+      },
+      "tenure_factor": {
+        "tenure_score": 0.5,
+        "explanation": "No tenure data available",
+        "company_tenure_months": 0,
+        "role_tenure_months": 0
+      },
+      "utilization_factor": {
+        "utilization_attrition_score": 1,
+        "current_utilization": 0,
+        "utilization_status": "severely_underutilized",
+        "explanation": "Severely underutilized employees are at high risk of leaving due to boredom or feeling unvalued"
+      },
+      "seniority_factor": {
+        "seniority_attrition_score": 0.5,
+        "seniority_level": 0.3,
+        "seniority_category": "mid",
+        "explanation": "Mid-level employees often seeking advancement opportunities"
+      },
+      "task_variety": {
+        "variety_score": 0.5,
+        "entropy": 0,
+        "explanation": "No data available for task variety analysis"
+      },
+      "job_intensity_factor": {
+        "intensity_attrition_score": 0.5,
+        "explanation": "No job intensity data available"
+      },
+      "role_project_ratio": {
+        "role_project_attrition_score": 0.5,
+        "explanation": "No project data available"
+      },
+      "collaboration_index": {
+        "collaboration_attrition_score": 0.85,
+        "collaboration_score": 0.15,
+        "feedback_activity": 0,
+        "feedback_quality": 0.5,
+        "has_feedback_data": true,
+        "explanation": "Limited collaboration may increase attrition risk"
+      },
+      "salary_satisfaction": {
+        "salary_score": 0.5,
+        "explanation": "No salary data available"
+      }
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "68152a00b23a0fc1ecbb3e96"
+  },
+  "email": "f@company.com",
+  "company": "Company",
+  "createdAt": {
+    "$date": "2025-05-01T01:21:54.658Z"
+  },
+  "emailVerified": false,
+  "feedbackMetrics": {
+    "given": {
+      "count": 0,
+      "averageRating": 0
+    },
+    "received": {
+      "count": 2,
+      "averageRating": 1.8,
+      "weightedAverageRating": 1.3860000000000001
+    }
+  },
+  "firstName": "Brian",
+  "jobResponsibilities": [
+    {
+      "duty": "Managing TTU Online department",
+      "hours": 40,
+      "_id": {
+        "$oid": "6812da751a87a032ef4375fa"
+      }
+    }
+  ],
+  "jobTitle": "Vice Provost",
+  "lastName": "Still",
+  "projects": [],
+  "reportsTo": null,
+  "role": "admin",
+  "skillsFeedback": {
+    "given": [],
+    "received": [
+      "best boss",
+      "best boss"
+    ]
+  },
+  "toolsProficient": "Microsoft Suite",
+  "updatedAt": {
+    "$date": "2025-05-03T05:29:19.895Z"
+  },
+  "user_id": {
+    "$oid": "6812ccb2f48f37614a5a37f6"
+  },
+  "user_status": "active",
+  "username": "BrianStill",
+  "collaboration_analysis": {
+    "collaboration_score": 0,
+    "feedback_activity_score": 0,
+    "feedback_quality_score": 0,
+    "feedback_given": 0,
+    "feedback_received": 0,
+    "average_rating": 0,
+    "weighted_rating": 0,
+    "has_feedback_data": true
+  },
+  "job_intensity_analysis": {
+    "overall_intensity": 0.5369640925048791,
+    "duties_analysis": [
+      {
+        "original_task": "Managing TTU Online department",
+        "top_matches": [
+          {
+            "matched_task": "network administration",
+            "similarity": 0.37838709354400635,
+            "intensity_score": 0.6,
+            "rank": 1
+          },
+          {
+            "matched_task": "online teaching",
+            "similarity": 0.32263708114624023,
+            "intensity_score": 0.5,
+            "rank": 2
+          },
+          {
+            "matched_task": "online teaching",
+            "similarity": 0.32263708114624023,
+            "intensity_score": 0.5,
+            "rank": 3
+          }
+        ],
+        "similarity": 0.37838709354400635,
+        "intensity_score": 0.5369640925048791,
+        "analysis_method": "vector_search_weighted_average",
+        "hours": 40,
+        "original_description": "Managing TTU Online department"
+      }
+    ],
+    "weighted_intensity": 0.5369640925048791,
+    "adjusted_intensity": 0.5369640925048791,
+    "total_hours": 40,
+    "workload_factor": 1,
+    "standard_work_week": 40
+  },
+  "utilizationAssessment": {
+    "timestamp": "2025-05-02T15:28:01.624214",
+    "email": "f@company.com",
+    "tool_complexity_analysis": {
+      "overall_score": 0.5,
+      "tool_details": [
+        {
+          "tool": "Microsoft Suite",
+          "complexity": 0.5
+        }
+      ],
+      "avg_complexity": 0.5,
+      "max_complexity": 0.5,
+      "tool_count": 1
+    },
+    "role_complexity_analysis": {
+      "complexity": 0.9,
+      "matched_role": "vice provost",
+      "input_job_title": "Vice Provost",
+      "canonical_title": "vice provost",
+      "categories": [
+        "marketing"
+      ],
+      "analysis_method": "ontology_direct_match"
+    },
+    "project_load_analysis": {
+      "project_count": 0,
+      "active_project_count": 0,
+      "average_priority": 0,
+      "time_pressure_score": 0,
+      "overlap_score": 0,
+      "overall_load_score": 0,
+      "pressure_handling_score": 0,
+      "project_details": []
+    },
+    "responsibility_breadth_analysis": {
+      "breadth_score": 0,
+      "expected_breadth": 0.9,
+      "breadth_gap": -0.9,
+      "is_management_role": false,
+      "seniority_level": 0.5,
+      "role_distribution": {
+        "management": 0,
+        "mentoring": 0,
+        "technical_leadership": 0,
+        "execution": 0
+      },
+      "expected_distribution": {
+        "execution": 0.6,
+        "technical_leadership": 0.2,
+        "mentoring": 0.1,
+        "management": 0.1
+      },
+      "distribution_gaps": {
+        "execution": -0.6,
+        "technical_leadership": -0.2,
+        "mentoring": -0.1,
+        "management": -0.1
+      },
+      "domain_variety": {
+        "unique_domains": 0,
+        "domains": []
+      },
+      "role_overlaps": {
+        "overlap_count": 0,
+        "overlap_factor": 0,
+        "role_types": [],
+        "domain_overlaps": {},
+        "responsibility_overlaps": [],
+        "is_overutilized": false,
+        "role_mismatch_score": 0
+      }
+    },
+    "utilization_assessment": {
+      "utilization_score": 0.13739281850097582,
+      "utilization_status": "severely_underutilized",
+      "confidence_score": 0.775,
+      "raw_score": 0.31739281850097584,
+      "workload_factor": 1,
+      "workload_adjusted_score": 0.31739281850097584,
+      "breadth_adjustment": -0.18000000000000002,
+      "role_overlap_adjustment": 0,
+      "dimensional_breakdown": {
+        "tool_complexity": 0.5,
+        "project_load": 0,
+        "pressure_handling": 0,
+        "responsibility_breadth": 0,
+        "role_complexity": 0.9,
+        "job_intensity": 0.5369640925048791
+      },
+      "role_overlap_analysis": {
+        "is_overutilized_by_roles": false,
+        "overlap_factor": 0,
+        "role_mismatch_score": 0,
+        "responsibility_overlaps": []
+      },
+      "includes_job_intensity": true
+    },
+    "utilization_score": 0.13739281850097582,
+    "collaboration_analysis": {
+      "collaboration_score": 0,
+      "feedback_activity_score": 0,
+      "feedback_quality_score": 0,
+      "feedback_given": 0,
+      "feedback_received": 0,
+      "average_rating": 0,
+      "weighted_rating": 0,
+      "has_feedback_data": true
+    },
+    "job_intensity_analysis": {
+      "overall_intensity": 0.5369640925048791,
+      "duties_analysis": [
+        {
+          "original_task": "Managing TTU Online department",
+          "top_matches": [
+            {
+              "matched_task": "network administration",
+              "similarity": 0.37838709354400635,
+              "intensity_score": 0.6,
+              "rank": 1
+            },
+            {
+              "matched_task": "online teaching",
+              "similarity": 0.32263708114624023,
+              "intensity_score": 0.5,
+              "rank": 2
+            },
+            {
+              "matched_task": "online teaching",
+              "similarity": 0.32263708114624023,
+              "intensity_score": 0.5,
+              "rank": 3
+            }
+          ],
+          "similarity": 0.37838709354400635,
+          "intensity_score": 0.5369640925048791,
+          "analysis_method": "vector_search_weighted_average",
+          "hours": 40,
+          "original_description": "Managing TTU Online department"
+        }
+      ],
+      "weighted_intensity": 0.5369640925048791,
+      "adjusted_intensity": 0.5369640925048791,
+      "total_hours": 40,
+      "workload_factor": 1,
+      "standard_work_week": 40
+    }
+  },
+  "utilization_score": 0.13739281850097582,
+  "attritionAssessment": {
+    "timestamp": "2025-05-04T14:37:57.031775",
+    "email": "f@company.com",
+    "attrition_score": 0.5279334943934477,
+    "attrition_risk": "medium",
+    "primary_explanation": "Collaboration patterns affecting retention",
+    "primary_risk_factors": [
+      {
+        "factor": "collaboration_index",
+        "score": 0.85,
+        "explanation": "Collaboration patterns affecting retention"
+      },
+      {
+        "factor": "utilization_factor",
+        "score": 0.8326929266982435,
+        "explanation": "Utilization level affecting retention risk"
+      },
+      {
+        "factor": "seniority_factor",
+        "score": 0.7,
+        "explanation": "Seniority level with characteristic attrition pattern"
+      }
+    ],
+    "factor_scores": {
+      "responsibility_mismatch": 0.08002554552630155,
+      "tenure_factor": 0.5,
+      "utilization_factor": 0.8326929266982435,
+      "seniority_factor": 0.7,
+      "task_variety_index": 0.3,
+      "job_intensity": 0.5378215444970725,
+      "role_project_ratio": 0.5,
+      "collaboration_index": 0.85,
+      "salary_satisfaction": 0.5
+    },
+    "factor_details": {
+      "responsibility_mismatch": {
+        "mismatch_score": 0.08002554552630155,
+        "avg_gap": 0.17333333333333334,
+        "positive_gaps": 0,
+        "negative_gaps": 0.31,
+        "detailed_mismatches": [
+          {
+            "role_type": "management",
+            "expected": 0.25,
+            "actual": 0.33,
+            "gap": 0.08000000000000002
+          },
+          {
+            "role_type": "technical_leadership",
+            "expected": 0.2,
+            "actual": 0.33,
+            "gap": 0.13
+          },
+          {
+            "role_type": "execution",
+            "expected": 0.65,
+            "actual": 0.34,
+            "gap": -0.31
+          }
+        ],
+        "explanation": "Not being utilized at appropriate seniority level"
+      },
+      "tenure_factor": {
+        "tenure_score": 0.5,
+        "explanation": "No tenure data available",
+        "company_tenure_months": 0,
+        "role_tenure_months": 0
+      },
+      "utilization_factor": {
+        "utilization_attrition_score": 0.8326929266982435,
+        "current_utilization": 0.13739281850097582,
+        "utilization_status": "severely_underutilized",
+        "explanation": "Severely underutilized employees are at high risk of leaving due to boredom or feeling unvalued"
+      },
+      "seniority_factor": {
+        "seniority_attrition_score": 0.7,
+        "seniority_level": 0.5,
+        "seniority_category": "senior",
+        "explanation": "Senior employees highly marketable and seeking growth"
+      },
+      "task_variety": {
+        "task_variety_index": 1,
+        "attrition_risk": 0.3,
+        "entropy": 1,
+        "normalized_entropy": 1,
+        "unique_task_count": 2,
+        "total_tasks": 2,
+        "unique_categories": {
+          "duties": 0,
+          "projects": 0,
+          "tools": 1
+        },
+        "explanation": "Very high task variety - potentially unfocused but engaging"
+      },
+      "job_intensity_factor": {
+        "intensity_attrition_score": 0.5378215444970725,
+        "current_intensity": 0.5369640925048791,
+        "original_intensity": 0.5369640925048791,
+        "manager_category": "non_manager",
+        "manager_adjustment": 0,
+        "workload_factor": 1,
+        "total_hours": 40,
+        "explanation": "Slightly below optimal job intensity (0.54) for Vice Provost"
+      },
+      "role_project_ratio": {
+        "role_project_attrition_score": 0.5,
+        "explanation": "No project data available"
+      },
+      "collaboration_index": {
+        "collaboration_attrition_score": 0.85,
+        "collaboration_score": 0.15,
+        "feedback_activity": 0,
+        "feedback_quality": 0.5,
+        "has_feedback_data": true,
+        "explanation": "Limited collaboration may increase attrition risk"
+      },
+      "salary_satisfaction": {
+        "salary_score": 0.5,
+        "explanation": "No salary data available"
+      }
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "68152a00b23a0fc1ecbb3e97"
+  },
+  "email": "g@company.com",
+  "company": "Company",
+  "createdAt": {
+    "$date": "2025-05-01T01:39:30.692Z"
+  },
+  "emailVerified": false,
+  "feedbackMetrics": {
+    "given": {
+      "count": 2,
+      "averageRating": 3.4
+    },
+    "received": {
+      "count": 1,
+      "averageRating": 3.4,
+      "weightedAverageRating": 2.38
+    }
+  },
+  "firstName": "Candess",
+  "jobResponsibilities": [
+    {
+      "duty": "manage team of student assistants",
+      "hours": 30,
+      "_id": {
+        "$oid": "6812ef548680098730eae347"
+      }
+    }
+  ],
+  "jobTitle": "student assistant manager",
+  "lastName": "Keane",
+  "projects": [
+    {
+      "project_title": "Project1",
+      "project_description": "Umbrella Project that covers every minor project",
+      "budget": 25000,
+      "tech_stack": [
+        "Jira",
+        "Figma",
+        "Github",
+        "adobe"
+      ],
+      "project_id": {
+        "$oid": "6812e2d88680098730eae224"
+      },
+      "project_status": "ongoing",
+      "project_priority": "medium",
+      "project_criticality": "",
+      "project_start_date": "2025-04-08",
+      "project_end_date": "2025-04-30",
+      "project_department": "Marketing",
+      "total_hours": 10,
+      "collaborators": [
+        {
+          "email": "a@online.com",
+          "name": "Name Not Found",
+          "role_in_project": "Manager",
+          "tasks": [
+            "manage and supervises employees"
+          ],
+          "hours_per_week": 5,
+          "tools_used": [
+            "outlook",
+            "java"
+          ],
+          "contribution_start_date": "2025-05-01T04:18:46.799Z"
+        }
+      ],
+      "user_contribution": {
+        "role_in_project": "poster maker",
+        "tasks": [
+          "made posters for ttu online"
+        ],
+        "hours_per_week": 5,
+        "tools_used": [
+          "adobe suite"
+        ],
+        "contribution_start_date": "2025-05-01T04:18:46.799Z"
+      }
+    }
+  ],
+  "reportsTo": {
+    "email": "f@company.com",
+    "name": "Brian Still"
+  },
+  "role": "top_management_tier_3",
+  "skillsFeedback": {
+    "given": [
+      "salesforce",
+      "javascript"
+    ],
+    "received": [
+      "IT"
+    ]
+  },
+  "toolsProficient": "management, salesforce",
+  "updatedAt": {
+    "$date": "2025-05-01T18:30:57.321Z"
+  },
+  "user_id": {
+    "$oid": "6812d24183ee38ea392bfdfd"
+  },
+  "user_status": "active",
+  "username": "CandessKeane",
+  "collaboration_analysis": {
+    "collaboration_score": 0,
+    "feedback_activity_score": 0,
+    "feedback_quality_score": 0,
+    "feedback_given": 0,
+    "feedback_received": 0,
+    "average_rating": 0,
+    "weighted_rating": 0,
+    "has_feedback_data": true
+  },
+  "job_intensity_analysis": {
+    "overall_intensity": 0.5212692021585424,
+    "duties_analysis": [
+      {
+        "original_task": "manage team of student assistants",
+        "top_matches": [
+          {
+            "matched_task": "team meetings",
+            "similarity": 0.5917647480964661,
+            "intensity_score": 0.4,
+            "rank": 1
+          },
+          {
+            "matched_task": "classroom management",
+            "similarity": 0.45574820041656494,
+            "intensity_score": 0.6,
+            "rank": 2
+          },
+          {
+            "matched_task": "classroom management",
+            "similarity": 0.45574820041656494,
+            "intensity_score": 0.6,
+            "rank": 3
+          }
+        ],
+        "similarity": 0.5917647480964661,
+        "intensity_score": 0.5212692021585424,
+        "analysis_method": "vector_search_weighted_average",
+        "hours": 30,
+        "original_description": "manage team of student assistants"
+      }
+    ],
+    "weighted_intensity": 0.5212692021585424,
+    "adjusted_intensity": 0.5212692021585424,
+    "total_hours": 30,
+    "workload_factor": 1,
+    "standard_work_week": 40
+  },
+  "utilizationAssessment": {
+    "timestamp": "2025-05-02T15:28:01.838523",
+    "email": "g@company.com",
+    "tool_complexity_analysis": {
+      "overall_score": 0.6699999999999999,
+      "tool_details": [
+        {
+          "tool": "management",
+          "complexity": 0.5
+        },
+        {
+          "tool": "salesforce",
+          "complexity": 0.7
+        }
+      ],
+      "avg_complexity": 0.6,
+      "max_complexity": 0.7,
+      "tool_count": 2
+    },
+    "role_complexity_analysis": {
+      "complexity": 0.7,
+      "matched_role": "assistant manager",
+      "input_job_title": "student assistant manager",
+      "canonical_title": "student assistant manager",
+      "categories": [
+        "management",
+        "administrative"
+      ],
+      "vector_match": {
+        "role": "assistant manager",
+        "similarity": 0.8125816583633423,
+        "complexity": 0.7,
+        "rank": 1
+      },
+      "all_matches": [
+        {
+          "role": "assistant manager",
+          "similarity": 0.8125816583633423,
+          "complexity": 0.7,
+          "rank": 1
+        },
+        {
+          "role": "executive assistant manager",
+          "similarity": 0.744359016418457,
+          "complexity": 0.8,
+          "rank": 2
+        },
+        {
+          "role": "senior manager",
+          "similarity": 0.6555267572402954,
+          "complexity": 0.9,
+          "rank": 3
+        }
+      ],
+      "analysis_method": "vector_search_match"
+    },
+    "project_load_analysis": {
+      "project_count": 1,
+      "active_project_count": 1,
+      "average_priority": 0.6,
+      "time_pressure_score": 0,
+      "project_count_factor": 0.4079441541679836,
+      "overlap_score": 0,
+      "max_concurrent_projects": 1,
+      "overall_load_score": 0.2219860385419959,
+      "project_details": [
+        {
+          "project_id": {
+            "$oid": "6812e2d88680098730eae224"
+          },
+          "project_title": "Project1",
+          "status": "ongoing",
+          "status_weight": 0.5,
+          "priority": "medium",
+          "priority_weight": 0.6,
+          "role": "poster maker",
+          "role_factor": 1
+        }
+      ]
+    },
+    "responsibility_breadth_analysis": {
+      "breadth_score": 0.73,
+      "expected_breadth": 0.7,
+      "breadth_gap": 0.030000000000000027,
+      "is_management_role": true,
+      "seniority_level": 0.8,
+      "role_distribution": {
+        "management": 0,
+        "mentoring": 0,
+        "technical_leadership": 0,
+        "execution": 1
+      },
+      "expected_distribution": {
+        "execution": 0.4,
+        "technical_leadership": 0.3,
+        "mentoring": 0.2,
+        "management": 0.1
+      },
+      "distribution_gaps": {
+        "execution": 0.6,
+        "technical_leadership": -0.3,
+        "mentoring": -0.2,
+        "management": -0.1
+      },
+      "domain_variety": {
+        "unique_domains": 4,
+        "domains": [
+          "Github",
+          "Figma",
+          "Jira",
+          "adobe"
+        ]
+      },
+      "role_overlaps": {
+        "overlap_count": 1,
+        "overlap_factor": 0.3333333333333333,
+        "role_types": [
+          "execution"
+        ],
+        "domain_overlaps": {},
+        "responsibility_overlaps": [
+          "Overloaded with execution responsibilities (+0.60)"
+        ],
+        "is_overutilized": true,
+        "role_mismatch_score": 0.6
+      }
+    },
+    "utilization_assessment": {
+      "utilization_score": 0.6161510481401076,
+      "utilization_status": "highly_utilized",
+      "confidence_score": 0.81875,
+      "raw_score": 0.5501510481401076,
+      "workload_factor": 1,
+      "workload_adjusted_score": 0.5501510481401076,
+      "breadth_adjustment": 0.006000000000000005,
+      "role_overlap_adjustment": 0.05999999999999999,
+      "dimensional_breakdown": {
+        "tool_complexity": 0.6699999999999999,
+        "project_load": 0.2219860385419959,
+        "pressure_handling": 0.5,
+        "responsibility_breadth": 0.73,
+        "role_complexity": 0.7,
+        "job_intensity": 0.5212692021585424
+      },
+      "role_overlap_analysis": {
+        "is_overutilized_by_roles": true,
+        "overlap_factor": 0.3333333333333333,
+        "role_mismatch_score": 0.6,
+        "responsibility_overlaps": [
+          "Overloaded with execution responsibilities (+0.60)"
+        ]
+      },
+      "includes_job_intensity": true
+    },
+    "utilization_score": 0.6161510481401076,
+    "collaboration_analysis": {
+      "collaboration_score": 0,
+      "feedback_activity_score": 0,
+      "feedback_quality_score": 0,
+      "feedback_given": 0,
+      "feedback_received": 0,
+      "average_rating": 0,
+      "weighted_rating": 0,
+      "has_feedback_data": true
+    },
+    "job_intensity_analysis": {
+      "overall_intensity": 0.5212692021585424,
+      "duties_analysis": [
+        {
+          "original_task": "manage team of student assistants",
+          "top_matches": [
+            {
+              "matched_task": "team meetings",
+              "similarity": 0.5917647480964661,
+              "intensity_score": 0.4,
+              "rank": 1
+            },
+            {
+              "matched_task": "classroom management",
+              "similarity": 0.45574820041656494,
+              "intensity_score": 0.6,
+              "rank": 2
+            },
+            {
+              "matched_task": "classroom management",
+              "similarity": 0.45574820041656494,
+              "intensity_score": 0.6,
+              "rank": 3
+            }
+          ],
+          "similarity": 0.5917647480964661,
+          "intensity_score": 0.5212692021585424,
+          "analysis_method": "vector_search_weighted_average",
+          "hours": 30,
+          "original_description": "manage team of student assistants"
+        }
+      ],
+      "weighted_intensity": 0.5212692021585424,
+      "adjusted_intensity": 0.5212692021585424,
+      "total_hours": 30,
+      "workload_factor": 1,
+      "standard_work_week": 40
+    }
+  },
+  "utilization_score": 0.6161510481401076,
+  "attritionAssessment": {
+    "timestamp": "2025-05-04T14:37:57.168918",
+    "email": "g@company.com",
+    "attrition_score": 0.5087438174271095,
+    "attrition_risk": "medium",
+    "primary_explanation": "Utilization level affecting retention risk",
+    "primary_risk_factors": [
+      {
+        "factor": "utilization_factor",
+        "score": 0.7,
+        "explanation": "Utilization level affecting retention risk"
+      },
+      {
+        "factor": "seniority_factor",
+        "score": 0.7,
+        "explanation": "Seniority level with characteristic attrition pattern"
+      },
+      {
+        "factor": "role_project_ratio",
+        "score": 0.7,
+        "explanation": "Project load relative to seniority level"
+      }
+    ],
+    "factor_scores": {
+      "responsibility_mismatch": 0.08002554552630155,
+      "tenure_factor": 0.5,
+      "utilization_factor": 0.7,
+      "seniority_factor": 0.7,
+      "task_variety_index": 0.3,
+      "job_intensity": 0.5472384787048745,
+      "role_project_ratio": 0.7,
+      "collaboration_index": 0.6830075608481182,
+      "salary_satisfaction": 0.5
+    },
+    "factor_details": {
+      "responsibility_mismatch": {
+        "mismatch_score": 0.08002554552630155,
+        "avg_gap": 0.17333333333333334,
+        "positive_gaps": 0,
+        "negative_gaps": 0.31,
+        "detailed_mismatches": [
+          {
+            "role_type": "management",
+            "expected": 0.25,
+            "actual": 0.33,
+            "gap": 0.08000000000000002
+          },
+          {
+            "role_type": "technical_leadership",
+            "expected": 0.2,
+            "actual": 0.33,
+            "gap": 0.13
+          },
+          {
+            "role_type": "execution",
+            "expected": 0.65,
+            "actual": 0.34,
+            "gap": -0.31
+          }
+        ],
+        "explanation": "Not being utilized at appropriate seniority level"
+      },
+      "tenure_factor": {
+        "tenure_score": 0.5,
+        "explanation": "No tenure data available",
+        "company_tenure_months": 0,
+        "role_tenure_months": 0
+      },
+      "utilization_factor": {
+        "utilization_attrition_score": 0.7,
+        "current_utilization": 0.6161510481401076,
+        "utilization_status": "highly_utilized",
+        "explanation": "Highly utilized employees are at increased risk of burnout and seeking better work-life balance"
+      },
+      "seniority_factor": {
+        "seniority_attrition_score": 0.7,
+        "seniority_level": 0.5,
+        "seniority_category": "senior",
+        "explanation": "Senior employees highly marketable and seeking growth"
+      },
+      "task_variety": {
+        "task_variety_index": 1,
+        "attrition_risk": 0.3,
+        "entropy": 3,
+        "normalized_entropy": 1,
+        "unique_task_count": 8,
+        "total_tasks": 8,
+        "unique_categories": {
+          "duties": 0,
+          "projects": 1,
+          "tools": 2
+        },
+        "explanation": "Very high task variety - potentially unfocused but engaging"
+      },
+      "job_intensity_factor": {
+        "intensity_attrition_score": 0.5472384787048745,
+        "current_intensity": 0.5212692021585424,
+        "original_intensity": 0.5212692021585424,
+        "manager_category": "medium_intensity",
+        "manager_adjustment": 0,
+        "workload_factor": 1,
+        "total_hours": 30,
+        "explanation": "Slightly below optimal job intensity (0.52) for student assistant manager (a medium intensity management role)"
+      },
+      "role_project_ratio": {
+        "role_project_attrition_score": 0.7,
+        "active_projects": 1,
+        "expected_projects": 3,
+        "project_ratio": 0.3333333333333333,
+        "explanation": "Significantly fewer projects (1) than expected (3) for seniority level"
+      },
+      "collaboration_index": {
+        "collaboration_attrition_score": 0.6830075608481182,
+        "collaboration_score": 0.3169924391518818,
+        "feedback_activity": 0.23856062735983122,
+        "feedback_quality": 0.5,
+        "has_feedback_data": true,
+        "explanation": "Limited collaboration may increase attrition risk"
+      },
+      "salary_satisfaction": {
+        "salary_score": 0.5,
+        "explanation": "No salary data available"
+      }
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "68152a00b23a0fc1ecbb3e98"
+  },
+  "email": "h@company.com",
+  "company": "Company",
+  "createdAt": {
+    "$date": "2025-05-01T01:39:30.692Z"
+  },
+  "emailVerified": false,
+  "feedbackMetrics": {
+    "given": {
+      "count": 2,
+      "averageRating": 1.8
+    },
+    "received": {
+      "count": 1,
+      "averageRating": 3.8,
+      "weightedAverageRating": 2.736
+    }
+  },
+  "firstName": "Jordan",
+  "jobResponsibilities": [
+    {
+      "duty": "manage sncks, and refreshments for the office",
+      "hours": 5,
+      "_id": {
+        "$oid": "6812f3198680098730eae3c1"
+      }
+    }
+  ],
+  "jobTitle": "snacks manager",
+  "lastName": "Brett",
+  "projects": [],
+  "reportsTo": {
+    "email": "g@company.com",
+    "name": "Candess Keane"
+  },
+  "role": "employee_tier_2",
+  "skillsFeedback": {
+    "given": [
+      "best boss",
+      "adobe skills "
+    ],
+    "received": [
+      "javascript"
+    ]
+  },
+  "toolsProficient": "inventory management",
+  "updatedAt": {
+    "$date": "2025-05-01T04:08:34.937Z"
+  },
+  "user_id": {
+    "$oid": "6812d29383ee38ea392bfe02"
+  },
+  "user_status": "active",
+  "username": "jordanbrett",
+  "collaboration_analysis": {
+    "collaboration_score": 0,
+    "feedback_activity_score": 0,
+    "feedback_quality_score": 0,
+    "feedback_given": 0,
+    "feedback_received": 0,
+    "average_rating": 0,
+    "weighted_rating": 0,
+    "has_feedback_data": true
+  },
+  "job_intensity_analysis": {
+    "overall_intensity": 0.3626337292659391,
+    "duties_analysis": [
+      {
+        "original_task": "manage sncks, and refreshments for the office",
+        "compound_task": true,
+        "sub_tasks": [
+          {
+            "original_task": "manage sncks,",
+            "top_matches": [
+              {
+                "matched_task": "user account management",
+                "similarity": 0.34510064125061035,
+                "intensity_score": 0.5,
+                "rank": 1
+              },
+              {
+                "matched_task": "helpdesk support",
+                "similarity": 0.3349398374557495,
+                "intensity_score": 0.5,
+                "rank": 2
+              },
+              {
+                "matched_task": "administrative tasks",
+                "similarity": 0.31617313623428345,
+                "intensity_score": 0.3,
+                "rank": 3
+              }
+            ],
+            "similarity": 0.34510064125061035,
+            "intensity_score": 0.43652503208297916,
+            "analysis_method": "vector_search_weighted_average"
+          },
+          {
+            "original_task": "refreshments for the office",
+            "top_matches": [
+              {
+                "matched_task": "office supply ordering",
+                "similarity": 0.40712785720825195,
+                "intensity_score": 0.3,
+                "rank": 1
+              },
+              {
+                "matched_task": "office supply ordering",
+                "similarity": 0.40712785720825195,
+                "intensity_score": 0.3,
+                "rank": 2
+              },
+              {
+                "matched_task": "calendar management",
+                "similarity": 0.34827810525894165,
+                "intensity_score": 0.3,
+                "rank": 3
+              }
+            ],
+            "similarity": 0.40712785720825195,
+            "intensity_score": 0.3,
+            "analysis_method": "vector_search_weighted_average"
+          }
+        ],
+        "intensity_score": 0.3626337292659391,
+        "analysis_method": "vector_search_compound_analysis",
+        "hours": 5,
+        "original_description": "manage sncks, and refreshments for the office"
+      }
+    ],
+    "weighted_intensity": 0.3626337292659391,
+    "adjusted_intensity": 0.06915386407975167,
+    "total_hours": 5,
+    "workload_factor": 0.19069892979821898,
+    "standard_work_week": 40
+  },
+  "utilizationAssessment": {
+    "timestamp": "2025-05-02T15:28:02.148058",
+    "email": "h@company.com",
+    "tool_complexity_analysis": {
+      "overall_score": 0.5,
+      "tool_details": [
+        {
+          "tool": "inventory management",
+          "complexity": 0.5
+        }
+      ],
+      "avg_complexity": 0.5,
+      "max_complexity": 0.5,
+      "tool_count": 1
+    },
+    "role_complexity_analysis": {
+      "complexity": 0.8,
+      "matched_role": "manager",
+      "input_job_title": "snacks manager",
+      "canonical_title": "snacks manager",
+      "categories": [
+        "management"
+      ],
+      "vector_match": {
+        "role": "manager",
+        "similarity": 0.6785016059875488,
+        "complexity": 0.8,
+        "rank": 1
+      },
+      "all_matches": [
+        {
+          "role": "manager",
+          "similarity": 0.6785016059875488,
+          "complexity": 0.8,
+          "rank": 1
+        },
+        {
+          "role": "people manager",
+          "similarity": 0.6073770523071289,
+          "complexity": 0.8,
+          "rank": 2
+        },
+        {
+          "role": "brand manager",
+          "similarity": 0.5876653790473938,
+          "complexity": 0.8,
+          "rank": 3
+        }
+      ],
+      "analysis_method": "vector_search_match"
+    },
+    "project_load_analysis": {
+      "project_count": 0,
+      "active_project_count": 0,
+      "average_priority": 0,
+      "time_pressure_score": 0,
+      "overlap_score": 0,
+      "overall_load_score": 0,
+      "pressure_handling_score": 0,
+      "project_details": []
+    },
+    "responsibility_breadth_analysis": {
+      "breadth_score": 0.48999999999999994,
+      "expected_breadth": 0.8,
+      "breadth_gap": -0.3100000000000001,
+      "is_management_role": true,
+      "seniority_level": 0.8,
+      "role_distribution": {
+        "management": 0,
+        "mentoring": 0,
+        "technical_leadership": 0,
+        "execution": 0
+      },
+      "expected_distribution": {
+        "execution": 0.4,
+        "technical_leadership": 0.3,
+        "mentoring": 0.2,
+        "management": 0.1
+      },
+      "distribution_gaps": {
+        "execution": -0.4,
+        "technical_leadership": -0.3,
+        "mentoring": -0.2,
+        "management": -0.1
+      },
+      "domain_variety": {
+        "unique_domains": 0,
+        "domains": []
+      },
+      "role_overlaps": {
+        "overlap_count": 0,
+        "overlap_factor": 0,
+        "role_types": [],
+        "domain_overlaps": {},
+        "responsibility_overlaps": [],
+        "is_overutilized": false,
+        "role_mismatch_score": 0
+      }
+    },
+    "utilization_assessment": {
+      "utilization_score": 0,
+      "utilization_status": "severely_underutilized",
+      "confidence_score": 0.665625,
+      "raw_score": 0.30683077281595034,
+      "workload_factor": 0.19069892979821898,
+      "workload_adjusted_score": 0.05851230000516219,
+      "breadth_adjustment": -0.06200000000000003,
+      "role_overlap_adjustment": 0,
+      "dimensional_breakdown": {
+        "tool_complexity": 0.5,
+        "project_load": 0,
+        "pressure_handling": 0,
+        "responsibility_breadth": 0.48999999999999994,
+        "role_complexity": 0.8,
+        "job_intensity": 0.06915386407975167
+      },
+      "role_overlap_analysis": {
+        "is_overutilized_by_roles": false,
+        "overlap_factor": 0,
+        "role_mismatch_score": 0,
+        "responsibility_overlaps": []
+      },
+      "includes_job_intensity": true
+    },
+    "utilization_score": 0,
+    "collaboration_analysis": {
+      "collaboration_score": 0,
+      "feedback_activity_score": 0,
+      "feedback_quality_score": 0,
+      "feedback_given": 0,
+      "feedback_received": 0,
+      "average_rating": 0,
+      "weighted_rating": 0,
+      "has_feedback_data": true
+    },
+    "job_intensity_analysis": {
+      "overall_intensity": 0.3626337292659391,
+      "duties_analysis": [
+        {
+          "original_task": "manage sncks, and refreshments for the office",
+          "compound_task": true,
+          "sub_tasks": [
+            {
+              "original_task": "manage sncks,",
+              "top_matches": [
+                {
+                  "matched_task": "user account management",
+                  "similarity": 0.34510064125061035,
+                  "intensity_score": 0.5,
+                  "rank": 1
+                },
+                {
+                  "matched_task": "helpdesk support",
+                  "similarity": 0.3349398374557495,
+                  "intensity_score": 0.5,
+                  "rank": 2
+                },
+                {
+                  "matched_task": "administrative tasks",
+                  "similarity": 0.31617313623428345,
+                  "intensity_score": 0.3,
+                  "rank": 3
+                }
+              ],
+              "similarity": 0.34510064125061035,
+              "intensity_score": 0.43652503208297916,
+              "analysis_method": "vector_search_weighted_average"
+            },
+            {
+              "original_task": "refreshments for the office",
+              "top_matches": [
+                {
+                  "matched_task": "office supply ordering",
+                  "similarity": 0.40712785720825195,
+                  "intensity_score": 0.3,
+                  "rank": 1
+                },
+                {
+                  "matched_task": "office supply ordering",
+                  "similarity": 0.40712785720825195,
+                  "intensity_score": 0.3,
+                  "rank": 2
+                },
+                {
+                  "matched_task": "calendar management",
+                  "similarity": 0.34827810525894165,
+                  "intensity_score": 0.3,
+                  "rank": 3
+                }
+              ],
+              "similarity": 0.40712785720825195,
+              "intensity_score": 0.3,
+              "analysis_method": "vector_search_weighted_average"
+            }
+          ],
+          "intensity_score": 0.3626337292659391,
+          "analysis_method": "vector_search_compound_analysis",
+          "hours": 5,
+          "original_description": "manage sncks, and refreshments for the office"
+        }
+      ],
+      "weighted_intensity": 0.3626337292659391,
+      "adjusted_intensity": 0.06915386407975167,
+      "total_hours": 5,
+      "workload_factor": 0.19069892979821898,
+      "standard_work_week": 40
+    }
+  },
+  "utilization_score": 0.99,
+  "attritionAssessment": {
+    "timestamp": "2025-05-04T14:37:57.357108",
+    "email": "h@company.com",
+    "attrition_score": 0.5740038318289453,
+    "attrition_risk": "medium",
+    "primary_explanation": "Utilization level affecting retention risk",
+    "primary_risk_factors": [
+      {
+        "factor": "utilization_factor",
+        "score": 1,
+        "explanation": "Utilization level affecting retention risk"
+      },
+      {
+        "factor": "collaboration_index",
+        "score": 0.85,
+        "explanation": "Collaboration patterns affecting retention"
+      },
+      {
+        "factor": "job_intensity",
+        "score": 0.8,
+        "explanation": "Low job intensity (0.10) may lead to boredom and disengagement for snacks manager (a low intensity management role); low weekly hours (5) may indicate underemployment"
+      }
+    ],
+    "factor_scores": {
+      "responsibility_mismatch": 0.08002554552630155,
+      "tenure_factor": 0.5,
+      "utilization_factor": 1,
+      "seniority_factor": 0.7,
+      "task_variety_index": 0.3,
+      "job_intensity": 0.8,
+      "role_project_ratio": 0.5,
+      "collaboration_index": 0.85,
+      "salary_satisfaction": 0.5
+    },
+    "factor_details": {
+      "responsibility_mismatch": {
+        "mismatch_score": 0.08002554552630155,
+        "avg_gap": 0.17333333333333334,
+        "positive_gaps": 0,
+        "negative_gaps": 0.31,
+        "detailed_mismatches": [
+          {
+            "role_type": "management",
+            "expected": 0.25,
+            "actual": 0.33,
+            "gap": 0.08000000000000002
+          },
+          {
+            "role_type": "technical_leadership",
+            "expected": 0.2,
+            "actual": 0.33,
+            "gap": 0.13
+          },
+          {
+            "role_type": "execution",
+            "expected": 0.65,
+            "actual": 0.34,
+            "gap": -0.31
+          }
+        ],
+        "explanation": "Not being utilized at appropriate seniority level"
+      },
+      "tenure_factor": {
+        "tenure_score": 0.5,
+        "explanation": "No tenure data available",
+        "company_tenure_months": 0,
+        "role_tenure_months": 0
+      },
+      "utilization_factor": {
+        "utilization_attrition_score": 1,
+        "current_utilization": 0,
+        "utilization_status": "severely_underutilized",
+        "explanation": "Severely underutilized employees are at high risk of leaving due to boredom or feeling unvalued"
+      },
+      "seniority_factor": {
+        "seniority_attrition_score": 0.7,
+        "seniority_level": 0.5,
+        "seniority_category": "senior",
+        "explanation": "Senior employees highly marketable and seeking growth"
+      },
+      "task_variety": {
+        "task_variety_index": 1,
+        "attrition_risk": 0.3,
+        "entropy": 1,
+        "normalized_entropy": 1,
+        "unique_task_count": 2,
+        "total_tasks": 2,
+        "unique_categories": {
+          "duties": 0,
+          "projects": 0,
+          "tools": 1
+        },
+        "explanation": "Very high task variety - potentially unfocused but engaging"
+      },
+      "job_intensity_factor": {
+        "intensity_attrition_score": 0.8,
+        "current_intensity": 0.1,
+        "original_intensity": 0.3626337292659391,
+        "manager_category": "low_intensity",
+        "manager_adjustment": -0.2,
+        "workload_factor": 0.19069892979821898,
+        "total_hours": 5,
+        "explanation": "Low job intensity (0.10) may lead to boredom and disengagement for snacks manager (a low intensity management role); low weekly hours (5) may indicate underemployment"
+      },
+      "role_project_ratio": {
+        "role_project_attrition_score": 0.5,
+        "explanation": "No project data available"
+      },
+      "collaboration_index": {
+        "collaboration_attrition_score": 0.85,
+        "collaboration_score": 0.15,
+        "feedback_activity": 0,
+        "feedback_quality": 0.5,
+        "has_feedback_data": true,
+        "explanation": "Limited collaboration may increase attrition risk"
+      },
+      "salary_satisfaction": {
+        "salary_score": 0.5,
+        "explanation": "No salary data available"
+      }
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "68152a00b23a0fc1ecbb3e99"
+  },
+  "email": "i@company.com",
+  "company": "Company",
+  "createdAt": {
+    "$date": "2025-05-01T01:39:30.692Z"
+  },
+  "emailVerified": false,
+  "feedbackMetrics": {
+    "given": {
+      "count": 0,
+      "averageRating": 0
+    },
+    "received": {
+      "count": 2,
+      "averageRating": 2.8,
+      "weightedAverageRating": 1.8990000000000002
+    }
+  },
+  "firstName": "Sarah",
+  "jobResponsibilities": [
+    {
+      "duty": "Manage calls and emails",
+      "hours": 35,
+      "_id": {
+        "$oid": "6812dc7e1a87a032ef437686"
+      }
+    }
+  ],
+  "jobTitle": "Receptionist",
+  "lastName": "Thee",
+  "projects": [
+    {
+      "project_title": "Project2",
+      "project_description": "manage reporting in TTU",
+      "budget": 20000,
+      "tech_stack": [
+        "FIgma"
+      ],
+      "project_id": {
+        "$oid": "6812ea788680098730eae319"
+      },
+      "project_status": "ongoing",
+      "project_priority": "medium",
+      "project_criticality": "",
+      "project_start_date": "2025-03-31",
+      "project_end_date": "2025-04-17",
+      "project_department": "Reporting",
+      "total_hours": 6,
+      "collaborators": [
+        {
+          "email": "a@company.com",
+          "name": "Sim,Singh Singh",
+          "role_in_project": "IT ",
+          "tasks": [
+            "create SQL reports"
+          ],
+          "hours_per_week": 5,
+          "tools_used": [
+            "SQL Server"
+          ],
+          "contribution_start_date": "2025-05-01T04:18:14.981Z"
+        }
+      ],
+      "user_contribution": {
+        "role_in_project": "IT",
+        "tasks": [
+          "manages reporting for reception"
+        ],
+        "hours_per_week": 1,
+        "tools_used": [
+          "ADOBE"
+        ],
+        "contribution_start_date": "2025-05-01T04:18:14.981Z"
+      }
+    }
+  ],
+  "reportsTo": {
+    "email": "f@company.com",
+    "name": "Brian Still"
+  },
+  "role": "employee_tier_3",
+  "skillsFeedback": {
+    "given": [],
+    "received": [
+      "everything",
+      "salesforce"
+    ]
+  },
+  "toolsProficient": "microsoft suite",
+  "updatedAt": {
+    "$date": "2025-05-01T03:50:29.243Z"
+  },
+  "user_id": {
+    "$oid": "6812d31183ee38ea392bfe03"
+  },
+  "user_status": "active",
+  "username": "sarahthee",
+  "collaboration_analysis": {
+    "collaboration_score": 0,
+    "feedback_activity_score": 0,
+    "feedback_quality_score": 0,
+    "feedback_given": 0,
+    "feedback_received": 0,
+    "average_rating": 0,
+    "weighted_rating": 0,
+    "has_feedback_data": true
+  },
+  "job_intensity_analysis": {
+    "overall_intensity": 0.3379863829750707,
+    "duties_analysis": [
+      {
+        "original_task": "Manage calls and emails",
+        "compound_task": true,
+        "sub_tasks": [
+          {
+            "original_task": "manage calls",
+            "top_matches": [
+              {
+                "matched_task": "answering phone calls",
+                "similarity": 0.5882197022438049,
+                "intensity_score": 0.2,
+                "rank": 1
+              },
+              {
+                "matched_task": "cold calling",
+                "similarity": 0.4917639493942261,
+                "intensity_score": 0.6,
+                "rank": 2
+              },
+              {
+                "matched_task": "reception duties",
+                "similarity": 0.384443998336792,
+                "intensity_score": 0.4,
+                "rank": 3
+              }
+            ],
+            "similarity": 0.5882197022438049,
+            "intensity_score": 0.38682683260573003,
+            "analysis_method": "vector_search_weighted_average"
+          },
+          {
+            "original_task": "emails",
+            "matched_task": "email communication",
+            "similarity": 0.7562950849533081,
+            "intensity_score": 0.3,
+            "analysis_method": "vector_search_direct_match"
+          }
+        ],
+        "intensity_score": 0.3379863829750707,
+        "analysis_method": "vector_search_compound_analysis",
+        "hours": 35,
+        "original_description": "Manage calls and emails"
+      }
+    ],
+    "weighted_intensity": 0.3379863829750707,
+    "adjusted_intensity": 0.3379863829750707,
+    "total_hours": 35,
+    "workload_factor": 1,
+    "standard_work_week": 40
+  },
+  "utilizationAssessment": {
+    "timestamp": "2025-05-02T15:28:02.445876",
+    "email": "i@company.com",
+    "tool_complexity_analysis": {
+      "overall_score": 0.5,
+      "tool_details": [
+        {
+          "tool": "microsoft suite",
+          "complexity": 0.5
+        }
+      ],
+      "avg_complexity": 0.5,
+      "max_complexity": 0.5,
+      "tool_count": 1
+    },
+    "role_complexity_analysis": {
+      "complexity": 0.7,
+      "matched_role": "administrative manager",
+      "input_job_title": "Receptionist",
+      "canonical_title": "administrative assistant",
+      "categories": [
+        "administrative"
+      ],
+      "vector_match": {
+        "role": "administrative manager",
+        "similarity": 0.8033261299133301,
+        "complexity": 0.7,
+        "rank": 1
+      },
+      "all_matches": [
+        {
+          "role": "administrative manager",
+          "similarity": 0.8033261299133301,
+          "complexity": 0.7,
+          "rank": 1
+        },
+        {
+          "role": "executive assistant manager",
+          "similarity": 0.787998616695404,
+          "complexity": 0.8,
+          "rank": 2
+        },
+        {
+          "role": "assistant manager",
+          "similarity": 0.777634859085083,
+          "complexity": 0.7,
+          "rank": 3
+        }
+      ],
+      "analysis_method": "vector_search_match"
+    },
+    "project_load_analysis": {
+      "project_count": 1,
+      "active_project_count": 1,
+      "average_priority": 0.6,
+      "time_pressure_score": 0,
+      "project_count_factor": 0.4079441541679836,
+      "overlap_score": 0,
+      "max_concurrent_projects": 1,
+      "overall_load_score": 0.2219860385419959,
+      "project_details": [
+        {
+          "project_id": {
+            "$oid": "6812ea788680098730eae319"
+          },
+          "project_title": "Project2",
+          "status": "ongoing",
+          "status_weight": 0.5,
+          "priority": "medium",
+          "priority_weight": 0.6,
+          "role": "it",
+          "role_factor": 1
+        }
+      ]
+    },
+    "responsibility_breadth_analysis": {
+      "breadth_score": 0.27,
+      "expected_breadth": 0.7,
+      "breadth_gap": -0.42999999999999994,
+      "is_management_role": false,
+      "seniority_level": 0.5,
+      "role_distribution": {
+        "management": 0,
+        "mentoring": 0,
+        "technical_leadership": 0,
+        "execution": 1
+      },
+      "expected_distribution": {
+        "execution": 0.6,
+        "technical_leadership": 0.2,
+        "mentoring": 0.1,
+        "management": 0.1
+      },
+      "distribution_gaps": {
+        "execution": 0.4,
+        "technical_leadership": -0.2,
+        "mentoring": -0.1,
+        "management": -0.1
+      },
+      "domain_variety": {
+        "unique_domains": 1,
+        "domains": [
+          "FIgma"
+        ]
+      },
+      "role_overlaps": {
+        "overlap_count": 1,
+        "overlap_factor": 0.3333333333333333,
+        "role_types": [
+          "execution"
+        ],
+        "domain_overlaps": {},
+        "responsibility_overlaps": [
+          "Overloaded with execution responsibilities (+0.40)"
+        ],
+        "is_overutilized": true,
+        "role_mismatch_score": 0.4
+      }
+    },
+    "utilization_assessment": {
+      "utilization_score": 0.3499944843034133,
+      "utilization_status": "highly_utilized",
+      "confidence_score": 0.85,
+      "raw_score": 0.3959944843034133,
+      "workload_factor": 1,
+      "workload_adjusted_score": 0.3959944843034133,
+      "breadth_adjustment": -0.086,
+      "role_overlap_adjustment": 0.04,
+      "dimensional_breakdown": {
+        "tool_complexity": 0.5,
+        "project_load": 0.2219860385419959,
+        "pressure_handling": 0.5,
+        "responsibility_breadth": 0.27,
+        "role_complexity": 0.7,
+        "job_intensity": 0.3379863829750707
+      },
+      "role_overlap_analysis": {
+        "is_overutilized_by_roles": true,
+        "overlap_factor": 0.3333333333333333,
+        "role_mismatch_score": 0.4,
+        "responsibility_overlaps": [
+          "Overloaded with execution responsibilities (+0.40)"
+        ]
+      },
+      "includes_job_intensity": true
+    },
+    "utilization_score": 0.3499944843034133,
+    "collaboration_analysis": {
+      "collaboration_score": 0,
+      "feedback_activity_score": 0,
+      "feedback_quality_score": 0,
+      "feedback_given": 0,
+      "feedback_received": 0,
+      "average_rating": 0,
+      "weighted_rating": 0,
+      "has_feedback_data": true
+    },
+    "job_intensity_analysis": {
+      "overall_intensity": 0.3379863829750707,
+      "duties_analysis": [
+        {
+          "original_task": "Manage calls and emails",
+          "compound_task": true,
+          "sub_tasks": [
+            {
+              "original_task": "manage calls",
+              "top_matches": [
+                {
+                  "matched_task": "answering phone calls",
+                  "similarity": 0.5882197022438049,
+                  "intensity_score": 0.2,
+                  "rank": 1
+                },
+                {
+                  "matched_task": "cold calling",
+                  "similarity": 0.4917639493942261,
+                  "intensity_score": 0.6,
+                  "rank": 2
+                },
+                {
+                  "matched_task": "reception duties",
+                  "similarity": 0.384443998336792,
+                  "intensity_score": 0.4,
+                  "rank": 3
+                }
+              ],
+              "similarity": 0.5882197022438049,
+              "intensity_score": 0.38682683260573003,
+              "analysis_method": "vector_search_weighted_average"
+            },
+            {
+              "original_task": "emails",
+              "matched_task": "email communication",
+              "similarity": 0.7562950849533081,
+              "intensity_score": 0.3,
+              "analysis_method": "vector_search_direct_match"
+            }
+          ],
+          "intensity_score": 0.3379863829750707,
+          "analysis_method": "vector_search_compound_analysis",
+          "hours": 35,
+          "original_description": "Manage calls and emails"
+        }
+      ],
+      "weighted_intensity": 0.3379863829750707,
+      "adjusted_intensity": 0.3379863829750707,
+      "total_hours": 35,
+      "workload_factor": 1,
+      "standard_work_week": 40
+    }
+  },
+  "utilization_score": 0.3499944843034133,
+  "attritionAssessment": {
+    "timestamp": "2025-05-04T14:37:59.162053",
+    "email": "i@company.com",
+    "attrition_score": 0.5175413927479162,
+    "attrition_risk": "medium",
+    "primary_explanation": "Utilization level affecting retention risk",
+    "primary_risk_factors": [
+      {
+        "factor": "utilization_factor",
+        "score": 0.7,
+        "explanation": "Utilization level affecting retention risk"
+      },
+      {
+        "factor": "seniority_factor",
+        "score": 0.7,
+        "explanation": "Seniority level with characteristic attrition pattern"
+      },
+      {
+        "factor": "role_project_ratio",
+        "score": 0.7,
+        "explanation": "Project load relative to seniority level"
+      }
+    ],
+    "factor_scores": {
+      "responsibility_mismatch": 0.08002554552630155,
+      "tenure_factor": 0.5,
+      "utilization_factor": 0.7,
+      "seniority_factor": 0.7,
+      "task_variety_index": 0.3,
+      "job_intensity": 0.6572081702149576,
+      "role_project_ratio": 0.7,
+      "collaboration_index": 0.6830075608481182,
+      "salary_satisfaction": 0.5
+    },
+    "factor_details": {
+      "responsibility_mismatch": {
+        "mismatch_score": 0.08002554552630155,
+        "avg_gap": 0.17333333333333334,
+        "positive_gaps": 0,
+        "negative_gaps": 0.31,
+        "detailed_mismatches": [
+          {
+            "role_type": "management",
+            "expected": 0.25,
+            "actual": 0.33,
+            "gap": 0.08000000000000002
+          },
+          {
+            "role_type": "technical_leadership",
+            "expected": 0.2,
+            "actual": 0.33,
+            "gap": 0.13
+          },
+          {
+            "role_type": "execution",
+            "expected": 0.65,
+            "actual": 0.34,
+            "gap": -0.31
+          }
+        ],
+        "explanation": "Not being utilized at appropriate seniority level"
+      },
+      "tenure_factor": {
+        "tenure_score": 0.5,
+        "explanation": "No tenure data available",
+        "company_tenure_months": 0,
+        "role_tenure_months": 0
+      },
+      "utilization_factor": {
+        "utilization_attrition_score": 0.7,
+        "current_utilization": 0.3499944843034133,
+        "utilization_status": "highly_utilized",
+        "explanation": "Highly utilized employees are at increased risk of burnout and seeking better work-life balance"
+      },
+      "seniority_factor": {
+        "seniority_attrition_score": 0.7,
+        "seniority_level": 0.5,
+        "seniority_category": "senior",
+        "explanation": "Senior employees highly marketable and seeking growth"
+      },
+      "task_variety": {
+        "task_variety_index": 1,
+        "attrition_risk": 0.3,
+        "entropy": 2,
+        "normalized_entropy": 1,
+        "unique_task_count": 4,
+        "total_tasks": 4,
+        "unique_categories": {
+          "duties": 0,
+          "projects": 1,
+          "tools": 1
+        },
+        "explanation": "Very high task variety - potentially unfocused but engaging"
+      },
+      "job_intensity_factor": {
+        "intensity_attrition_score": 0.6572081702149576,
+        "current_intensity": 0.3379863829750707,
+        "original_intensity": 0.3379863829750707,
+        "manager_category": "non_manager",
+        "manager_adjustment": 0,
+        "workload_factor": 1,
+        "total_hours": 35,
+        "explanation": "Low job intensity (0.34) may lead to boredom and disengagement for Receptionist"
+      },
+      "role_project_ratio": {
+        "role_project_attrition_score": 0.7,
+        "active_projects": 1,
+        "expected_projects": 3,
+        "project_ratio": 0.3333333333333333,
+        "explanation": "Significantly fewer projects (1) than expected (3) for seniority level"
+      },
+      "collaboration_index": {
+        "collaboration_attrition_score": 0.6830075608481182,
+        "collaboration_score": 0.3169924391518818,
+        "feedback_activity": 0.23856062735983122,
+        "feedback_quality": 0.5,
+        "has_feedback_data": true,
+        "explanation": "Limited collaboration may increase attrition risk"
+      },
+      "salary_satisfaction": {
+        "salary_score": 0.5,
+        "explanation": "No salary data available"
+      }
+    }
+  }
+}]

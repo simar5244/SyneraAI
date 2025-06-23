@@ -1,0 +1,641 @@
+import mongoose from 'mongoose';
+import Feedback from '@/models/Feedback';
+import User from '@/models/User';
+import connectDB from '@/lib/dbConnect';
+
+class FeedbackService {
+  /**
+   * Submit feedback for an employee
+   */
+  async submitFeedback(
+    evaluatorId: string,
+    evaluatedEmail: string,
+    relationshipType: 'direct-reporting' | 'project-collaboration' | 'no-connection',
+    ratings: {
+      accountability: 'Average' | 'Good' | 'Very Good' | 'Excellent' | 'Outstanding';
+      teamContribution: 'Average' | 'Good' | 'Very Good' | 'Excellent' | 'Outstanding';
+      adaptability: 'Average' | 'Good' | 'Very Good' | 'Excellent' | 'Outstanding';
+      communication: 'Average' | 'Good' | 'Very Good' | 'Excellent' | 'Outstanding';
+      confidence: 'Average' | 'Good' | 'Very Good' | 'Excellent' | 'Outstanding';
+    },
+    topSkills: string,
+    company: string
+  ) {
+    await connectDB();
+
+    // For token-authenticated users, we need to be more flexible
+    // Try to find evaluator by email (case-insensitive)
+    const evaluatorEmail = evaluatorId.toLowerCase();
+    const evaluator = await User.findOne({
+      $or: [
+        { email: evaluatorEmail },
+        { email: evaluatorEmail.toLowerCase() }
+      ]
+    });
+
+    if (!evaluator) {
+      console.error(`Evaluator not found: ${evaluatorEmail} (company: ${company})`);
+      throw new Error('Evaluator not found');
+    }
+
+    // Directly use the evaluator's role. Ensure it's trimmed and lowercased.
+    // The Feedback model's enum and setter will handle validation.
+    const evaluatorInternalRole = evaluator.role ? evaluator.role.trim().toLowerCase() : ''; // Assign empty string if role is missing, validation will catch it.
+
+    // Get current quarter and year
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentQuarter = Math.ceil((now.getMonth() + 1) / 3);
+    const quarter = `Q${currentQuarter}-${currentYear}`;
+
+    // Check if feedback already submitted in this quarter by email
+    const existingFeedback = await Feedback.findOne({
+      documentType: 'feedback', evaluatorEmail: evaluator.email, evaluatedEmail, quarter, companyCode: { $regex: `^${company}$`, $options: 'i' }
+    });
+
+    if (existingFeedback) {
+      throw new Error('You have already provided feedback for this employee this quarter');
+    }
+
+    // Find the user being evaluated (case-insensitive)
+    const evaluatedEmailLower = evaluatedEmail.toLowerCase();
+    const evaluatedUser = await User.findOne({
+      $or: [
+        { email: evaluatedEmailLower },
+        { email: evaluatedEmailLower.toLowerCase() }
+      ]
+    });
+    
+    if (!evaluatedUser) {
+      console.error(`Evaluated user not found: ${evaluatedEmailLower}`);
+      throw new Error('User being evaluated not found');
+    }
+
+    // Create new feedback (weightedRating will be calculated by pre-save hook)
+    const feedback = new Feedback({
+      documentType: 'feedback',
+      evaluatorId: evaluator._id,
+      evaluatorName: evaluator.firstName && evaluator.lastName 
+        ? `${evaluator.firstName} ${evaluator.lastName}` 
+        : evaluator.username,
+      evaluatorEmail: evaluator.email,
+      evaluatorInternalRole,
+      evaluatedEmail,
+      relationshipType,
+      ratings,
+      topSkills,
+      quarter,
+      companyCode: evaluator.companyCode,
+      // Populate organizationId to satisfy schema (optional)
+      organizationId: evaluator.organizationId,
+    });
+
+    await feedback.save();
+
+    // Update metrics for both users
+    // Note: We pass the evaluator's average rating to apply the reduction rule
+    const evaluatorAvgRatingGiven = evaluator.feedbackMetrics?.given?.averageRating || 0;
+    await this.updateUserFeedbackMetrics(evaluator.email, company, evaluatorAvgRatingGiven);
+    await this.updateUserFeedbackMetrics(evaluatedEmail, company, evaluatorAvgRatingGiven);
+
+    return feedback;
+  }
+
+  /**
+   * Update feedback metrics for a user and store in user model
+   * @param email User email
+   * @param company User company
+   * @param evaluatorAvgRatingGiven (Optional) Avg rating given by the person *who just submitted feedback* 
+   *                              Used ONLY when updating the *evaluated* user to apply the 10% reduction rule.
+   */
+  async updateUserFeedbackMetrics(
+    email: string, 
+    company: string, 
+    evaluatorAvgRatingGiven?: number
+  ) {
+    // Calculate all feedback metrics using the static method
+    const metrics = await this.calculateUserFeedbackMetrics(email, company);
+    
+    // Apply 10% reduction if applicable (only when updating the evaluated user)
+    let finalWeightedAverage = metrics.feedbackReceived.weightedAverageRating;
+    if (evaluatorAvgRatingGiven !== undefined && evaluatorAvgRatingGiven >= 4.5) {
+       // Recalculate the weighted average, applying reduction to the latest feedback score
+       const feedbackReceived = await Feedback.find({ 
+         documentType: 'feedback',
+         evaluatedEmail: email, 
+         companyCode: { $regex: `^${company}$`, $options: 'i' }
+       }).sort({ createdAt: -1 }); // Get latest feedback first
+       
+       if (feedbackReceived.length > 0) {
+           let totalWeightedScore = 0;
+           feedbackReceived.forEach((fb, index) => {
+               let score = fb.weightedRating || 0;
+               // Apply reduction only to the most recent feedback if evaluator rating is high
+               if (index === 0) { 
+                   score *= 0.9; 
+               }
+               totalWeightedScore += score;
+           });
+           finalWeightedAverage = totalWeightedScore / feedbackReceived.length;
+       }
+    }
+    
+    // Update metrics for user - use case-insensitive email match
+    await User.findOneAndUpdate(
+      { email: { $regex: `^${email}$`, $options: 'i' } },
+      { 
+        $set: {
+          feedbackMetrics: {
+            given: {
+              count: metrics.feedbackGiven.count,
+              averageRating: metrics.feedbackGiven.averageRating
+            },
+            received: {
+              count: metrics.feedbackReceived.count,
+              averageRating: metrics.feedbackReceived.averageRating,
+              weightedAverageRating: finalWeightedAverage // Use potentially reduced average
+            }
+          },
+          skillsFeedback: {
+            given: metrics.skillsFeedback.given,
+            received: metrics.skillsFeedback.received
+          }
+        }
+      }
+    );
+    
+    return metrics;
+  }
+
+  /**
+   * Calculate raw feedback metrics for a user by delegating to the Feedback model
+   */
+  async calculateUserFeedbackMetrics(email: string, companyCode: string) {
+    await connectDB();
+    return await Feedback.calculateUserFeedbackMetrics(email, companyCode);
+  }
+
+  /**
+   * Get feedback submitted by a specific evaluator
+   */
+  async getFeedbackByEvaluator(evaluatorEmail: string, company: string, quarter?: string) {
+    await connectDB();
+    
+    const query: any = { 
+      documentType: 'feedback', 
+      evaluatorEmail: { $regex: `^${evaluatorEmail}$`, $options: 'i' },
+      $or: [
+        { companyCode: { $regex: `^${company}$`, $options: 'i' } },
+        { company: { $regex: `^${company}$`, $options: 'i' } }
+      ]
+    };
+    
+    if (quarter) {
+      query.quarter = quarter;
+    }
+    
+    return await Feedback.find(query).sort({ createdAt: -1 });
+  }
+
+  /**
+   * Get all feedback for a specific employee by email
+   */
+  async getFeedbackForEmployee(evaluatedEmail: string, company: string, quarter?: string) {
+    await connectDB();
+    const query: any = { 
+      documentType: 'feedback',
+      evaluatedEmail: { $regex: `^${evaluatedEmail}$`, $options: 'i' },
+      $or: [
+        { companyCode: { $regex: `^${company}$`, $options: 'i' } },
+        { company: { $regex: `^${company}$`, $options: 'i' } }
+      ]
+    };
+    
+    if (quarter) query.quarter = quarter;
+    
+    return await Feedback.find(query).sort({ createdAt: -1 });
+  }
+
+  /**
+   * Calculate aggregated score for an employee (primarily reads from User model now)
+   */
+  async calculateAggregatedScore(evaluatedEmail: string, companyCode: string, quarter?: string) {
+    await connectDB();
+    
+    // If quarter is specified, we need to calculate on the fly for that specific quarter
+    if (quarter) {
+        const query: any = { 
+          documentType: 'feedback',
+          evaluatedEmail,
+          company: companyCode,
+          quarter: quarter
+        };
+        const feedbacks = await Feedback.find(query);
+        if (feedbacks.length === 0) return null;
+
+        // Fetch evaluator average ratings for the reduction rule (This could be slow)
+        // Simplified: We won't apply the reduction for quarter-specific views for performance.
+        // A more robust solution might pre-calculate quarterly aggregates.
+        const avgReceived = feedbacks.reduce((sum, fb) => sum + (fb.averageRating || 0), 0) / feedbacks.length;
+        const weightedAvgReceived = feedbacks.reduce((sum, fb) => sum + (fb.weightedRating || 0), 0) / feedbacks.length;
+        const skills = feedbacks.map(fb => fb.topSkills).filter(Boolean);
+        
+        return {
+            count: feedbacks.length,
+            averageRating: avgReceived,
+            weightedAverageRating: weightedAvgReceived,
+            skillsFeedback: { received: skills, given: [] } // Return in expected structure, 'given' is not calculated here
+        };
+    }
+    
+    // Otherwise, get the overall metrics stored in the user profile (case-insensitive)
+    const user = await User.findOne({ email: { $regex: `^${evaluatedEmail}$`, $options: 'i' } });
+    if (!user || !user.feedbackMetrics) {
+      // Should ideally not happen after feedback is submitted, but calculate if needed
+      const metrics = await this.calculateUserFeedbackMetrics(evaluatedEmail, companyCode);
+      return {
+        count: metrics.feedbackReceived.count,
+        averageRating: metrics.feedbackReceived.averageRating,
+        weightedAverageRating: metrics.feedbackReceived.weightedAverageRating,
+        skillsFeedback: metrics.skillsFeedback || { given: [], received: [] }
+      };
+    }
+    
+    // Return metrics from user profile
+    return {
+      count: user.feedbackMetrics.received.count,
+      averageRating: user.feedbackMetrics.received.averageRating,
+      weightedAverageRating: user.feedbackMetrics.received.weightedAverageRating,
+      skillsFeedback: user.skillsFeedback || { given: [], received: [] }
+    };
+  }
+
+  /**
+   * Get current feedback cycle settings
+   */
+  async getFeedbackCycleSettings(company: string) {
+    await connectDB();
+    let settings = await Feedback.findOne({ 
+      documentType: 'settings', 
+      company: company 
+    });
+    
+    if (!settings) {
+      // Use create instead of new + save for atomicity
+      settings = await Feedback.create({
+        documentType: 'settings',
+        company,
+        frequency: 'quarterly',
+        lastChanged: new Date()
+        // nextChangeAvailable will be set by the API route
+      });
+    }
+  }
+  
+  /**
+   * Get current feedback cycle settings
+   */
+  async getFeedbackCycleSettings(company: string) {
+    await connectDB();
+    let settings = await Feedback.findOne({ 
+      documentType: 'settings', 
+      $or: [
+        { companyCode: { $regex: `^${company}$`, $options: 'i' } },
+        { company: { $regex: `^${company}$`, $options: 'i' } }
+      ]
+    });
+    
+    if (!settings) {
+      // Use create instead of new + save for atomicity
+      settings = await Feedback.create({
+        documentType: 'settings',
+        companyCode: company,
+        company: company,
+        frequency: 'quarterly',
+        lastChanged: new Date()
+        // nextChangeAvailable will be set by the API route
+      });
+    }
+    
+    return settings;
+  }
+}
+
+    await connectDB();
+
+    // For token-authenticated users, we need to be more flexible
+    // Try to find evaluator by email (case-insensitive)
+    const evaluatorEmail = evaluatorId.toLowerCase();
+    const evaluator = await User.findOne({
+      email: evaluatorEmail
+    });
+
+    if (!evaluator) {
+      console.error(`Evaluator not found: ${evaluatorEmail} (company: ${company})`);
+      throw new Error('Evaluator not found');
+    }
+
+    // Directly use the evaluator's role. Ensure it's trimmed and lowercased.
+    // The Feedback model's enum and setter will handle validation.
+    const evaluatorInternalRole = evaluator.role ? evaluator.role.trim().toLowerCase() : ''; // Assign empty string if role is missing, validation will catch it.
+
+    // Get current quarter and year
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentQuarter = Math.ceil((now.getMonth() + 1) / 3);
+    const quarter = `Q${currentQuarter}-${currentYear}`;
+
+    // Check if feedback already submitted in this quarter by email
+    const existingFeedback = await Feedback.findOne({
+      documentType: 'feedback', 
+      evaluatorEmail: evaluator.email, 
+      evaluatedEmail, 
+      quarter, 
+      $or: [
+        { companyCode: { $regex: `^${company}$`, $options: 'i' } },
+        { company: { $regex: `^${company}$`, $options: 'i' } }
+      ]
+    });
+
+    if (existingFeedback) {
+      throw new Error('You have already provided feedback for this employee this quarter');
+    }
+
+    // Find the user being evaluated (case-insensitive)
+    const evaluatedEmailLower = evaluatedEmail.toLowerCase();
+    const evaluatedUser = await User.findOne({
+      email: evaluatedEmailLower
+    });
+    
+    if (!evaluatedUser) {
+      console.error(`Evaluated user not found: ${evaluatedEmailLower}`);
+      throw new Error('User being evaluated not found');
+    }
+
+    // Create new feedback (weightedRating will be calculated by pre-save hook)
+    const feedback = new Feedback({
+      documentType: 'feedback',
+      evaluatorId: evaluator._id,
+      evaluatorName: evaluator.firstName && evaluator.lastName 
+        ? `${evaluator.firstName} ${evaluator.lastName}` 
+        : evaluator.username,
+      evaluatorEmail: evaluator.email,
+      evaluatorInternalRole,
+      evaluatedEmail,
+      relationshipType,
+      ratings,
+      topSkills,
+      quarter,
+      companyCode: company,
+      company: company,
+      organizationId: evaluator.organizationId,
+    });
+
+    await feedback.save();
+
+    // Update metrics for both users
+    const evaluatorAvgRatingGiven = evaluator.feedbackMetrics?.given?.averageRating || 0;
+    await this.updateUserFeedbackMetrics(evaluator.email, company, evaluatorAvgRatingGiven);
+    await this.updateUserFeedbackMetrics(evaluatedEmail, company, evaluatorAvgRatingGiven);
+
+    return feedback;
+  }
+
+  /**
+   * Update feedback metrics for a user and store in user model
+   */
+  async updateUserFeedbackMetrics(
+    email: string,
+    company: string,
+    evaluatorAvgRatingGiven?: number
+  ) {
+    await connectDB();
+    // Calculate all feedback metrics using the static method
+    const metrics = await this.calculateUserFeedbackMetrics(email, company);
+
+    // Apply 10% reduction if applicable (only when updating the evaluated user)
+    let finalWeightedAverage = metrics.feedbackReceived.weightedAverageRating;
+
+    if (evaluatorAvgRatingGiven !== undefined && evaluatorAvgRatingGiven >= 4.5) {
+      // Recalculate the weighted average, applying reduction to the latest feedback score
+      const feedbackReceived = await Feedback.find({
+        documentType: 'feedback',
+        evaluatedEmail: email,
+        $or: [
+          { companyCode: company },
+          { company: company }
+        ]
+      }).sort({ createdAt: -1 }); // Get latest feedback first
+
+      if (feedbackReceived.length > 0) {
+        let totalWeightedScore = 0;
+        feedbackReceived.forEach((fb, index) => {
+          let score = fb.weightedRating || 0;
+          // Apply reduction only to the most recent feedback if evaluator rating is high
+          if (index === 0) {
+            score *= 0.9;
+          }
+          totalWeightedScore += score;
+        });
+        finalWeightedAverage = totalWeightedScore / feedbackReceived.length;
+      }
+    }
+
+    // Update metrics for user - use case-insensitive email match
+    await User.findOneAndUpdate(
+      { email: { $regex: `^${email}$`, $options: 'i' } },
+      {
+        $set: {
+          feedbackMetrics: {
+            given: {
+              count: metrics.feedbackGiven.count,
+              averageRating: metrics.feedbackGiven.averageRating
+            },
+            received: {
+              count: metrics.feedbackReceived.count,
+              averageRating: metrics.feedbackReceived.averageRating,
+              weightedAverageRating: finalWeightedAverage // Use potentially reduced average
+            }
+          },
+          skillsFeedback: {
+            given: metrics.skillsFeedback.given,
+            received: metrics.skillsFeedback.received
+          }
+        }
+      }
+    );
+
+    return metrics;
+  }
+
+  /**
+   * Calculate raw feedback metrics for a user by delegating to the Feedback model
+   */
+  async calculateUserFeedbackMetrics(email: string, company: string) {
+    await connectDB();
+    return await Feedback.calculateUserFeedbackMetrics(email, company);
+  }
+
+  /**
+   * Get feedback submitted by a specific evaluator
+   */
+  async getFeedbackByEvaluator(evaluatorEmail: string, company: string, quarter?: string) {
+    await connectDB();
+
+    const query: any = {
+      documentType: 'feedback',
+      evaluatorEmail: { $regex: `^${evaluatorEmail}$`, $options: 'i' },
+      $or: [
+        { companyCode: company },
+        { company: company }
+      ]
+    };
+
+    if (quarter) {
+      query.quarter = quarter;
+    }
+
+    return await Feedback.find(query).sort({ createdAt: -1 });
+  }
+
+  /**
+   * Get all feedback for a specific employee by email
+   */
+  async getFeedbackForEmployee(evaluatedEmail: string, company: string, quarter?: string) {
+    await connectDB();
+    const query: any = {
+      documentType: 'feedback',
+      evaluatedEmail: { $regex: `^${evaluatedEmail}$`, $options: 'i' },
+      $or: [
+        { companyCode: company },
+        { company: company }
+      ]
+    };
+
+    if (quarter) query.quarter = quarter;
+
+    return await Feedback.find(query).sort({ createdAt: -1 });
+  }
+
+  /**
+   * Calculate aggregated score for an employee (primarily reads from User model now)
+   */
+  async calculateAggregatedScore(evaluatedEmail: string, company: string, quarter?: string) {
+    await connectDB();
+
+    // If quarter is specified, we need to calculate on the fly for that specific quarter
+    if (quarter) {
+      const query: any = {
+        documentType: 'feedback',
+        evaluatedEmail: { $regex: `^${evaluatedEmail}$`, $options: 'i' },
+        $or: [
+          { companyCode: company },
+          { company: company }
+        ],
+        quarter: quarter
+      };
+      const feedbacks = await Feedback.find(query);
+
+      if (feedbacks.length === 0) {
+        return {
+          count: 0,
+          averageRating: 0,
+          weightedAverageRating: 0,
+          skillsFeedback: { given: [], received: [] }
+        };
+      }
+
+      // Calculate average ratings
+      const totalRating = feedbacks.reduce((sum, fb) => sum + (fb.averageRating || 0), 0);
+      const totalWeightedRating = feedbacks.reduce((sum, fb) => sum + (fb.weightedRating || 0), 0);
+
+      return {
+        count: feedbacks.length,
+        averageRating: totalRating / feedbacks.length,
+        weightedAverageRating: totalWeightedRating / feedbacks.length,
+        skillsFeedback: { given: [], received: [] } // Would need to aggregate skills
+      };
+    }
+
+    // Otherwise, get the overall metrics stored in the user profile (case-insensitive)
+    const user = await User.findOne({ email: { $regex: `^${evaluatedEmail}$`, $options: 'i' } });
+    if (!user || !user.feedbackMetrics) {
+      // Should ideally not happen after feedback is submitted, but calculate if needed
+      const metrics = await this.calculateUserFeedbackMetrics(evaluatedEmail, company);
+      return {
+        count: metrics.feedbackReceived.count,
+        averageRating: metrics.feedbackReceived.averageRating,
+        weightedAverageRating: metrics.feedbackReceived.weightedAverageRating,
+        skillsFeedback: metrics.skillsFeedback || { given: [], received: [] }
+      };
+    }
+
+    // Return metrics from user profile
+    return {
+      count: user.feedbackMetrics.received.count,
+      averageRating: user.feedbackMetrics.received.averageRating,
+      weightedAverageRating: user.feedbackMetrics.received.weightedAverageRating,
+      skillsFeedback: user.skillsFeedback || { given: [], received: [] }
+    };
+  }
+
+  /**
+   * Get current feedback cycle settings
+   */
+  async getFeedbackCycleSettings(company: string) {
+    await connectDB();
+    let settings = await Feedback.findOne({
+      documentType: 'settings',
+      $or: [
+        { companyCode: company },
+        { company: company }
+      ]
+    });
+
+    if (!settings) {
+      // Use create instead of new + save for atomicity
+      settings = await Feedback.create({
+        documentType: 'settings',
+        companyCode: company,
+        company: company,
+        frequency: 'quarterly',
+        lastChanged: new Date()
+        // nextChangeAvailable will be set by the API route
+      });
+    }
+
+    return settings;
+  }
+    console.log('Creating mock evaluated user for', evaluatedEmail);
+    evaluatedUser = {
+      _id: new mongoose.Types.ObjectId(),
+      email: evaluatedEmail.toLowerCase(),
+      companyCode: company,
+      firstName: 'Test',
+      lastName: 'User'
+    };
+  }
+  
+  // Create new feedback
+  const feedback = new Feedback({
+    documentType: 'feedback',
+    evaluatorId: mockEvaluator._id,
+    evaluatorName: `${mockEvaluator.firstName} ${mockEvaluator.lastName}`,
+    evaluatorEmail: mockEvaluator.email,
+    evaluatorInternalRole: mockEvaluator.role || 'admin',
+    evaluatedEmail: evaluatedEmail.toLowerCase(),
+    relationshipType,
+    ratings,
+    topSkills,
+    quarter,
+    companyCode: company,
+  });
+  
+  // Save the feedback
+  await feedback.save();
+  console.log('Mock feedback saved successfully');
+  
+  return feedback;
+}
+
+export default new FeedbackService();

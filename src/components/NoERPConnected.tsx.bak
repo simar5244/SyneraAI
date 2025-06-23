@@ -1,0 +1,744 @@
+'use client';
+
+import React, { useState } from 'react';
+import { MdSecurity, MdBusinessCenter, MdOutlineIntegrationInstructions } from 'react-icons/md';
+import { BsCashStack, BsShieldLock, BsFileEarmarkLock, BsUpload } from 'react-icons/bs';
+import { FiExternalLink, FiArrowLeft, FiAlertTriangle } from 'react-icons/fi';
+import { HiOutlineServerStack } from 'react-icons/hi2';
+import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+import { CSVUploadForm } from './CSVUploadForm';
+
+interface NoERPConnectedProps {
+  onConnectClick?: () => void;
+  showConnectButton?: boolean;
+}
+
+/**
+ * Component displayed when no ERP system is connected to the application
+ */
+export default function NoERPConnected({ onConnectClick, showConnectButton = false }: NoERPConnectedProps) {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<'overview' | 'benefits' | 'security' | 'steps'>('overview');
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [selectedERPSystem, setSelectedERPSystem] = useState<string | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<'idle' | 'connecting' | 'success' | 'error'>('idle');
+  const [connectionError, setConnectionError] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    organization: '',
+    message: '',
+    securityLevel: 'standard'
+  });
+  const [erpFormData, setErpFormData] = useState({
+    host: '',
+    port: '',
+    username: '',
+    password: '',
+    database: '',
+    domain: '',
+    apiKey: '',
+    tenantId: '',
+    systemId: '',
+    useSsl: true,
+    clientNumber: '',
+    tenantName: '',
+    clientId: '',
+    clientSecret: '',
+    instanceName: '',
+    serviceUrl: ''
+  });
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showCSVUpload, setShowCSVUpload] = useState(false);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target as HTMLInputElement;
+    
+    setErpFormData({
+      ...erpFormData,
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // In a real application, this would send the form data to a backend API
+    console.log('Form submitted:', formData);
+    setFormSubmitted(true);
+    // Reset form after 3 seconds
+    setTimeout(() => {
+      setFormSubmitted(false);
+      setShowContactForm(false);
+      setFormData({
+        name: '',
+        email: '',
+        organization: '',
+        message: '',
+        securityLevel: 'standard'
+      });
+    }, 3000);
+  };
+
+  const handleConnectButtonClick = () => {
+    setSelectedERPSystem(null);
+    setConnectionStatus('idle');
+    setConnectionError('');
+    setShowCSVUpload(false);
+    setErpFormData({
+      host: '',
+      port: '',
+      username: '',
+      password: '',
+      database: '',
+      domain: '',
+      apiKey: '',
+      tenantId: '',
+      systemId: '',
+      useSsl: true,
+      clientNumber: '',
+      tenantName: '',
+      clientId: '',
+      clientSecret: '',
+      instanceName: '',
+      serviceUrl: ''
+    });
+    
+    setShowContactForm(true);
+    
+    if (onConnectClick) {
+      onConnectClick();
+    }
+  };
+
+  const getERPSystemName = (type: string): string => {
+    switch (type) {
+      case 'SAP_HR':
+        return 'SAP HR';
+      case 'MICROSOFT_AD':
+        return 'Microsoft Active Directory';
+      case 'PEOPLESOFT':
+        return 'PeopleSoft';
+      case 'CSV_UPLOAD':
+        return 'CSV File Upload';
+      default:
+        return type;
+    }
+  };
+
+  const handleConnect = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setConnectionStatus('connecting');
+    
+    try {
+      if (!selectedERPSystem) {
+        setConnectionError('Please select an ERP system');
+        setConnectionStatus('error');
+        return;
+      }
+      
+      const details: any = {};
+      
+      if (erpFormData.host) details.host = erpFormData.host;
+      if (erpFormData.username) details.username = erpFormData.username;
+      if (erpFormData.password) details.password = erpFormData.password;
+      if (erpFormData.apiKey) details.apiKey = erpFormData.apiKey;
+      
+      switch (selectedERPSystem) {
+        case 'SAP_HR':
+          details.systemId = erpFormData.systemId;
+          details.clientNumber = erpFormData.clientNumber;
+          break;
+        case 'MICROSOFT_AD':
+          details.tenantId = erpFormData.tenantId;
+          details.clientId = erpFormData.clientId;
+          details.clientSecret = erpFormData.clientSecret;
+          break;
+        case 'PEOPLESOFT':
+          details.domain = erpFormData.domain;
+          break;
+      }
+      
+      const response = await fetch('/api/erp/connect', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: selectedERPSystem,
+          details: details
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setConnectionStatus('success');
+        
+        localStorage.setItem('erpConnected', 'true');
+        localStorage.setItem('erpType', selectedERPSystem || '');
+        
+        toast.success(`Successfully connected to ${getERPSystemName(selectedERPSystem)}`);
+        
+        router.push('/app/employees');
+      } else {
+        setConnectionStatus('error');
+        setConnectionError(data.error || 'Connection failed. Please check your credentials and try again.');
+        
+        toast.error(data.error || 'Failed to connect to the ERP system.');
+      }
+    } catch (error) {
+      console.error('Error connecting to ERP:', error);
+      setConnectionStatus('error');
+      setConnectionError('Connection failed. Please try again later.');
+      
+      toast.error("An unexpected error occurred. Please try again.");
+    }
+  };
+
+  return (
+    <div className="p-6 bg-white rounded-lg shadow-md max-w-4xl mx-auto">
+      {!showContactForm && !showCSVUpload && (
+        <>
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Connect Your HR System</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Streamline your workforce management by connecting directly with your HR system 
+              or importing employee data via CSV.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+            <button
+              onClick={handleConnectButtonClick}
+              className="px-4 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 shadow-sm flex items-center justify-center transition-colors"
+            >
+              <HiOutlineServerStack className="mr-2 h-5 w-5" />
+              Connect to ERP System
+            </button>
+            
+            <button
+              onClick={() => setShowCSVUpload(true)}
+              className="px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 shadow-sm flex items-center justify-center transition-colors"
+            >
+              <BsUpload className="mr-2 h-5 w-5" />
+              Upload CSV File
+            </button>
+          </div>
+
+          <div className="border-t border-gray-200 pt-6">
+            <div className="flex border-b border-gray-200">
+              <button
+                className={`px-4 py-2 ${activeTab === 'overview' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+                onClick={() => setActiveTab('overview')}
+              >
+                Overview
+              </button>
+              <button
+                className={`px-4 py-2 ${activeTab === 'benefits' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+                onClick={() => setActiveTab('benefits')}
+              >
+                Benefits
+              </button>
+              <button
+                className={`px-4 py-2 ${activeTab === 'security' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+                onClick={() => setActiveTab('security')}
+              >
+                Security
+              </button>
+              <button
+                className={`px-4 py-2 ${activeTab === 'steps' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+                onClick={() => setActiveTab('steps')}
+              >
+                Steps
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Tab Content */}
+      <div className="p-6">
+        {/* Overview Tab */}
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            <div className="max-w-3xl">
+              <h2 className="text-xl font-semibold text-gray-800 mb-3">What is ERP Integration?</h2>
+              <p className="text-gray-600 mb-4">
+                Enterprise Resource Planning (ERP) integration allows this application to securely connect to your 
+                organization's data systems. This provides a comprehensive view of your organization's structure, 
+                projects, resources, and personnel.
+              </p>
+
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <div className="bg-indigo-50 p-4 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <MdBusinessCenter className="text-indigo-600 mr-2" size={20} />
+                    <h3 className="font-medium text-indigo-800">Organizational Structure</h3>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Visualize your complete organizational hierarchy, departments, and reporting lines.
+                  </p>
+                </div>
+
+                <div className="bg-indigo-50 p-4 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <BsFileEarmarkLock className="text-indigo-600 mr-2" size={20} />
+                    <h3 className="font-medium text-indigo-800">Secure Data Exchange</h3>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    All data is encrypted and exchanged through secure channels, compliant with military-grade standards.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
+                <button
+                  onClick={() => setActiveTab('steps')}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors flex items-center justify-center"
+                >
+                  View Integration Steps
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Benefits Tab */}
+        {activeTab === 'benefits' && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Benefits of ERP Integration</h2>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[
+                {
+                  title: "Real-time Data Visualization",
+                  description: "Access up-to-date visualizations of your organization's structure and relationships.",
+                  icon: <IoMdCheckmarkCircleOutline className="text-green-500" size={20} />
+                },
+                {
+                  title: "Secure Information Flow",
+                  description: "Military-grade encryption ensures your organizational data remains protected.",
+                  icon: <IoMdCheckmarkCircleOutline className="text-green-500" size={20} />
+                },
+                {
+                  title: "Project Resource Allocation",
+                  description: "Visualize how resources are allocated across projects and departments.",
+                  icon: <IoMdCheckmarkCircleOutline className="text-green-500" size={20} />
+                },
+                {
+                  title: "Hierarchical Mapping",
+                  description: "Interactive tree and network visualizations of your command structure.",
+                  icon: <IoMdCheckmarkCircleOutline className="text-green-500" size={20} />
+                },
+                {
+                  title: "Personnel Analytics",
+                  description: "Gain insights into expertise distribution and specialized capabilities.",
+                  icon: <IoMdCheckmarkCircleOutline className="text-green-500" size={20} />
+                },
+                {
+                  title: "Strategic Decision Support",
+                  description: "Enhanced decision-making with comprehensive organizational data.",
+                  icon: <IoMdCheckmarkCircleOutline className="text-green-500" size={20} />
+                }
+              ].map((benefit, index) => (
+                <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    {benefit.icon}
+                    <h3 className="ml-2 font-medium text-gray-800">{benefit.title}</h3>
+                  </div>
+                  <p className="text-sm text-gray-600">{benefit.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Security Tab */}
+        {activeTab === 'security' && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Security and Compliance</h2>
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="flex items-start">
+                <MdSecurity className="text-blue-600 mt-1 mr-3" size={24} />
+                <div>
+                  <h3 className="font-medium text-blue-800 mb-1">Military-Grade Security</h3>
+                  <p className="text-sm text-gray-700">
+                    Our integration uses AES-256 encryption, secure token authentication, and follows strict 
+                    security protocols designed for military and government applications.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-medium text-gray-800 mb-3">Security Features</h3>
+                <ul className="space-y-3">
+                  {[
+                    "End-to-end encryption for all data transfers",
+                    "Role-based access control with multi-factor authentication",
+                    "Isolated secure channels for sensitive information",
+                    "Regular security audits and penetration testing",
+                    "Compliance with CMMC Level 3 requirements",
+                    "Real-time threat monitoring and prevention"
+                  ].map((feature, index) => (
+                    <li key={index} className="flex items-center">
+                      <BsShieldLock className="text-green-600 mr-2 flex-shrink-0" size={16} />
+                      <span className="text-sm text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div>
+                <h3 className="font-medium text-gray-800 mb-3">Compliance Standards</h3>
+                <div className="bg-white border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200">
+                  {[
+                    { standard: "NIST SP 800-171", status: "Compliant" },
+                    { standard: "CMMC Level 3", status: "Certified" },
+                    { standard: "FedRAMP High", status: "Authorized" },
+                    { standard: "FIPS 140-2", status: "Validated" },
+                    { standard: "Zero Trust Architecture", status: "Implemented" }
+                  ].map((item, index) => (
+                    <div key={index} className="flex justify-between items-center px-4 py-3">
+                      <span className="text-sm font-medium text-gray-700">{item.standard}</span>
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">
+                        {item.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Integration Steps Tab */}
+        {activeTab === 'steps' && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Integration Process</h2>
+            <button
+              onClick={() => setShowContactForm(true)}
+              className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            >
+              Connect to ERP System
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Modal */}
+      {showContactForm && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <div className="flex items-center justify-center min-h-screen px-4">
+            <div className="bg-white rounded-lg shadow-xl z-10 w-full max-w-md p-6 relative">
+              <button
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                onClick={() => setShowContactForm(false)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              
+              <div className="mt-2">
+                {connectionStatus === 'success' && (
+                  <div className="text-center py-6">
+                    <IoMdCheckmarkCircleOutline className="mx-auto h-16 w-16 text-green-500" />
+                    <h3 className="text-lg font-medium text-gray-900 mt-4">Connection Successful!</h3>
+                    <p className="mt-2 text-gray-600">
+                      Your ERP system has been connected successfully. You'll be redirected to the dashboard shortly.
+                    </p>
+                  </div>
+                )} 
+                
+                {connectionStatus === 'error' && (
+                  <div className="text-center py-6">
+                    <FiAlertTriangle className="mx-auto h-16 w-16 text-red-500" />
+                    <h3 className="text-lg font-medium text-gray-900 mt-4">Connection Failed</h3>
+                    <p className="mt-2 text-gray-600">
+                      {connectionError || 'There was an error connecting to your ERP system. Please check your credentials and try again.'}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setConnectionStatus('idle')}
+                      className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                )}
+                
+                {connectionStatus === 'idle' && !showCSVUpload && (
+                  selectedERPSystem === null ? (
+                    <>
+                      <h2 className="text-xl font-semibold mb-4">Connect an ERP System</h2>
+                      <p className="text-gray-600 mb-6">
+                        Select the ERP system you would like to connect to your account.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 gap-3 mt-4">
+                        {['SAP_HR', 'MICROSOFT_AD', 'PEOPLESOFT', 'CSV_UPLOAD'].map((system) => (
+                          <button
+                            key={system}
+                            type="button"
+                            onClick={() => {
+                              if (system === 'CSV_UPLOAD') {
+                                setShowCSVUpload(true);
+                              } else {
+                                setSelectedERPSystem(system);
+                              }
+                            }}
+                            className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="bg-indigo-100 p-2 rounded-md">
+                              {system === 'CSV_UPLOAD' ? (
+                                <BsUpload className="h-6 w-6 text-indigo-600" />
+                              ) : (
+                                <HiOutlineServerStack className="h-6 w-6 text-indigo-600" />
+                              )}
+                            </div>
+                            <div className="ml-3 text-left">
+                              <span className="font-medium text-gray-800">{getERPSystemName(system)}</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <form onSubmit={handleConnect} className="space-y-4">
+                      <div className="flex items-center mb-4">
+                        <button 
+                          type="button" 
+                          onClick={() => setSelectedERPSystem(null)}
+                          className="text-indigo-600 hover:text-indigo-800 flex items-center mr-4"
+                        >
+                          <FiArrowLeft className="mr-1" />
+                          Back
+                        </button>
+                        <h3 className="text-lg font-medium text-gray-900">
+                          Connect to {getERPSystemName(selectedERPSystem)}
+                        </h3>
+                      </div>
+                      
+                      {selectedERPSystem === 'SAP_HR' && (
+                        <>
+                          <div>
+                            <label htmlFor="host" className="block text-sm font-medium text-gray-700">SAP Server Host</label>
+                            <input
+                              type="text"
+                              id="host"
+                              name="host"
+                              value={erpFormData.host}
+                              onChange={handleInputChange}
+                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+                            <input
+                              type="text"
+                              id="username"
+                              name="username"
+                              value={erpFormData.username}
+                              onChange={handleInputChange}
+                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                            <input
+                              type="password"
+                              id="password"
+                              name="password"
+                              value={erpFormData.password}
+                              onChange={handleInputChange}
+                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                              required
+                            />
+                          </div>
+                        </>
+                      )}
+                      
+                      {selectedERPSystem === 'MICROSOFT_AD' && (
+                        <>
+                          <div>
+                            <label htmlFor="domain" className="block text-sm font-medium text-gray-700">Domain</label>
+                            <input
+                              type="text"
+                              id="domain"
+                              name="domain"
+                              value={erpFormData.domain}
+                              onChange={handleInputChange}
+                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+                            <input
+                              type="text"
+                              id="username"
+                              name="username"
+                              value={erpFormData.username}
+                              onChange={handleInputChange}
+                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                            <input
+                              type="password"
+                              id="password"
+                              name="password"
+                              value={erpFormData.password}
+                              onChange={handleInputChange}
+                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                              required
+                            />
+                          </div>
+                        </>
+                      )}
+                      
+                      {selectedERPSystem === 'PEOPLESOFT' && (
+                        <>
+                          <div>
+                            <label htmlFor="host" className="block text-sm font-medium text-gray-700">Server Host</label>
+                            <input
+                              type="text"
+                              id="host"
+                              name="host"
+                              value={erpFormData.host}
+                              onChange={handleInputChange}
+                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+                            <input
+                              type="text"
+                              id="username"
+                              name="username"
+                              value={erpFormData.username}
+                              onChange={handleInputChange}
+                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                            <input
+                              type="password"
+                              id="password"
+                              name="password"
+                              value={erpFormData.password}
+                              onChange={handleInputChange}
+                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                              required
+                            />
+                          </div>
+                        </>
+                      )}
+                      
+                      <div className="flex justify-end space-x-3 pt-4">
+                        <button
+                          type="button"
+                          onClick={() => setShowContactForm(false)}
+                          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={connectionStatus === 'connecting'}
+                          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center"
+                        >
+                          {connectionStatus === 'connecting' ? (
+                            <>
+                              <span className="inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+                              Connecting...
+                            </>
+                          ) : 'Connect'}
+                        </button>
+                      </div>
+                    </form>
+                  )
+                )}
+
+                {showCSVUpload && (
+                  <div>
+                    <div className="flex items-center mb-4">
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          setShowCSVUpload(false);
+                          setSelectedERPSystem(null);
+                        }}
+                        className="text-indigo-600 hover:text-indigo-800 flex items-center mr-4"
+                      >
+                        <FiArrowLeft className="mr-1" />
+                        Back
+                      </button>
+                      <h3 className="text-lg font-medium text-gray-900">
+                        Upload Employee Data (CSV)
+                      </h3>
+                    </div>
+                    
+                    <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0">
+                          <IoMdCheckmarkCircleOutline className="h-5 w-5 text-blue-500" />
+                        </div>
+                        <div className="ml-3">
+                          <h3 className="text-sm font-medium text-blue-800">CSV Upload Tips</h3>
+                          <div className="mt-2 text-sm text-blue-700">
+                            <ul className="list-disc pl-5 space-y-1">
+                              <li>Your CSV should include headers in the first row</li>
+                              <li>Required columns: Name, Email, Department, Role</li>
+                              <li>Optional columns: Employee ID, Start Date, Manager</li>
+                              <li>Maximum file size: 10MB</li>
+                            </ul>
+                          </div>
+                          <div className="mt-3">
+                            <a 
+                              href="/templates/employee-template.csv" 
+                              download
+                              className="text-sm font-medium text-blue-600 hover:text-blue-500 flex items-center"
+                            >
+                              <FiExternalLink className="mr-1" /> Download template CSV
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <CSVUploadForm />
+                  </div>
+                )}
+                
+                {connectionStatus === 'connecting' && (
+                  <div className="text-center py-10">
+                    <div className="inline-block h-10 w-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <h3 className="text-lg font-medium text-gray-900 mt-4">Connecting...</h3>
+                    <p className="mt-2 text-gray-600">
+                      Establishing connection to your ERP system. This may take a moment.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      )}
+    </div>
+  );
+} 

@@ -1,0 +1,1512 @@
+'use client';
+
+import React, { useRef, useState, useEffect, Suspense } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import * as THREE from 'three';
+import { OrbitControls as ThreeOrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { useSpring, animated } from '@react-spring/three';
+import { useRouter } from 'next/navigation';
+import { X, Info, List } from 'lucide-react';
+
+// Department colors mapping with more harmonious colors and HR synonyms
+export const departmentColors: Record<string, string> = {
+  'Executive': '#FF6B5A', // Warmer coral
+  'Engineering': '#4D9DE0', // Softer blue
+  'Marketing': '#7DCE82', // Mint green
+  'Sales': '#F333FF', // Softer purple
+  'HR': '#FF66B3', // Pink
+  'Human Resources': '#FF66B3', // Same as HR
+  'Finance': '#56E2C5', // Turquoise
+  'Operations': '#F2D45C', // Soft gold
+  'Product': '#B07DFF', // Lavender
+  'Customer Support': '#FF8FD5', // Light pink
+  'Research': '#5DE0C9', // Aqua
+  'IT': '#6B9AFF', // Sky blue
+  'Legal': '#FF8C5A', // Soft orange
+  'Procurement': '#78E667', // Lime
+  'Quality Assurance': '#9F7AFF', // Light purple
+  'default': '#D4B82A' // Gold
+};
+
+// Type definitions
+interface Node {
+  id: string;
+  name: string;
+  department: string;
+  role: string;
+  internalRole: string;
+  jobTitle: string;
+  email: string;
+  avatar?: string;
+  userData: any;
+  projects?: any[];
+  x?: number;
+  y?: number;
+  z?: number;
+}
+
+interface Link {
+  source: string | { id: string };
+  target: string | { id: string };
+  type: 'reporting' | 'collaboration';
+  value: number;
+  project?: any;
+}
+
+interface GraphData {
+  nodes: Node[];
+  links: Link[];
+}
+
+interface GalaxyVisualizationProps {
+  graphData: GraphData;
+  searchTerm: string;
+  selectedDepartment: string | null;
+}
+
+// Main visualization component
+export default function GalaxyVisualization({ 
+  graphData,
+  searchTerm,
+  selectedDepartment
+}: GalaxyVisualizationProps) {
+  const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Store Three.js objects as refs to avoid recreation
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const controlsRef = useRef<ThreeOrbitControls | null>(null);
+  const nodeObjectsRef = useRef<Record<string, THREE.Group>>({});
+  const connectionObjectsRef = useRef<THREE.Line[]>([]);
+  const raycasterRef = useRef<THREE.Raycaster | null>(null);
+  const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2());
+  const requestRef = useRef<number>();
+  
+  // States
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [selectedConnection, setSelectedConnection] = useState<any | null>(null);
+  const [sidebarType, setSidebarType] = useState<'employee' | 'connection'>('employee');
+  const [sidebarData, setSidebarData] = useState<any | null>(null);
+  const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
+  const [filteredNodes, setFilteredNodes] = useState<Node[]>([]);
+  const [filteredLinks, setFilteredLinks] = useState<Link[]>([]);
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
+  const [showLegend, setShowLegend] = useState(false);
+  
+  // Keyboard controls
+  const keyStateRef = useRef<Record<string, boolean>>({
+    ArrowUp: false,
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false,
+    w: false,
+    a: false,
+    s: false,
+    d: false,
+    W: false,
+    A: false,
+    S: false,
+    D: false
+  });
+
+  // Function to navigate back to visualizations page
+  const handleBackNavigation = () => {
+    router.push('/dashboard/visualizations');
+  };
+
+  // Helper to get role size
+  const getRoleSize = (internalRole: string): number => {
+    if (!internalRole) return 0.8;
+    
+    if (internalRole.startsWith('topmanagement')) {
+      const level = parseInt(internalRole.slice(-1)) || 3;
+      return 1.4 - (level - 1) * 0.2; // 1.4, 1.2, 1.0
+    } else {
+      const level = parseInt(internalRole.slice(-1)) || 3;
+      return 0.9 - (level - 1) * 0.1; // 0.9, 0.8, 0.7
+    }
+  };
+
+  // Initialize the 3D scene
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    // Initialize Three.js components
+    const container = containerRef.current;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+    sceneRef.current = scene;
+    
+    // Add subtle nebula background
+    addNebulaBackground(scene);
+    
+    // Camera setup
+    const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+    camera.position.z = 100;
+    cameraRef.current = camera;
+    
+    // Renderer setup
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
+    
+    // Controls setup
+    const controls = new ThreeOrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 0.1; // Allow much closer zoom
+    controls.maxDistance = 300;
+    controls.zoomSpeed = 0.8; // Slightly reduce zoom speed to prevent accidental over-zooming
+    controls.enableZoom = true;
+    controls.keyPanSpeed = 20; // Faster than default
+    controlsRef.current = controls;
+    
+    // Add mouseup and touchend handlers to stop any continuous zooming
+    const handleMouseUp = () => {
+      if (controlsRef.current) {
+        // Reset any inertia
+        controlsRef.current.update();
+      }
+    };
+    
+    container.addEventListener('mouseup', handleMouseUp);
+    container.addEventListener('touchend', handleMouseUp);
+    
+    // Raycaster for interaction
+    raycasterRef.current = new THREE.Raycaster();
+    raycasterRef.current.params.Line = { threshold: 0.2 };
+    raycasterRef.current.params.Points = { threshold: 0.2 };
+    
+    // Add ambient light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    
+    // Add directional light
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(5, 5, 5);
+    scene.add(directionalLight);
+    
+    // Add stars background
+    addStars(scene);
+    
+    // Handle window resize
+    const handleResize = () => {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Animation loop
+    const animate = () => {
+      requestRef.current = requestAnimationFrame(animate);
+      
+      // Update controls
+      if (controlsRef.current) {
+        controlsRef.current.update();
+      }
+      
+      // Render scene
+      renderer.render(scene, camera);
+    };
+    
+    animate();
+    
+    // Cleanup
+    return () => {
+      if (renderer && renderer.domElement && container) {
+        container.removeChild(renderer.domElement);
+      }
+      
+      window.removeEventListener('resize', handleResize);
+      container.removeEventListener('mouseup', handleMouseUp);
+      container.removeEventListener('touchend', handleMouseUp);
+      
+      cancelAnimationFrame(requestRef.current as number);
+      
+      // Dispose resources
+      Object.values(nodeObjectsRef.current).forEach(obj => {
+        obj.traverse((child: THREE.Object3D) => {
+          if (child instanceof THREE.Mesh) {
+            if (child.geometry) child.geometry.dispose();
+            if (child.material instanceof THREE.Material) child.material.dispose();
+          }
+        });
+      });
+      
+      connectionObjectsRef.current.forEach(obj => {
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material instanceof THREE.Material) obj.material.dispose();
+      });
+      
+      scene.clear();
+    };
+  }, []);
+
+  // Add nebula background for more immersive feel
+  const addNebulaBackground = (scene: THREE.Scene) => {
+    // Create several nebula clouds at different depths
+    const createNebulaCloud = (color: number, size: number, position: THREE.Vector3, opacity: number) => {
+      // Create a nebula texture
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const context = canvas.getContext('2d');
+      
+      if (context) {
+        // Create a radial gradient for nebula cloud
+        const gradient = context.createRadialGradient(
+          canvas.width / 2, canvas.height / 2, 0,
+          canvas.width / 2, canvas.height / 2, canvas.width / 2
+        );
+        
+        // Convert hex color to RGB components
+        const r = (color >> 16) & 255;
+        const g = (color >> 8) & 255;
+        const b = color & 255;
+        
+        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.7)`);
+        gradient.addColorStop(0.2, `rgba(${r}, ${g}, ${b}, 0.4)`);
+        gradient.addColorStop(0.4, `rgba(${r}, ${g}, ${b}, 0.2)`);
+        gradient.addColorStop(0.6, `rgba(${r}, ${g}, ${b}, 0.1)`);
+        gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+        
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Add some noise texture for more nebula-like appearance
+        for (let i = 0; i < 1000; i++) {
+          const x = Math.random() * canvas.width;
+          const y = Math.random() * canvas.height;
+          const radius = Math.random() * 2 + 0.5;
+          
+          context.beginPath();
+          context.arc(x, y, radius, 0, Math.PI * 2);
+          context.fillStyle = `rgba(${r+30}, ${g+30}, ${b+30}, ${Math.random() * 0.2})`;
+          context.fill();
+        }
+      }
+      
+      // Create a sprite with the nebula texture
+      const texture = new THREE.CanvasTexture(canvas);
+      const material = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        opacity: opacity,
+        blending: THREE.AdditiveBlending
+      });
+      
+      const sprite = new THREE.Sprite(material);
+      sprite.scale.set(size, size, 1);
+      sprite.position.copy(position);
+      
+      scene.add(sprite);
+    };
+    
+    // Create multiple nebula clouds with different colors and positions
+    createNebulaCloud(0x3344ff, 300, new THREE.Vector3(-100, -50, -200), 0.15);
+    createNebulaCloud(0xff3366, 250, new THREE.Vector3(120, 70, -180), 0.1);
+    createNebulaCloud(0x22aadd, 350, new THREE.Vector3(-50, 100, -250), 0.08);
+    createNebulaCloud(0xaa44dd, 400, new THREE.Vector3(80, -120, -300), 0.05);
+  };
+
+  // Add stars background
+  const addStars = (scene: THREE.Scene) => {
+    // Create tiny sphere geometry for stars
+    const starGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+    const starMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.2
+    });
+    
+    // Create regular stars
+    for (let i = 0; i < 3000; i++) {
+      const star = new THREE.Mesh(starGeometry, starMaterial);
+      star.position.set(
+        (Math.random() - 0.5) * 500,
+        (Math.random() - 0.5) * 500,
+        (Math.random() - 0.5) * 500
+      );
+      star.scale.setScalar(Math.random() * 0.5 + 0.1); // Random size
+      scene.add(star);
+    }
+    
+    // Create a few brighter stars
+    const brightStarMaterial = new THREE.MeshBasicMaterial({
+      color: 0xf0f8ff, // Slightly blue-white tint
+      transparent: true,
+      opacity: 0.4
+    });
+    
+    for (let i = 0; i < 500; i++) {
+      const brightStar = new THREE.Mesh(starGeometry, brightStarMaterial);
+      brightStar.position.set(
+        (Math.random() - 0.5) * 500,
+        (Math.random() - 0.5) * 500,
+        (Math.random() - 0.5) * 500
+      );
+      brightStar.scale.setScalar(Math.random() * 0.7 + 0.2); // Random size but slightly larger
+      scene.add(brightStar);
+    }
+  };
+
+  // Process the graph data to filter by search term and department
+  useEffect(() => {
+    if (!graphData || !graphData.nodes || !graphData.links) return;
+    
+    // Debug logging to see data structure
+    console.log("Processing graph data:", graphData.nodes[0]);
+    
+    // Filter nodes by search and department
+    let nodes = [...graphData.nodes];
+    
+    if (searchTerm) {
+      const lowercaseSearch = searchTerm.toLowerCase();
+      nodes = nodes.filter(node => 
+        node.name?.toLowerCase().includes(lowercaseSearch) ||
+        node.email?.toLowerCase().includes(lowercaseSearch) ||
+        node.jobTitle?.toLowerCase().includes(lowercaseSearch) ||
+        node.department?.toLowerCase().includes(lowercaseSearch)
+      );
+    }
+    
+    if (selectedDepartment) {
+      nodes = nodes.filter(node => 
+        node.department === selectedDepartment
+      );
+    }
+    
+    const nodeIds = new Set(nodes.map(n => n.id));
+    
+    // Filter links to only include filtered nodes
+    const links = graphData.links.filter(link => {
+      const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
+      const targetId = typeof link.target === 'string' ? link.target : link.target.id;
+      return nodeIds.has(sourceId) && nodeIds.has(targetId);
+    });
+    
+    const nodesWithPositions = distributeNodesIn3D(nodes);
+    
+    setFilteredNodes(nodesWithPositions);
+    setFilteredLinks(links);
+  }, [graphData, searchTerm, selectedDepartment]);
+  
+  // Update the 3D scene when filteredNodes or filteredLinks change
+  useEffect(() => {
+    if (!sceneRef.current || !filteredNodes.length) return;
+    
+    // Clear previous objects
+    Object.values(nodeObjectsRef.current).forEach(obj => {
+      sceneRef.current?.remove(obj);
+    });
+    
+    connectionObjectsRef.current.forEach(obj => {
+      sceneRef.current?.remove(obj);
+    });
+    
+    nodeObjectsRef.current = {};
+    connectionObjectsRef.current = [];
+    
+    // Add nodes (planets)
+    filteredNodes.forEach(node => {
+      const planetGroup = createPlanet(node);
+      sceneRef.current?.add(planetGroup);
+      nodeObjectsRef.current[node.id] = planetGroup;
+    });
+    
+    // Add connections (lines)
+    filteredLinks.forEach((link, index) => {
+      const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
+      const targetId = typeof link.target === 'string' ? link.target : link.target.id;
+      
+      const sourceNode = filteredNodes.find(n => n.id === sourceId);
+      const targetNode = filteredNodes.find(n => n.id === targetId);
+      
+      if (!sourceNode || !targetNode) return;
+      
+      const connection = createConnection(sourceNode, targetNode, link);
+      sceneRef.current?.add(connection);
+      connectionObjectsRef.current.push(connection);
+    });
+  }, [filteredNodes, filteredLinks]);
+  
+  // Function to distribute nodes in 3D space
+  const distributeNodesIn3D = (nodes: Node[]) => {
+    // Group nodes by department
+    const departmentGroups: Record<string, Node[]> = {};
+    nodes.forEach(node => {
+      const dept = node.department || 'default';
+      if (!departmentGroups[dept]) {
+        departmentGroups[dept] = [];
+      }
+      departmentGroups[dept].push(node);
+    });
+    
+    // Position departments in a spiral
+    const departments = Object.keys(departmentGroups);
+    const spiralRadius = 30;
+    const spiralHeight = 30;
+    const spiralTurns = Math.max(1, Math.ceil(departments.length / 5));
+    
+    // Assign positions to nodes
+    let positionedNodes = [...nodes];
+    
+    departments.forEach((dept, deptIndex) => {
+      const angle = (deptIndex / departments.length) * Math.PI * 2 * spiralTurns;
+      const radius = spiralRadius;
+      const deptX = Math.cos(angle) * radius;
+      const deptZ = Math.sin(angle) * radius;
+      const deptY = (deptIndex / departments.length) * spiralHeight - (spiralHeight / 2);
+      
+      // Position nodes in a sphere around department center
+      const deptNodes = departmentGroups[dept];
+      const nodeRadius = Math.max(3, Math.sqrt(deptNodes.length) * 1.5);
+      
+      deptNodes.forEach((node, i) => {
+        // Distribute nodes based on the golden ratio on a sphere
+        const phi = Math.acos(1 - 2 * (i / Math.max(1, deptNodes.length - 1)));
+        const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+        
+        // Find node with spherical coordinates
+        const x = deptX + nodeRadius * Math.cos(theta) * Math.sin(phi);
+        const y = deptY + nodeRadius * Math.sin(theta) * Math.sin(phi);
+        const z = deptZ + nodeRadius * Math.cos(phi);
+        
+        // Find the node in the array and update position
+        const nodeIndex = positionedNodes.findIndex(n => n.id === node.id);
+        if (nodeIndex !== -1) {
+          positionedNodes[nodeIndex] = {
+            ...positionedNodes[nodeIndex],
+            x, y, z
+          };
+        }
+      });
+    });
+    
+    return positionedNodes;
+  };
+  
+  // Function to create a planet (employee node) with label
+  const createPlanet = (node: Node) => {
+    // Create a group to hold the planet and its label
+    const planetGroup = new THREE.Group();
+    
+    // Determine planet size based on internal role
+    let size = 0.8; // default size
+    
+    if (node.internalRole) {
+      size = getRoleSize(node.internalRole);
+    }
+    
+    // Add subtle rotation animation
+    const rotationSpeed = Math.random() * 0.005 + 0.001; // Random speed for variety
+    const rotationAxis = new THREE.Vector3(
+      Math.random() - 0.5,
+      Math.random() - 0.5,
+      Math.random() - 0.5
+    ).normalize();
+    
+    // Create animation update function
+    const animate = () => {
+      planetGroup.rotateOnAxis(rotationAxis, rotationSpeed);
+      requestAnimationFrame(animate);
+    };
+    
+    // Start animation
+    animate();
+    
+    // Create the planet mesh
+    const geometry = new THREE.SphereGeometry(size, 32, 32); // More segments for better quality
+    const color = departmentColors[node.department] || departmentColors.default;
+    
+    // Add crater details using bump mapping
+    const bumpTexture = createCraterTexture();
+    
+    // Create material with enhanced glow effect
+    const material = new THREE.MeshPhongMaterial({
+      color: new THREE.Color(color),
+      shininess: 40, // Increased shininess
+      emissive: new THREE.Color(color),
+      emissiveIntensity: 0.35, // Slightly stronger glow
+      bumpMap: bumpTexture,
+      bumpScale: 0.05, // Subtle craters
+      transparent: true, // Make slightly translucent
+      opacity: 0.95, // 5% transparency
+    });
+    
+    const planet = new THREE.Mesh(geometry, material);
+    
+    // Add a better glow effect (larger and more intense)
+    const glowSize = size * 1.35; // Larger glow radius
+    const glowGeometry = new THREE.SphereGeometry(glowSize, 32, 32);
+    const glowMaterial = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(color),
+      transparent: true,
+      opacity: 0.17, // Slightly more visible
+      side: THREE.BackSide,
+    });
+    const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+    planet.add(glowMesh);
+    
+    // Add a second outer glow for better effect
+    const outerGlowSize = size * 1.6;
+    const outerGlowGeometry = new THREE.SphereGeometry(outerGlowSize, 32, 32);
+    const outerGlowMaterial = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(color),
+      transparent: true,
+      opacity: 0.07,
+      side: THREE.BackSide,
+    });
+    const outerGlowMesh = new THREE.Mesh(outerGlowGeometry, outerGlowMaterial);
+    planet.add(outerGlowMesh);
+    
+    // Create text label with improved visibility
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = 256;
+    canvas.height = 64;
+    
+    if (context) {
+      context.fillStyle = 'rgba(0, 0, 0, 0)';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Text shadow for better visibility
+      context.font = '20px Arial';
+      context.textAlign = 'center';
+      context.shadowColor = 'rgba(0, 0, 0, 0.7)';
+      context.shadowBlur = 4;
+      context.shadowOffsetX = 0;
+      context.shadowOffsetY = 0;
+      context.fillStyle = 'white';
+      context.fillText(node.name || 'Unknown', canvas.width / 2, 20);
+    }
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    const labelMaterial = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true
+    });
+    
+    const label = new THREE.Sprite(labelMaterial);
+    label.scale.set(5, 1.25, 1);
+    label.position.set(0, -size - 1.5, 0);
+    
+    // Add planet and label to the group
+    planetGroup.add(planet);
+    planetGroup.add(label);
+    
+    // Set position
+    planetGroup.position.set(node.x || 0, node.y || 0, node.z || 0);
+    
+    // Store node data for interaction
+    planetGroup.userData = { 
+      type: 'node',
+      node: node
+    };
+    
+    return planetGroup;
+  };
+  
+  // Helper function to create crater texture
+  const createCraterTexture = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256; // Larger texture for more detail
+    canvas.height = 256;
+    const context = canvas.getContext('2d');
+    
+    if (context) {
+      context.fillStyle = 'black';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Create a more interesting surface with varied crater sizes
+      for (let i = 0; i < 20; i++) {
+        const size = Math.random() * 15 + 2; // More variation in crater size
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        
+        // Add gradient to craters for depth
+        const gradient = context.createRadialGradient(x, y, 0, x, y, size);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+        gradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.3)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        
+        context.beginPath();
+        context.arc(x, y, size, 0, Math.PI * 2);
+        context.fillStyle = gradient;
+        context.fill();
+      }
+      
+      // Add some texture noise for surface detail
+      for (let i = 0; i < 5000; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const size = Math.random() * 1 + 0.5;
+        
+        context.beginPath();
+        context.arc(x, y, size, 0, Math.PI * 2);
+        context.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.2 + 0.1})`;
+        context.fill();
+      }
+    }
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    return texture;
+  };
+  
+  // Function to create a connection (line between nodes)
+  const createConnection = (sourceNode: Node, targetNode: Node, linkData: Link) => {
+    // Create the line geometry
+    const points = [
+      new THREE.Vector3(sourceNode.x || 0, sourceNode.y || 0, sourceNode.z || 0),
+      new THREE.Vector3(targetNode.x || 0, targetNode.y || 0, targetNode.z || 0)
+    ];
+    
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    
+    // Create a curved line for more aesthetic appeal
+    const curve = new THREE.QuadraticBezierCurve3(
+      new THREE.Vector3(sourceNode.x || 0, sourceNode.y || 0, sourceNode.z || 0),
+      new THREE.Vector3(
+        ((sourceNode.x || 0) + (targetNode.x || 0)) / 2,
+        ((sourceNode.y || 0) + (targetNode.y || 0)) / 2 + 0.5, // Add slight curve upward
+        ((sourceNode.z || 0) + (targetNode.z || 0)) / 2
+      ),
+      new THREE.Vector3(targetNode.x || 0, targetNode.y || 0, targetNode.z || 0)
+    );
+    
+    const curvePoints = curve.getPoints(20); // More points for smoother curve
+    const curveGeometry = new THREE.BufferGeometry().setFromPoints(curvePoints);
+    
+    // Choose color based on connection type
+    const color = linkData.type === 'reporting' ? 0xffffff : 0xc0c0c0;
+    
+    // Create material with glow effect
+    const material = new THREE.LineBasicMaterial({
+      color: color,
+      transparent: true,
+      opacity: 0.5, // Slightly more visible
+      linewidth: 1
+    });
+    
+    const connection = new THREE.Line(curveGeometry, material);
+    
+    // Store connection data for interaction
+    connection.userData = { 
+      type: 'connection',
+      connectionData: {
+        source: sourceNode,
+        target: targetNode,
+        type: linkData.type,
+        project: linkData.project
+      }
+    };
+    
+    return connection;
+  };
+
+  // Side panel for detailed information
+  const SidePanel: React.FC<{
+    data: any;
+    type: 'employee' | 'connection';
+    onClose: () => void;
+  }> = ({ data, type, onClose }) => {
+    const [showProjectDetails, setShowProjectDetails] = useState(false);
+    
+    if (!data) return null;
+    
+    console.log("Sidebar data:", data); // Debug log to check data
+    
+    // Function to format field name for display
+    const formatFieldName = (key: string) => {
+      return key
+        .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+        .replace(/^./, str => str.toUpperCase()) // Capitalize first letter
+        .trim();
+    };
+
+    // User-friendly field name mapping
+    const fieldNameMap: Record<string, string> = {
+      'email': 'Email Address',
+      'firstName': 'First Name',
+      'lastName': 'Last Name',
+      'jobTitle': 'Job Title',
+      'department': 'Department',
+      'phone': 'Phone Number',
+      'company': 'Company',
+      'reportsTo': 'Reports To',
+      'salary': 'Salary',
+      'totalDuration': 'Total Employment',
+      'currentRoleDuration': 'Time in Current Role',
+      'toolsProficient': 'Skills & Tools',
+      'createdAt': 'Joined On',
+      'updatedAt': 'Last Updated',
+      'utilizationScore': 'Utilization Rate',
+      'attritionScore': 'Retention Risk',
+      'possibleSuccessors': 'Potential Successors',
+      'utilizationScore_period': 'Utilization Period',
+      'currentRoleDuration_months': 'Time in Current Role',
+      'totalDuration_months': 'Total Employment',
+      'officeLocation': 'Office Location',
+      'workMode': 'Work Mode',
+      'industry': 'Industry',
+      'username': 'Username',
+      'work_mode': 'Work Setting'
+    };
+    
+    // Fields to hide from display
+    const hiddenFields = ['userId', 'user_id', 'user_status', 'id', '_id', 'name', 'x', 'y', 'z', 'userData', 'role', 'internalRole'];
+    
+    // Function to format field values for display
+    const formatFieldValue = (key: string, value: any): string => {
+      if (value === undefined || value === null) return '';
+      
+      if (key === 'utilizationScore' && typeof value === 'number') {
+        return `${(value * 100).toFixed(0)}%`;
+      }
+      if (key === 'attritionScore' && typeof value === 'number') {
+        return `${(value * 100).toFixed(0)}%`;
+      }
+      if (key === 'createdAt' || key === 'updatedAt') {
+        return new Date(value).toLocaleDateString();
+      }
+      if (key === 'currentRoleDuration_months' || key === 'totalDuration_months') {
+        return `${value} months`;
+      }
+      if (key === 'email_verified') {
+        return value ? 'Yes' : 'No';
+      }
+      if (key === 'salary' && typeof value === 'number') {
+        return `$${value.toLocaleString()}`;
+      }
+      return String(value);
+    };
+
+    return (
+      <div className="fixed right-0 top-0 w-96 h-full bg-gray-900 text-white overflow-y-auto z-50 transition-transform duration-300 transform shadow-xl">
+        <div className="p-4">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">
+              {type === 'employee' ? `Employee Profile` : `Connection Details`}
+            </h2>
+            <button 
+              onClick={onClose}
+              className="text-white hover:text-gray-300 transition-colors"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none"
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          {type === 'employee' ? (
+            <div className="space-y-4">
+              <div className="mb-4 flex items-center">
+                <div className="w-16 h-16 rounded-full mr-4 flex items-center justify-center"
+                    style={{ backgroundColor: departmentColors[data.department] || departmentColors.default }}>
+                  <span className="text-xl font-bold">
+                    {data.name?.charAt(0) || '?'}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">{data.name || `${data.firstName || ''} ${data.lastName || ''}`}</h3>
+                  <p className="text-sm opacity-80">{data.jobTitle || 'Employee'}</p>
+                  <p className="text-sm opacity-70">{data.department}</p>
+                </div>
+              </div>
+              
+              {/* Only show requested fields in logical order */}
+              <div>
+                <h4 className="text-md font-semibold mb-2 border-b border-gray-700 pb-1">Information</h4>
+                <div className="space-y-2 text-sm">
+                  {/* 1. Name already shown above */}
+                  
+                  {/* 2. Email */}
+                  {(data.email || data.userData?.email) && (
+                    <div className="flex items-start">
+                      <span className="opacity-70 w-32">Email Address:</span>
+                      <span className="flex-1">{data.email || data.userData?.email}</span>
+                    </div>
+                  )}
+                  
+                  {/* 3. Phone */}
+                  {(data.phone || data.userData?.phone) && (
+                    <div className="flex items-start">
+                      <span className="opacity-70 w-32">Phone:</span>
+                      <span className="flex-1">{data.phone || data.userData?.phone}</span>
+                    </div>
+                  )}
+                  
+                  {/* 4. Work Setting */}
+                  {(data.workMode || data.userData?.workMode || data.work_mode || data.userData?.work_mode) && (
+                    <div className="flex items-start">
+                      <span className="opacity-70 w-32">Work Setting:</span>
+                      <span className="flex-1">{data.workMode || data.userData?.workMode || data.work_mode || data.userData?.work_mode}</span>
+                    </div>
+                  )}
+                  
+                  {/* 5. Salary */}
+                  {(data.salary || data.userData?.salary) && (
+                    <div className="flex items-start">
+                      <span className="opacity-70 w-32">Salary:</span>
+                      <span className="flex-1">
+                        {typeof data.salary === 'number' ? 
+                         `$${data.salary.toLocaleString()}` : 
+                         typeof data.userData?.salary === 'number' ? 
+                         `$${data.userData.salary.toLocaleString()}` : 
+                         data.salary || data.userData?.salary}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* 6. Department - already shown above but including for completeness */}
+                  {(data.department || data.userData?.department) && (
+                    <div className="flex items-start">
+                      <span className="opacity-70 w-32">Department:</span>
+                      <span className="flex-1">{data.department || data.userData?.department}</span>
+                    </div>
+                  )}
+                  
+                  {/* 7. Job Title - already shown above but including for completeness */}
+                  {(data.jobTitle || data.userData?.jobTitle) && (
+                    <div className="flex items-start">
+                      <span className="opacity-70 w-32">Job Title:</span>
+                      <span className="flex-1">{data.jobTitle || data.userData?.jobTitle}</span>
+                    </div>
+                  )}
+                  
+                  {/* 8. Reports To */}
+                  {(data.reportsTo || data.userData?.reportsTo) && (
+                    <div className="flex items-start">
+                      <span className="opacity-70 w-32">Reports To:</span>
+                      <span className="flex-1">
+                        {data.reportsTo?.name || 
+                         data.userData?.reportsTo?.name ||
+                         (data.reportsTo?.firstName && `${data.reportsTo.firstName} ${data.reportsTo.lastName || ''}`) || 
+                         (data.userData?.reportsTo?.firstName && `${data.userData.reportsTo.firstName} ${data.userData.reportsTo.lastName || ''}`) || 
+                         data.reportsTo?.email || 
+                         data.userData?.reportsTo?.email ||
+                         'Manager'}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* 9. Utilization Score */}
+                  {(data.utilizationScore !== undefined || data.userData?.utilizationScore !== undefined || 
+                    data.utilization_score !== undefined || data.userData?.utilization_score !== undefined) && (
+                    <div className="flex items-center">
+                      <span className="opacity-70 w-32">Utilization Rate:</span>
+                      <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-blue-400 rounded-full"
+                          style={{ width: `${Math.min(100, Math.max(0, (
+                            data.utilizationScore || data.userData?.utilizationScore || 
+                            data.utilization_score || data.userData?.utilization_score || 0) * 100))}%` }}
+                        ></div>
+                      </div>
+                      <span className="ml-2">
+                        {data.utilizationScore !== undefined ? 
+                         `${(data.utilizationScore * 100).toFixed(0)}%` : 
+                         data.userData?.utilizationScore !== undefined ? 
+                         `${(data.userData.utilizationScore * 100).toFixed(0)}%` :
+                         data.utilization_score !== undefined ?
+                         `${(data.utilization_score * 100).toFixed(0)}%` :
+                         data.userData?.utilization_score !== undefined ?
+                         `${(data.userData.utilization_score * 100).toFixed(0)}%` : '0%'}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* 10. Attrition/Retention Score */}
+                  {(data.attritionScore !== undefined || data.userData?.attritionScore !== undefined || 
+                    (data.attritionassesment && data.attritionassesment.attrition_risk !== undefined) || 
+                    (data.userData?.attritionassesment && data.userData.attritionassesment.attrition_risk !== undefined)) && (
+                    <div className="flex items-center mt-2">
+                      <span className="opacity-70 w-32">Retention Risk:</span>
+                      <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full rounded-full ${
+                            (data.attritionScore || data.userData?.attritionScore || 
+                             (data.attritionassesment && data.attritionassesment.attrition_risk) || 
+                             (data.userData?.attritionassesment && data.userData.attritionassesment.attrition_risk) || 0) > 0.7 ? 'bg-red-500' : 
+                            (data.attritionScore || data.userData?.attritionScore || 
+                             (data.attritionassesment && data.attritionassesment.attrition_risk) || 
+                             (data.userData?.attritionassesment && data.userData.attritionassesment.attrition_risk) || 0) > 0.4 ? 'bg-yellow-500' : 'bg-green-500'
+                          }`}
+                          style={{ width: `${Math.min(100, Math.max(0, (
+                            data.attritionScore || data.userData?.attritionScore || 
+                            (data.attritionassesment && data.attritionassesment.attrition_risk) || 
+                            (data.userData?.attritionassesment && data.userData.attritionassesment.attrition_risk) || 0) * 100))}%` }}
+                        ></div>
+                      </div>
+                      <span className="ml-2">
+                        {getRiskLevel(
+                          data.attritionScore || 
+                          data.userData?.attritionScore || 
+                          (data.attritionassesment && data.attritionassesment.attrition_risk) || 
+                          (data.userData?.attritionassesment && data.userData.attritionassesment.attrition_risk) || 0
+                        )}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* 11. Projects Collaborated On */}
+              {(data.projects || data.userData?.projects) && (data.projects?.length > 0 || data.userData?.projects?.length > 0) && (
+                <div>
+                  <h4 className="text-md font-semibold mb-2 border-b border-gray-700 pb-1">Projects</h4>
+                  <div className="space-y-2">
+                    {(data.projects || data.userData?.projects || []).map((project: any, index: number) => (
+                      <div key={index} className="bg-gray-800/50 p-2 rounded text-sm">
+                        <div className="font-medium">{project.name || project.project_title || 'Unnamed Project'}</div>
+                        {project.description && <div className="opacity-70 text-xs mt-1">{project.description}</div>}
+                        {(project.startDate || project.start_date) && (project.endDate || project.end_date) && (
+                          <div className="text-xs mt-1">
+                            {new Date(project.startDate || project.start_date).toLocaleDateString()} - 
+                            {(project.endDate === 'ongoing' || project.end_date === 'ongoing') ? ' Present' : 
+                             new Date(project.endDate || project.end_date).toLocaleDateString()}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="mb-4">
+              <div className="text-center py-2 bg-gray-800/50 rounded mb-3">
+                <span className="text-sm font-medium">
+                  {data.type === 'reporting' ? 'Reporting Relationship' : 'Project Collaboration'}
+                </span>
+              </div>
+              
+              <div className="bg-gray-800/50 p-2 rounded-lg mb-3">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-left">Source</div>
+                  <div className="text-xs text-right">Target</div>
+                </div>
+                
+                <div className="flex items-center justify-between mt-1">
+                  <div className="text-sm font-medium">{data.source.name}</div>
+                  <div className="px-2">
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="16" 
+                      height="16" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
+                      <path d="M5 12h14"></path>
+                      <path d="m12 5 7 7-7 7"></path>
+                    </svg>
+                  </div>
+                  <div className="text-sm font-medium">{data.target.name}</div>
+                </div>
+                
+                <div className="flex items-center justify-between mt-1">
+                  <div className="text-xs opacity-70" style={{ color: departmentColors[data.source.department] || departmentColors.default }}>
+                    {data.source.jobTitle || 'Employee'} • {data.source.department}
+                  </div>
+                  <div className="text-xs opacity-70" style={{ color: departmentColors[data.target.department] || departmentColors.default }}>
+                    {data.target.jobTitle || 'Employee'} • {data.target.department}
+                  </div>
+                </div>
+                
+                <div className="mt-2 text-xs text-center opacity-70">
+                  {data.type === 'reporting' ? 'Direct report' : 'Project collaboration'}
+                </div>
+              </div>
+              
+              {/* Project Details with toggle */}
+              {data.project && (
+                <div>
+                  <button 
+                    onClick={() => setShowProjectDetails(!showProjectDetails)}
+                    className="w-full flex items-center justify-between bg-gray-800/80 p-2 rounded text-sm mb-2 hover:bg-gray-700/80 transition-colors"
+                  >
+                    <span className="font-medium">Project Details</span>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="16" 
+                      height="16" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                      style={{ transform: showProjectDetails ? 'rotate(180deg)' : 'rotate(0)' }}
+                      className="transition-transform"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  
+                  {showProjectDetails && (
+                    <div className="bg-gray-800/50 p-2 rounded-lg text-sm">
+                      <p className="font-medium text-sm">{data.project.name || data.project.title || 'Unnamed Project'}</p>
+                      
+                      {data.project.description && (
+                        <p className="text-xs mt-2 opacity-80">{data.project.description}</p>
+                      )}
+                      
+                      {/* Compact display of key project details */}
+                      <div className="mt-2 grid grid-cols-2 gap-x-2 gap-y-1 text-xs">
+                        {['status', 'priority', 'startDate', 'endDate', 'department'].map(key => 
+                          data.project[key] ? (
+                            <div key={key} className="flex flex-col">
+                              <span className="opacity-70">{formatFieldName(key)}</span>
+                              <span>{String(data.project[key])}</span>
+                            </div>
+                          ) : null
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Tooltip component for hover information
+  const Tooltip: React.FC<{
+    text: string;
+    x: number;
+    y: number;
+    visible: boolean;
+  }> = ({ text, x, y, visible }) => {
+    if (!visible) return null;
+    
+    return (
+      <div 
+        className="fixed z-50 bg-gray-900/95 text-white text-sm py-1.5 px-3 rounded pointer-events-none backdrop-blur-sm border border-gray-700 shadow-lg"
+        style={{ 
+          left: x, 
+          top: y,
+          transform: 'translate(0, -100%)',
+          marginTop: '-8px',
+          minWidth: '120px',
+          textAlign: 'center'
+        }}
+      >
+        {text}
+      </div>
+    );
+  };
+
+  // Function to close sidebar
+  const closeSidebar = () => {
+    setSidebarData(null);
+  };
+
+  // Handler for mouse movement and hover effects
+  useEffect(() => {
+    if (!containerRef.current || !sceneRef.current || !cameraRef.current) return;
+    
+    const container = containerRef.current;
+    
+    // Mouse move handler for hover effects
+    const handleMouseMove = (event: MouseEvent) => {
+      // Calculate mouse position in normalized device coordinates (-1 to +1)
+      const rect = container.getBoundingClientRect();
+      mouseRef.current.x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
+      mouseRef.current.y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
+      
+      if (!raycasterRef.current || !sceneRef.current || !cameraRef.current) return;
+      
+      // Update the raycaster
+      raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
+      
+      // Calculate objects intersecting the picking ray
+      const intersects = raycasterRef.current.intersectObjects(sceneRef.current.children, true);
+      
+      // Reset cursor
+      document.body.style.cursor = 'default';
+      
+      // Hide tooltip by default
+      setTooltip({ visible: false, text: '', x: 0, y: 0 });
+      
+      // Check for intersections with nodes or connections
+      for (const intersect of intersects) {
+        // Find the parent object which has userData
+        let currentObject: THREE.Object3D | null = intersect.object;
+        
+        while (currentObject && (!currentObject.userData || !currentObject.userData.type)) {
+          currentObject = currentObject.parent;
+        }
+        
+        if (!currentObject || !currentObject.userData) continue;
+        
+        document.body.style.cursor = 'pointer';
+        
+        if (currentObject.userData.type === 'node') {
+          const node = currentObject.userData.node;
+          
+          // IMPORTANT FIX: Show jobTitle in tooltip
+          console.log("Hovering over node with data:", node); // Debug logging
+          
+          if (node.jobTitle) {
+            setTooltip({
+              visible: true,
+              text: node.jobTitle,
+              x: event.clientX + 10,
+              y: event.clientY + 10
+            });
+          } else {
+            setTooltip({
+              visible: true,
+              text: "Employee",
+              x: event.clientX + 10,
+              y: event.clientY + 10
+            });
+          }
+          
+          break;
+        } else if (currentObject.userData.type === 'connection') {
+          const connectionData = currentObject.userData.connectionData;
+          
+          // Show tooltip with connection information
+          setTooltip({
+            visible: true,
+            text: `${connectionData.source.name} → ${connectionData.target.name} (${
+              connectionData.type === 'reporting' ? 'Reports to' : 'Collaborates with'
+            })`,
+            x: event.clientX + 10,
+            y: event.clientY + 10
+          });
+          
+          break;
+        }
+      }
+    };
+    
+    // Click handler for selection
+    const handleClick = (event: MouseEvent) => {
+      if (!raycasterRef.current || !sceneRef.current || !cameraRef.current) return;
+      
+      // Update the raycaster
+      const rect = container.getBoundingClientRect();
+      mouseRef.current.x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
+      mouseRef.current.y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
+      
+      raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
+      
+      // Calculate objects intersecting the picking ray
+      const intersects = raycasterRef.current.intersectObjects(sceneRef.current.children, true);
+      
+      // Reset selection
+      setSelectedNode(null);
+      setSelectedConnection(null);
+      
+      // Check for intersections with nodes or connections
+      for (const intersect of intersects) {
+        // Find the parent object which has userData
+        let currentObject: THREE.Object3D | null = intersect.object;
+        
+        while (currentObject && (!currentObject.userData || !currentObject.userData.type)) {
+          currentObject = currentObject.parent;
+        }
+        
+        if (!currentObject || !currentObject.userData) continue;
+        
+        if (currentObject.userData.type === 'node') {
+          const node = currentObject.userData.node;
+          console.log("Clicked on node:", node);
+          console.log("Node jobTitle:", node.jobTitle);
+          setSelectedNode(node);
+          setSidebarType('employee');
+          setSidebarData(node);
+          break;
+        } else if (currentObject.userData.type === 'connection') {
+          const connectionData = currentObject.userData.connectionData;
+          setSelectedConnection(connectionData);
+          setSidebarType('connection');
+          setSidebarData(connectionData);
+          break;
+        }
+      }
+    };
+
+    // Add event listeners
+    container.addEventListener('mousemove', handleMouseMove);
+    container.addEventListener('click', handleClick);
+    
+    // Cleanup
+    return () => {
+      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('click', handleClick);
+    };
+  }, []);
+
+  // Set up keyboard controls
+  useEffect(() => {
+    if (!cameraRef.current || !controlsRef.current) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (keyStateRef.current.hasOwnProperty(event.key)) {
+        keyStateRef.current[event.key] = true;
+      }
+    };
+  
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (keyStateRef.current.hasOwnProperty(event.key)) {
+        keyStateRef.current[event.key] = false;
+      }
+    };
+
+    // Animation loop for keyboard movement
+    const animate = () => {
+      const moveSpeed = 1.0;
+      const camera = cameraRef.current;
+      
+      if (camera) {
+        // Forward/backward movement
+        if (keyStateRef.current.w || keyStateRef.current.W || keyStateRef.current.ArrowUp) {
+          camera.position.z -= moveSpeed;
+        }
+        if (keyStateRef.current.s || keyStateRef.current.S || keyStateRef.current.ArrowDown) {
+          camera.position.z += moveSpeed;
+        }
+        
+        // Left/right movement
+        if (keyStateRef.current.a || keyStateRef.current.A || keyStateRef.current.ArrowLeft) {
+          camera.position.x -= moveSpeed;
+        }
+        if (keyStateRef.current.d || keyStateRef.current.D || keyStateRef.current.ArrowRight) {
+          camera.position.x += moveSpeed;
+        }
+      }
+      
+      requestRef.current = requestAnimationFrame(animate);
+    };
+
+    // Start animation
+    animate();
+    
+    // Add event listeners
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      cancelAnimationFrame(requestRef.current as number);
+    };
+  }, []);
+
+  // Toggle keyboard help
+  const toggleKeyboardHelp = () => {
+    setShowKeyboardHelp(!showKeyboardHelp);
+  };
+
+  // Toggle legend visibility
+  const toggleLegend = () => {
+    setShowLegend(!showLegend);
+  };
+
+  // Keyboard help modal component
+  const KeyboardHelpModal = () => {
+    if (!showKeyboardHelp) return null;
+    
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="bg-gray-800 text-white p-6 rounded-lg max-w-md">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold">Keyboard Controls</h3>
+            <button 
+              onClick={toggleKeyboardHelp}
+              className="text-gray-400 hover:text-white"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <h4 className="font-medium mb-1">Navigation:</h4>
+              <ul className="space-y-1 text-sm">
+                <li className="flex items-center">
+                  <span className="inline-block bg-gray-700 px-2 py-0.5 rounded mr-2 w-8 text-center">W</span> 
+                  <span className="mx-2">or</span> 
+                  <span className="inline-block bg-gray-700 px-2 py-0.5 rounded mr-2 w-8 text-center">↑</span> 
+                  <span>Move forward</span>
+                </li>
+                <li className="flex items-center">
+                  <span className="inline-block bg-gray-700 px-2 py-0.5 rounded mr-2 w-8 text-center">S</span> 
+                  <span className="mx-2">or</span> 
+                  <span className="inline-block bg-gray-700 px-2 py-0.5 rounded mr-2 w-8 text-center">↓</span> 
+                  <span>Move backward</span>
+                </li>
+                <li className="flex items-center">
+                  <span className="inline-block bg-gray-700 px-2 py-0.5 rounded mr-2 w-8 text-center">A</span> 
+                  <span className="mx-2">or</span> 
+                  <span className="inline-block bg-gray-700 px-2 py-0.5 rounded mr-2 w-8 text-center">←</span> 
+                  <span>Move left</span>
+                </li>
+                <li className="flex items-center">
+                  <span className="inline-block bg-gray-700 px-2 py-0.5 rounded mr-2 w-8 text-center">D</span> 
+                  <span className="mx-2">or</span> 
+                  <span className="inline-block bg-gray-700 px-2 py-0.5 rounded mr-2 w-8 text-center">→</span> 
+                  <span>Move right</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-medium mb-1">Mouse Controls:</h4>
+              <ul className="space-y-1 text-sm">
+                <li><strong>Left Click:</strong> Select planet or connection</li>
+                <li><strong>Click + Drag:</strong> Rotate view</li>
+                <li><strong>Scroll:</strong> Zoom in/out</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Legend component
+  const LegendModal = () => {
+    if (!showLegend) return null;
+    
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="bg-gray-800 text-white p-6 rounded-lg max-w-md">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold">Department Colors</h3>
+            <button 
+              onClick={toggleLegend}
+              className="text-gray-400 hover:text-white"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {Object.entries(departmentColors).map(([dept, color]) => (
+              dept !== 'default' && (
+                <div key={dept} className="flex items-center space-x-2">
+                  <div 
+                    className="w-5 h-5 rounded-full" 
+                    style={{ backgroundColor: color, boxShadow: `0 0 10px ${color}` }}
+                  />
+                  <span className="text-sm">{dept}</span>
+                </div>
+              )
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Helper to get risk level text based on score - enhance with color
+  const getRiskLevel = (score: number): JSX.Element => {
+    let color: string;
+    let text: string;
+    
+    if (score > 0.7) {
+      color = 'text-red-400';
+      text = 'High';
+    } else if (score > 0.4) {
+      color = 'text-yellow-400';
+      text = 'Medium';
+    } else {
+      color = 'text-green-400';
+      text = 'Low';
+    }
+    
+    return (
+      <span className={`font-medium ${color}`}>
+        {text}
+      </span>
+    );
+  };
+
+  // Main component render
+  return (
+    <>
+      <div ref={containerRef} className="w-full h-full bg-black"></div>
+      
+      {/* Control buttons with improved visibility and spacing */}
+      <div className="fixed bottom-4 left-4 z-50 flex space-x-3 p-2 bg-gray-800/90 backdrop-blur-md rounded-lg shadow-lg">
+        {/* Close button to return to visualization page */}
+        <button 
+          onClick={handleBackNavigation}
+          className="bg-gray-700 text-white p-2 rounded-full hover:bg-gray-600 transition-colors shadow-md"
+          title="Back to Visualizations"
+        >
+          <X size={20} />
+        </button>
+        
+        {/* Info button for keyboard controls */}
+        <button 
+          onClick={toggleKeyboardHelp}
+          className="bg-gray-700 text-white p-2 rounded-full hover:bg-gray-600 transition-colors shadow-md"
+          title="Keyboard Controls"
+        >
+          <Info size={20} />
+        </button>
+        
+        {/* Legend button for department colors */}
+        <button 
+          onClick={toggleLegend}
+          className="bg-gray-700 text-white p-2 rounded-full hover:bg-gray-600 transition-colors shadow-md"
+          title="Department Legend"
+        >
+          <List size={20} />
+        </button>
+      </div>
+      
+      {/* Keyboard help modal */}
+      <KeyboardHelpModal />
+      
+      {/* Legend modal */}
+      <LegendModal />
+      
+      {/* Tooltip for hover information */}
+      <Tooltip {...tooltip} />
+      
+      {/* Side panel for detailed information */}
+      {sidebarData && (
+        <SidePanel
+          data={sidebarData}
+          type={sidebarType}
+          onClose={closeSidebar}
+        />
+      )}
+    </>
+  );
+} 

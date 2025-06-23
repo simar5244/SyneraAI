@@ -1,0 +1,88 @@
+[2025-05-31T14:52:02.716Z] [INFO] Starting scheduled reports check...
+[2025-05-31T14:52:02.720Z] [DEBUG] Connecting to MongoDB...
+[2025-05-31T14:52:02.721Z] [ERROR] Error in runScheduledReports: Cannot read properties of undefined (reading 'startsWith')
+[2025-05-31T14:52:02.721Z] [ERROR] Stack trace: TypeError: Cannot read properties of undefined (reading 'startsWith')
+    at connectionStringHasValidScheme (/Users/sim/Project2/node_modules/mongodb-connection-string-url/lib/index.js:9:30)
+    at new ConnectionString (/Users/sim/Project2/node_modules/mongodb-connection-string-url/lib/index.js:85:34)
+    at parseOptions (/Users/sim/Project2/node_modules/mongodb/lib/connection_string.js:203:17)
+    at new MongoClient (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:52:61)
+    at MongoClient.connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:359:24)
+    at runScheduledReports (/Users/sim/Project2/scripts/scheduled-reports-cron.js:77:32)
+    at Object.<anonymous> (/Users/sim/Project2/scripts/scheduled-reports-cron.js:219:1)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+[2025-05-31T14:52:02.721Z] [INFO] Script execution completed
+[2025-05-31T15:20:50.191Z] [INFO] Starting scheduled reports check...
+[2025-05-31T15:20:50.192Z] [DEBUG] Connecting to MongoDB...
+[2025-05-31T15:20:52.629Z] [INFO] Connected to MongoDB
+[2025-05-31T15:20:52.630Z] [DEBUG] Fetching company databases...
+[2025-05-31T15:20:52.911Z] [INFO] Found 3 company databases
+[2025-05-31T15:20:52.912Z] [DEBUG] Processing company database: company_7pmjdlir
+[2025-05-31T15:20:53.226Z] [DEBUG] Finding reports to execute in company_7pmjdlir (current time: 2025-05-31T15:20:53.226Z)
+[2025-05-31T15:20:53.513Z] [INFO] Found 3 reports to execute in company_7pmjdlir
+[2025-05-31T15:20:53.513Z] [DEBUG] Getting admin token for company 7pmjdlir
+[2025-05-31T15:20:53.515Z] [INFO] Getting admin token for company 7pmjdlir
+[2025-05-31T15:20:53.515Z] [DEBUG] Connecting to MongoDB for company 7pmjdlir
+[2025-05-31T15:20:55.855Z] [DEBUG] Finding admin user for company 7pmjdlir
+[2025-05-31T15:20:56.349Z] [DEBUG] Requesting auth token for admin user: admin@company10.com
+[2025-05-31T15:21:07.978Z] [ERROR] Failed to get admin token for 7pmjdlir: Unknown error
+[2025-05-31T15:21:07.987Z] [ERROR] Failed to get admin token for company_7pmjdlir
+[2025-05-31T15:21:07.987Z] [DEBUG] Processing company database: company_demo
+[2025-05-31T15:21:08.234Z] [INFO] Skipping company_demo: No scheduled reports collection found
+[2025-05-31T15:21:08.234Z] [DEBUG] Processing company database: company_simarjotsingh5244
+[2025-05-31T15:21:08.488Z] [INFO] Skipping company_simarjotsingh5244: No scheduled reports collection found
+[2025-05-31T15:21:08.489Z] [INFO] Scheduled reports check completed
+[2025-05-31T15:21:08.492Z] [INFO] MongoDB connection closed
+[2025-05-31T15:21:08.493Z] [INFO] Script execution completed
+[2025-05-31T15:22:46.963Z] [INFO] Starting scheduled reports check...
+[2025-05-31T15:22:46.964Z] [DEBUG] Connecting to MongoDB...
+[2025-05-31T15:22:49.303Z] [INFO] Connected to MongoDB
+[2025-05-31T15:22:49.303Z] [DEBUG] Fetching company databases...
+[2025-05-31T15:22:49.562Z] [INFO] Found 3 company databases
+[2025-05-31T15:22:49.563Z] [DEBUG] Processing company database: company_7pmjdlir
+[2025-05-31T15:22:49.812Z] [DEBUG] Finding reports to execute in company_7pmjdlir (current time: 2025-05-31T15:22:49.812Z)
+[2025-05-31T15:22:50.056Z] [INFO] Found 3 reports to execute in company_7pmjdlir
+[2025-05-31T15:22:50.057Z] [DEBUG] Getting admin token for company 7pmjdlir
+[2025-05-31T15:22:50.058Z] [INFO] Getting admin token for company 7pmjdlir
+[2025-05-31T15:22:50.058Z] [DEBUG] Connecting to MongoDB for company 7pmjdlir
+[2025-05-31T15:22:52.397Z] [DEBUG] Finding admin user for company 7pmjdlir
+[2025-05-31T15:22:52.888Z] [DEBUG] Found admin user: admin@company10.com
+[2025-05-31T15:22:52.888Z] [DEBUG] Created token for scheduled reports: scheduled_reports_token_7pmjdlir_1748704972888
+[2025-05-31T15:22:52.890Z] [DEBUG] Processing report: 683b15d76d06e4e4b843525e - employees
+[2025-05-31T15:22:52.891Z] [INFO] Executing scheduled report: 683b15d76d06e4e4b843525e - "employees" for company company_7pmjdlir
+[2025-05-31T15:22:52.891Z] [DEBUG] Calling API endpoint to execute report: 683b15d76d06e4e4b843525e
+[2025-05-31T15:22:54.367Z] [ERROR] Error executing report 683b15d76d06e4e4b843525e: invalid json response body at http://localhost:3000/login reason: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[2025-05-31T15:22:54.367Z] [ERROR] Stack trace: FetchError: invalid json response body at http://localhost:3000/login reason: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at /Users/sim/Project2/node_modules/node-fetch/lib/index.js:273:32
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async executeScheduledReport (/Users/sim/Project2/scripts/scheduled-reports-cron.js:63:20)
+    at async runScheduledReports (/Users/sim/Project2/scripts/scheduled-reports-cron.js:144:26)
+[2025-05-31T15:22:54.367Z] [ERROR] Failed to execute report 683b15d76d06e4e4b843525e: invalid json response body at http://localhost:3000/login reason: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[2025-05-31T15:22:54.368Z] [DEBUG] Processing report: 683b16366d06e4e4b843525f - projects
+[2025-05-31T15:22:54.368Z] [INFO] Executing scheduled report: 683b16366d06e4e4b843525f - "projects" for company company_7pmjdlir
+[2025-05-31T15:22:54.368Z] [DEBUG] Calling API endpoint to execute report: 683b16366d06e4e4b843525f
+[2025-05-31T15:22:54.432Z] [ERROR] Error executing report 683b16366d06e4e4b843525f: invalid json response body at http://localhost:3000/login reason: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[2025-05-31T15:22:54.432Z] [ERROR] Stack trace: FetchError: invalid json response body at http://localhost:3000/login reason: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at /Users/sim/Project2/node_modules/node-fetch/lib/index.js:273:32
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async executeScheduledReport (/Users/sim/Project2/scripts/scheduled-reports-cron.js:63:20)
+    at async runScheduledReports (/Users/sim/Project2/scripts/scheduled-reports-cron.js:144:26)
+[2025-05-31T15:22:54.433Z] [ERROR] Failed to execute report 683b16366d06e4e4b843525f: invalid json response body at http://localhost:3000/login reason: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[2025-05-31T15:22:54.433Z] [DEBUG] Processing report: 683b1925b9507caffb41f14b - all projects
+[2025-05-31T15:22:54.433Z] [INFO] Executing scheduled report: 683b1925b9507caffb41f14b - "all projects" for company company_7pmjdlir
+[2025-05-31T15:22:54.433Z] [DEBUG] Calling API endpoint to execute report: 683b1925b9507caffb41f14b
+[2025-05-31T15:22:54.476Z] [ERROR] Error executing report 683b1925b9507caffb41f14b: invalid json response body at http://localhost:3000/login reason: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[2025-05-31T15:22:54.477Z] [ERROR] Stack trace: FetchError: invalid json response body at http://localhost:3000/login reason: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at /Users/sim/Project2/node_modules/node-fetch/lib/index.js:273:32
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async executeScheduledReport (/Users/sim/Project2/scripts/scheduled-reports-cron.js:63:20)
+    at async runScheduledReports (/Users/sim/Project2/scripts/scheduled-reports-cron.js:144:26)
+[2025-05-31T15:22:54.478Z] [ERROR] Failed to execute report 683b1925b9507caffb41f14b: invalid json response body at http://localhost:3000/login reason: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+[2025-05-31T15:22:54.478Z] [DEBUG] Processing company database: company_demo
+[2025-05-31T15:22:54.719Z] [INFO] Skipping company_demo: No scheduled reports collection found
+[2025-05-31T15:22:54.720Z] [DEBUG] Processing company database: company_simarjotsingh5244
+[2025-05-31T15:22:54.960Z] [INFO] Skipping company_simarjotsingh5244: No scheduled reports collection found
+[2025-05-31T15:22:54.960Z] [INFO] Scheduled reports check completed
+[2025-05-31T15:22:54.962Z] [INFO] MongoDB connection closed
+[2025-05-31T15:22:54.962Z] [INFO] Script execution completed

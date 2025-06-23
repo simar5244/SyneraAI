@@ -1,0 +1,315 @@
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+./scripts/start-stripe-webhook-py.sh: line 23: uvicorn: command not found
+/Users/sim/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2025-06-06 13:15:09.946 | INFO     | stripe_webhook       | ================================================================================
+2025-06-06 13:15:09.946 | INFO     | stripe_webhook       | 🚀 STRIPE WEBHOOK SERVICE INITIALIZATION STARTING
+2025-06-06 13:15:09.946 | INFO     | stripe_webhook       | ================================================================================
+2025-06-06 13:15:09.946 | INFO     | stripe_webhook       | 📁 Starting environment variable loading process...
+2025-06-06 13:15:09.946 | DEBUG    | stripe_webhook       | 🔍 Searching for .env.local in 4 possible locations:
+2025-06-06 13:15:09.946 | DEBUG    | stripe_webhook       |    1. /Users/sim/Project2/.env.local
+2025-06-06 13:15:09.947 | DEBUG    | stripe_webhook       |    2. /Users/sim/Project2/scripts/.env.local
+2025-06-06 13:15:09.947 | DEBUG    | stripe_webhook       |    3. /Users/sim/Project2/.env.local
+2025-06-06 13:15:09.947 | DEBUG    | stripe_webhook       |    4. /Users/sim/.env.local
+2025-06-06 13:15:09.947 | DEBUG    | stripe_webhook       | 🔎 Checking path: /Users/sim/Project2/.env.local
+2025-06-06 13:15:09.947 | INFO     | stripe_webhook       | ✅ Found .env.local at: /Users/sim/Project2/.env.local
+2025-06-06 13:15:09.947 | DEBUG    | stripe_webhook       | 📊 File size: 1502 bytes
+2025-06-06 13:15:09.947 | DEBUG    | stripe_webhook       | 📅 Last modified: 2025-06-06 02:59:20.756927
+2025-06-06 13:15:09.950 | INFO     | stripe_webhook       | 🔄 Successfully loaded environment variables from /Users/sim/Project2/.env.local
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       | 📝 .env.local contains 34 lines:
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 1: # SMTP Settings
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 2: SMTP_USER=***REDACTED***
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 3: SMTP_PASS=***REDACTED***
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 4: EMAIL_FROM=***REDACTED***
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 5: SMTP_HOST=***REDACTED***
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 6: SMTP_PORT=***REDACTED***
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 7: 
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 8: # Application URL
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 9: NEXT_PUBLIC_APP_URL=***REDACTED***
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 10: 
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 11: # MongoDB Connection
+2025-06-06 13:15:09.950 | DEBUG    | stripe_webhook       |    Line 12: MONGODB_URI_BASE=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 13: MONGODB_URI=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 14: 
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 15: # Redis URL
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 16: REDIS_URL=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 17: 
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 18: # JWT Secret for Application Authentication
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 19: JWT_SECRET=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 20: 
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 21: # LLM API Keys
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 22: NEXT_PUBLIC_GEMINI_API_KEY=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 23: USE_MOCK_REDIS=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 24: NEXT_PUBLIC_CLAUDE_API_KEY=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 25: NEXT_PUBLIC_OPENAI_API_KEY=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 26: GEMINI_API_KEY=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 27: CLAUDE_API_KEY=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 28: NEXT_PUBLIC_COMPANY_CODE=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 29: 
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 30: # Stripe API Keys (Sandbox Mode)
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 31: STRIPE_SECRET_KEY=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 32: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 33: STRIPE_WEBHOOK_SECRET=***REDACTED***
+2025-06-06 13:15:09.951 | DEBUG    | stripe_webhook       |    Line 34: WEBHOOK_PORT=***REDACTED***
+2025-06-06 13:15:09.952 | INFO     | stripe_webhook       | ⚙️ Initializing configuration...
+2025-06-06 13:15:09.952 | INFO     | stripe_webhook       | 🌐 WEBHOOK_PORT: 3333 (source: env var)
+2025-06-06 13:15:09.952 | INFO     | stripe_webhook       | 🔑 STRIPE_SECRET_KEY: Found (length: 107 chars, starts with: sk_test...)
+2025-06-06 13:15:09.952 | INFO     | stripe_webhook       | 🔐 STRIPE_WEBHOOK_SECRET: Using default (starts with: whsec_4ff0...)
+2025-06-06 13:15:09.952 | INFO     | stripe_webhook       | 🗄️ MONGODB_URI: Found (connects to: cluster0.nen0dzs.mongodb.net/)
+2025-06-06 13:15:09.952 | INFO     | stripe_webhook       | 🏠 HOST: 0.0.0.0
+2025-06-06 13:15:09.952 | INFO     | stripe_webhook       | ✅ Configuration initialization complete
+2025-06-06 13:15:09.952 | INFO     | stripe_webhook       | 💳 Initializing Stripe API...
+2025-06-06 13:15:09.952 | INFO     | stripe_webhook       | ✅ Stripe API key configured successfully
+2025-06-06 13:15:09.952 | INFO     | stripe_webhook       | 🚀 Initializing FastAPI application...
+2025-06-06 13:15:09.953 | INFO     | stripe_webhook       | ✅ FastAPI application initialized
+2025-06-06 13:15:09.953 | INFO     | stripe_webhook       | 🌐 Adding CORS middleware...
+2025-06-06 13:15:09.953 | INFO     | stripe_webhook       | ✅ CORS middleware configured
+INFO:     Started server process [94299]
+INFO:     Waiting for application startup.
+2025-06-06 13:15:09.956 | INFO     | stripe_webhook       | 🚀 APPLICATION STARTUP EVENT
+2025-06-06 13:15:09.956 | INFO     | stripe_webhook       | ============================================================
+2025-06-06 13:15:09.956 | INFO     | stripe_webhook       | 🧪 Testing database connectivity...
+2025-06-06 13:15:09.956 | INFO     | stripe_webhook       | 🗄 Connecting to MongoDB at mongodb+srv://simarjotsingh5244:NUMotMgntP7AcNrQ@cluster0.nen0dzs.mongodb.net/, DB: company_test
+2025-06-06 13:15:10.067 | INFO     | stripe_webhook       | ✅ Database connectivity test passed
+2025-06-06 13:15:10.067 | INFO     | stripe_webhook       | 🧪 Testing Stripe API connectivity...
+2025-06-06 13:15:10.974 | INFO     | stripe_webhook       | ✅ Stripe API test passed - Account ID: acct_1RLudEQY3NVUyJal
+2025-06-06 13:15:10.974 | INFO     | stripe_webhook       | 🎉 Application startup completed
+2025-06-06 13:15:10.974 | INFO     | stripe_webhook       | ============================================================
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:3333 (Press CTRL+C to quit)
+2025-06-06 13:16:30.088 | INFO     | stripe_webhook       | ============================================================
+2025-06-06 13:16:30.089 | INFO     | stripe_webhook       | 📥 INCOMING REQUEST [1749233790088]
+2025-06-06 13:16:30.089 | INFO     | stripe_webhook       | ============================================================
+2025-06-06 13:16:30.089 | INFO     | stripe_webhook       | 🌐 Method: POST
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       | 🔗 URL: http://localhost:3333/webhook
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       | 🏠 Client: 127.0.0.1
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       | 🕐 Timestamp: 2025-06-06T13:16:30.090279
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       | 📋 Headers:
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       |    host: localhost:3333
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       |    user-agent: Stripe/1.0 (+https://stripe.com/docs/webhooks)
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       |    content-length: 2914
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       |    accept: */*; q=0.5, application/xml
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       |    cache-control: no-cache
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       |    content-type: application/json; charset=utf-8
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       |    stripe-signature: t=1749233789,v1=2be0...***REDACTED***
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       |    accept-encoding: gzip
+2025-06-06 13:16:30.090 | INFO     | stripe_webhook       | 📄 Body length: 2914 bytes
+2025-06-06 13:16:30.091 | DEBUG    | stripe_webhook       | 📄 Raw body (first 200 chars): {
+  "id": "evt_1RX4obQY3NVUyJalREQCql8j",
+  "object": "event",
+  "api_version": "2025-04-30.basil",
+  "created": 1749233789,
+  "data": {
+    "object": {
+      "id": "sub_sched_1RX4e5QY3NVUyJallBK751Hk...
+2025-06-06 13:16:30.091 | INFO     | stripe_webhook       | 🔄 Processing request [1749233790088]...
+2025-06-06 13:16:30.093 | INFO     | stripe_webhook       | 🎣 STRIPE WEBHOOK RECEIVED
+2025-06-06 13:16:30.093 | INFO     | stripe_webhook       | ==================================================
+2025-06-06 13:16:30.093 | INFO     | stripe_webhook       | 📥 Reading webhook payload...
+2025-06-06 13:16:30.094 | INFO     | stripe_webhook       | ✅ Payload received: 2914 bytes
+2025-06-06 13:16:30.094 | INFO     | stripe_webhook       | 🔐 Verifying webhook signature...
+2025-06-06 13:16:30.094 | DEBUG    | stripe_webhook       |    Signature header: t=1749233789,v1=2be0...***REDACTED***
+2025-06-06 13:16:30.094 | DEBUG    | stripe_webhook       |    Webhook secret configured: Yes
+2025-06-06 13:16:30.095 | INFO     | stripe_webhook       | ✅ Webhook signature verified successfully
+2025-06-06 13:16:30.095 | INFO     | stripe_webhook       | 📋 Event Details:
+2025-06-06 13:16:30.095 | INFO     | stripe_webhook       |    Type: subscription_schedule.canceled
+2025-06-06 13:16:30.095 | INFO     | stripe_webhook       |    ID: evt_1RX4obQY3NVUyJalREQCql8j
+2025-06-06 13:16:30.095 | INFO     | stripe_webhook       |    Created: 2025-06-06T13:16:29
+2025-06-06 13:16:30.095 | INFO     | stripe_webhook       |    Object Type: subscription_schedule
+2025-06-06 13:16:30.095 | INFO     | stripe_webhook       |    Object ID: sub_sched_1RX4e5QY3NVUyJallBK751Hk
+2025-06-06 13:16:30.095 | INFO     | stripe_webhook       | 🔄 Processing Stripe event...
+2025-06-06 13:16:30.096 | INFO     | stripe_webhook       | 🔄 PROCESSING STRIPE EVENT: subscription_schedule.canceled
+2025-06-06 13:16:30.096 | INFO     | stripe_webhook       | ----------------------------------------
+2025-06-06 13:16:30.096 | INFO     | stripe_webhook       | 📊 Event category: Subscription Schedule
+2025-06-06 13:16:30.096 | INFO     | stripe_webhook       | 🔍 Retrieving subscription sub_1RX4e5QY3NVUyJal6iqJz6YN for schedule event
+2025-06-06 13:16:31.483 | INFO     | stripe_webhook       | 📊 HANDLING SUBSCRIPTION EVENT
+2025-06-06 13:16:31.484 | INFO     | stripe_webhook       |    Event Type: customer.subscription.updated
+2025-06-06 13:16:31.484 | INFO     | stripe_webhook       |    Customer ID: cus_SRARzSfc2XZwvY
+2025-06-06 13:16:31.484 | INFO     | stripe_webhook       |    Subscription ID: sub_1RX4e5QY3NVUyJal6iqJz6YN
+2025-06-06 13:16:31.484 | INFO     | stripe_webhook       |    Status: canceled
+2025-06-06 13:16:31.484 | INFO     | stripe_webhook       | 🔍 Retrieving customer details from Stripe...
+2025-06-06 13:16:31.872 | INFO     | stripe_webhook       | ✅ Customer retrieved successfully
+2025-06-06 13:16:31.872 | INFO     | stripe_webhook       | 👤 Customer Metadata:
+2025-06-06 13:16:31.873 | INFO     | stripe_webhook       |    companyCode: eoVVtJ2e
+2025-06-06 13:16:31.873 | INFO     | stripe_webhook       |    companyName: testcompany1
+2025-06-06 13:16:31.873 | INFO     | stripe_webhook       |    role: admin
+2025-06-06 13:16:31.873 | INFO     | stripe_webhook       |    userId: 6840550bb85864af70426036
+2025-06-06 13:16:31.873 | INFO     | stripe_webhook       | 🏢 Processing subscription for company: eoVVtJ2e
+2025-06-06 13:16:31.873 | INFO     | stripe_webhook       | 📊 Subscription status: canceled (active: False)
+2025-06-06 13:16:31.873 | INFO     | stripe_webhook       | 🔍 Retrieving plan details...
+2025-06-06 13:16:31.873 | INFO     | stripe_webhook       | 💰 Price ID: price_1RVXLhQY3NVUyJalhBsohgH2
+2025-06-06 13:16:32.229 | INFO     | stripe_webhook       | 💰 Price details: 200.0 usd
+2025-06-06 13:16:32.609 | INFO     | stripe_webhook       | 📦 Product: Starter (normalized: starter)
+2025-06-06 13:16:32.609 | INFO     | stripe_webhook       | 📋 Final processing details:
+2025-06-06 13:16:32.610 | INFO     | stripe_webhook       |    Company: eoVVtJ2e
+2025-06-06 13:16:32.610 | INFO     | stripe_webhook       |    Is Paid: False
+2025-06-06 13:16:32.610 | INFO     | stripe_webhook       |    Plan: starter
+2025-06-06 13:16:32.610 | INFO     | stripe_webhook       | 👥 UPDATING COMPANY USERS
+2025-06-06 13:16:32.610 | INFO     | stripe_webhook       |    Company Code: eoVVtJ2e
+2025-06-06 13:16:32.610 | INFO     | stripe_webhook       |    Is Paid: False
+2025-06-06 13:16:32.610 | INFO     | stripe_webhook       |    Plan Name: starter
+2025-06-06 13:16:32.610 | INFO     | stripe_webhook       | 🗄️ Target database: company_eovvtj2e
+2025-06-06 13:16:32.610 | INFO     | stripe_webhook       | 🔌 Establishing database connection...
+2025-06-06 13:16:32.610 | INFO     | stripe_webhook       | 🗄 Connecting to MongoDB at mongodb+srv://simarjotsingh5244:NUMotMgntP7AcNrQ@cluster0.nen0dzs.mongodb.net/, DB: company_eovvtj2e
+2025-06-06 13:16:32.795 | INFO     | stripe_webhook       | ✅ Connected to users collection
+2025-06-06 13:16:32.795 | INFO     | stripe_webhook       |    Adding paid field: false
+2025-06-06 13:16:32.795 | INFO     | stripe_webhook       |    Adding plan field: starter
+2025-06-06 13:16:32.795 | INFO     | stripe_webhook       | 📝 Update operation details:
+2025-06-06 13:16:32.795 | INFO     | stripe_webhook       |    Fields to update: {
+    "paid": "false",
+    "plan": "starter"
+}
+2025-06-06 13:16:32.795 | INFO     | stripe_webhook       |    Target: All users in company_eovvtj2e
+2025-06-06 13:16:32.795 | INFO     | stripe_webhook       | 🔢 Counting existing users...
+2025-06-06 13:16:36.228 | INFO     | stripe_webhook       |    Total users in database: 3
+2025-06-06 13:16:36.229 | INFO     | stripe_webhook       | 🔄 Executing update operation...
+2025-06-06 13:16:36.592 | INFO     | stripe_webhook       | ✅ Update operation completed
+2025-06-06 13:16:36.593 | INFO     | stripe_webhook       | 📊 Update results:
+2025-06-06 13:16:36.593 | INFO     | stripe_webhook       |    Matched documents: 3
+2025-06-06 13:16:36.593 | INFO     | stripe_webhook       |    Modified documents: 3
+2025-06-06 13:16:36.593 | INFO     | stripe_webhook       |    Acknowledged: True
+2025-06-06 13:16:36.594 | INFO     | stripe_webhook       | 💾 UPDATING SUBSCRIPTION IN DATABASE
+2025-06-06 13:16:36.594 | INFO     | stripe_webhook       |    Company Code: eoVVtJ2e
+2025-06-06 13:16:36.594 | INFO     | stripe_webhook       |    Subscription ID: sub_1RX4e5QY3NVUyJal6iqJz6YN
+2025-06-06 13:16:36.594 | INFO     | stripe_webhook       |    Is Active: False
+2025-06-06 13:16:36.594 | INFO     | stripe_webhook       |    Plan Name: starter
+2025-06-06 13:16:36.594 | INFO     | stripe_webhook       |    Status: canceled
+2025-06-06 13:16:36.594 | INFO     | stripe_webhook       |    Cancel at Period End: False
+2025-06-06 13:16:36.594 | INFO     | stripe_webhook       | 🔌 Establishing database connection...
+2025-06-06 13:16:36.594 | INFO     | stripe_webhook       | 🗄 Connecting to MongoDB at mongodb+srv://simarjotsingh5244:NUMotMgntP7AcNrQ@cluster0.nen0dzs.mongodb.net/, DB: company_eovvtj2e
+2025-06-06 13:16:36.922 | INFO     | stripe_webhook       | ✅ Connected to subscriptions collection
+2025-06-06 13:16:36.922 | INFO     | stripe_webhook       | 📝 Subscription update data:
+2025-06-06 13:16:36.923 | INFO     | stripe_webhook       | {
+    "status": "canceled",
+    "planType": "starter",
+    "isActive": "False",
+    "cancelAtPeriodEnd": "False",
+    "updatedAt": "2025-06-06 18:16:36.922926"
+}
+2025-06-06 13:16:36.923 | INFO     | stripe_webhook       | 🔍 Checking if subscription exists...
+2025-06-06 13:16:40.421 | INFO     | stripe_webhook       | ✅ Found existing subscription record: 68432dfa7586a17702b70caa
+2025-06-06 13:16:40.422 | INFO     | stripe_webhook       | 🔄 Executing upsert operation...
+2025-06-06 13:16:40.754 | INFO     | stripe_webhook       | ✅ Subscription update completed
+2025-06-06 13:16:40.755 | INFO     | stripe_webhook       | 📊 Update results:
+2025-06-06 13:16:40.755 | INFO     | stripe_webhook       |    Matched documents: 1
+2025-06-06 13:16:40.755 | INFO     | stripe_webhook       |    Modified documents: 1
+2025-06-06 13:16:40.756 | INFO     | stripe_webhook       |    Upserted ID: None
+2025-06-06 13:16:40.756 | INFO     | stripe_webhook       |    Acknowledged: True
+2025-06-06 13:16:40.756 | INFO     | stripe_webhook       | ✅ Subscription event handled successfully
+2025-06-06 13:16:40.757 | INFO     | stripe_webhook       | ✅ Webhook processed successfully
+2025-06-06 13:16:40.757 | INFO     | stripe_webhook       | ============================================================
+2025-06-06 13:16:40.758 | INFO     | stripe_webhook       | 📥 INCOMING REQUEST [1749233800757]
+2025-06-06 13:16:40.758 | INFO     | stripe_webhook       | ============================================================
+2025-06-06 13:16:40.758 | INFO     | stripe_webhook       | 🌐 Method: POST
+2025-06-06 13:16:40.758 | INFO     | stripe_webhook       | 🔗 URL: http://localhost:3333/webhook
+2025-06-06 13:16:40.758 | INFO     | stripe_webhook       | 🏠 Client: 127.0.0.1
+2025-06-06 13:16:40.758 | INFO     | stripe_webhook       | 🕐 Timestamp: 2025-06-06T13:16:40.758606
+2025-06-06 13:16:40.758 | INFO     | stripe_webhook       | 📋 Headers:
+2025-06-06 13:16:40.758 | INFO     | stripe_webhook       |    host: localhost:3333
+2025-06-06 13:16:40.759 | INFO     | stripe_webhook       |    user-agent: Stripe/1.0 (+https://stripe.com/docs/webhooks)
+2025-06-06 13:16:40.759 | INFO     | stripe_webhook       |    content-length: 5388
+2025-06-06 13:16:40.759 | INFO     | stripe_webhook       |    accept: */*; q=0.5, application/xml
+2025-06-06 13:16:40.759 | INFO     | stripe_webhook       |    cache-control: no-cache
+2025-06-06 13:16:40.759 | INFO     | stripe_webhook       |    content-type: application/json; charset=utf-8
+2025-06-06 13:16:40.759 | INFO     | stripe_webhook       |    stripe-signature: t=1749233789,v1=4e50...***REDACTED***
+2025-06-06 13:16:40.759 | INFO     | stripe_webhook       |    accept-encoding: gzip
+2025-06-06 13:16:40.759 | INFO     | stripe_webhook       | 📄 Body length: 5388 bytes
+2025-06-06 13:16:40.759 | DEBUG    | stripe_webhook       | 📄 Raw body (first 200 chars): {
+  "id": "evt_1RX4obQY3NVUyJalje3dMg82",
+  "object": "event",
+  "api_version": "2025-04-30.basil",
+  "created": 1749233789,
+  "data": {
+    "object": {
+      "id": "sub_1RX4e5QY3NVUyJal6iqJz6YN",
+   ...
+2025-06-06 13:16:40.759 | INFO     | stripe_webhook       | 🔄 Processing request [1749233800757]...
+2025-06-06 13:16:40.760 | INFO     | stripe_webhook       | 🎣 STRIPE WEBHOOK RECEIVED
+2025-06-06 13:16:40.760 | INFO     | stripe_webhook       | ==================================================
+2025-06-06 13:16:40.760 | INFO     | stripe_webhook       | 📥 Reading webhook payload...
+2025-06-06 13:16:40.760 | INFO     | stripe_webhook       | ============================================================
+2025-06-06 13:16:40.760 | INFO     | stripe_webhook       | 📤 RESPONSE [1749233790088]
+2025-06-06 13:16:40.760 | INFO     | stripe_webhook       | ============================================================
+2025-06-06 13:16:40.760 | INFO     | stripe_webhook       | ✅ Status: 200
+2025-06-06 13:16:40.761 | INFO     | stripe_webhook       | ⏱️ Processing time: 10672.40ms
+2025-06-06 13:16:40.761 | INFO     | stripe_webhook       | 📊 Response headers:
+2025-06-06 13:16:40.761 | INFO     | stripe_webhook       |    content-length: 108
+2025-06-06 13:16:40.761 | INFO     | stripe_webhook       |    content-type: application/json
+INFO:     127.0.0.1:60077 - "POST /webhook HTTP/1.1" 200 OK
+2025-06-06 13:16:40.762 | INFO     | stripe_webhook       | ✅ Payload received: 5388 bytes
+2025-06-06 13:16:40.762 | INFO     | stripe_webhook       | 🔐 Verifying webhook signature...
+2025-06-06 13:16:40.763 | DEBUG    | stripe_webhook       |    Signature header: t=1749233789,v1=4e50...***REDACTED***
+2025-06-06 13:16:40.763 | DEBUG    | stripe_webhook       |    Webhook secret configured: Yes
+2025-06-06 13:16:40.765 | INFO     | stripe_webhook       | ✅ Webhook signature verified successfully
+2025-06-06 13:16:40.765 | INFO     | stripe_webhook       | 📋 Event Details:
+2025-06-06 13:16:40.765 | INFO     | stripe_webhook       |    Type: customer.subscription.deleted
+2025-06-06 13:16:40.765 | INFO     | stripe_webhook       |    ID: evt_1RX4obQY3NVUyJalje3dMg82
+2025-06-06 13:16:40.765 | INFO     | stripe_webhook       |    Created: 2025-06-06T13:16:29
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       |    Object Type: subscription
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       |    Object ID: sub_1RX4e5QY3NVUyJal6iqJz6YN
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       | 🔄 Processing Stripe event...
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       | 🔄 PROCESSING STRIPE EVENT: customer.subscription.deleted
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       | ----------------------------------------
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       | 📊 Event category: Subscription
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       | 📊 HANDLING SUBSCRIPTION EVENT
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       |    Event Type: customer.subscription.deleted
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       |    Customer ID: cus_SRARzSfc2XZwvY
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       |    Subscription ID: sub_1RX4e5QY3NVUyJal6iqJz6YN
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       |    Status: canceled
+2025-06-06 13:16:40.766 | INFO     | stripe_webhook       | 🔍 Retrieving customer details from Stripe...
+2025-06-06 13:16:41.164 | INFO     | stripe_webhook       | ✅ Customer retrieved successfully
+2025-06-06 13:16:41.165 | INFO     | stripe_webhook       | 👤 Customer Metadata:
+2025-06-06 13:16:41.165 | INFO     | stripe_webhook       |    companyCode: eoVVtJ2e
+2025-06-06 13:16:41.165 | INFO     | stripe_webhook       |    companyName: testcompany1
+2025-06-06 13:16:41.165 | INFO     | stripe_webhook       |    role: admin
+2025-06-06 13:16:41.165 | INFO     | stripe_webhook       |    userId: 6840550bb85864af70426036
+2025-06-06 13:16:41.165 | INFO     | stripe_webhook       | 🏢 Processing subscription for company: eoVVtJ2e
+2025-06-06 13:16:41.166 | INFO     | stripe_webhook       | 🗑️ Subscription deleted - setting company to unpaid
+2025-06-06 13:16:41.166 | INFO     | stripe_webhook       | 👥 UPDATING COMPANY USERS
+2025-06-06 13:16:41.166 | INFO     | stripe_webhook       |    Company Code: eoVVtJ2e
+2025-06-06 13:16:41.166 | INFO     | stripe_webhook       |    Is Paid: False
+2025-06-06 13:16:41.166 | INFO     | stripe_webhook       |    Plan Name: free
+2025-06-06 13:16:41.166 | INFO     | stripe_webhook       | 🗄️ Target database: company_eovvtj2e
+2025-06-06 13:16:41.166 | INFO     | stripe_webhook       | 🔌 Establishing database connection...
+2025-06-06 13:16:41.167 | INFO     | stripe_webhook       | 🗄 Connecting to MongoDB at mongodb+srv://simarjotsingh5244:NUMotMgntP7AcNrQ@cluster0.nen0dzs.mongodb.net/, DB: company_eovvtj2e
+2025-06-06 13:16:41.336 | INFO     | stripe_webhook       | ✅ Connected to users collection
+2025-06-06 13:16:41.337 | INFO     | stripe_webhook       |    Adding paid field: false
+2025-06-06 13:16:41.337 | INFO     | stripe_webhook       |    Adding plan field: free
+2025-06-06 13:16:41.337 | INFO     | stripe_webhook       | 📝 Update operation details:
+2025-06-06 13:16:41.337 | INFO     | stripe_webhook       |    Fields to update: {
+    "paid": "false",
+    "plan": "free"
+}
+2025-06-06 13:16:41.338 | INFO     | stripe_webhook       |    Target: All users in company_eovvtj2e
+2025-06-06 13:16:41.338 | INFO     | stripe_webhook       | 🔢 Counting existing users...
+2025-06-06 13:16:44.717 | INFO     | stripe_webhook       |    Total users in database: 3
+2025-06-06 13:16:44.718 | INFO     | stripe_webhook       | 🔄 Executing update operation...
+2025-06-06 13:16:45.030 | INFO     | stripe_webhook       | ✅ Update operation completed
+2025-06-06 13:16:45.030 | INFO     | stripe_webhook       | 📊 Update results:
+2025-06-06 13:16:45.031 | INFO     | stripe_webhook       |    Matched documents: 3
+2025-06-06 13:16:45.031 | INFO     | stripe_webhook       |    Modified documents: 3
+2025-06-06 13:16:45.031 | INFO     | stripe_webhook       |    Acknowledged: True
+2025-06-06 13:16:45.031 | INFO     | stripe_webhook       | ✅ Subscription event handled successfully
+2025-06-06 13:16:45.032 | INFO     | stripe_webhook       | ✅ Webhook processed successfully
+2025-06-06 13:16:45.032 | INFO     | stripe_webhook       | ============================================================
+2025-06-06 13:16:45.033 | INFO     | stripe_webhook       | 📤 RESPONSE [1749233800757]
+2025-06-06 13:16:45.033 | INFO     | stripe_webhook       | ============================================================
+2025-06-06 13:16:45.033 | INFO     | stripe_webhook       | ✅ Status: 200
+2025-06-06 13:16:45.033 | INFO     | stripe_webhook       | ⏱️ Processing time: 4275.07ms
+2025-06-06 13:16:45.033 | INFO     | stripe_webhook       | 📊 Response headers:
+2025-06-06 13:16:45.033 | INFO     | stripe_webhook       |    content-length: 107
+2025-06-06 13:16:45.033 | INFO     | stripe_webhook       |    content-type: application/json
+INFO:     127.0.0.1:60079 - "POST /webhook HTTP/1.1" 200 OK

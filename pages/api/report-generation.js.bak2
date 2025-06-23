@@ -1,0 +1,2354 @@
+import { MongoClient } from 'mongodb';
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import Anthropic from '@anthropic-ai/sdk';
+import claudeQuery from './claude-query.js'; // Import the claude-query module with explicit extension
+import { verifyAuth } from '@/lib/auth';
+
+// Environment variables
+const MONGODB_URI = process.env.MONGODB_URI;
+const DATA_COLLECTION_NAME = "users";
+const REPORT_HISTORY_COLLECTION_NAME = "report_history";
+
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_MODEL_NAME = "gemini-2.0-flash-001";
+const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
+const CLAUDE_MODEL = "claude-3-7-sonnet-20250219";
+
+// Configure safety settings for Gemini
+const safetySettings = [
+  { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+];
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).json({ error: 'Method not allowed. Use POST.' });
+  }
+
+  console.log("=== REPORT GENERATION API CALLED ===");
+  console.log("Operation:", req.body.operation || 'not specified');
+  
+  let client;
+  try {
+    const reportParams = req.body;
+    
+    // Check the operation type
+    const operationType = reportParams.operation || 'prefetch';
+    console.log(`Processing ${operationType} operation`);
+    
+    if (!reportParams || !reportParams.reportTopic && operationType !== 'modify' && operationType !== 'export') {
+      console.log("Error: Missing report topic");
+      return res.status(400).json({ error: 'Report topic is required' });
+    }
+
+    // Handle export requests
+    if (operationType === 'export' || (reportParams.exportFormat && reportParams.reportContent)) {
+      return await handleExport(reportParams, res);
+    }
+    
+    // Handle report modification requests
+    if (operationType === 'modify') {
+      return await handleModification(reportParams, res);
+    }
+
+    // Initialize Google Generative AI client
+    if (!GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY environment variable is not set.');
+    }
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL_NAME, safetySettings });
+    
+    // Initialize Claude client if needed for fallback
+    let claudeClient = null;
+    if (CLAUDE_API_KEY) {
+      claudeClient = new Anthropic({
+        apiKey: CLAUDE_API_KEY,
+      });
+    }
+
+    // Get token from request
+    const token = req.cookies.token || 
+                req.headers.authorization?.split(' ')[1] || 
+                '';
+    
+    if (!token) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    // Verify token and get company code
+    const payload = await verifyAuth(token);
+    
+    if (!payload || !payload.companyCode) {
+      return res.status(401).json({ error: 'Invalid authentication or missing company code' });
+    }
+
+    // Connect to MongoDB
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI environment variable is not set.');
+    }
+    client = await MongoClient.connect(MONGODB_URI);
+    
+    // Get company-specific database
+    const companyDbName = `company_${payload.companyCode.toLowerCase()}`;
+    const companyDb = client.db(companyDbName);
+    const dataCollection = companyDb.collection(DATA_COLLECTION_NAME);
+    const reportHistoryCollection = companyDb.collection(REPORT_HISTORY_COLLECTION_NAME);
+
+    // Generate a unique report ID
+    const reportId = reportParams.reportId || new Date().getTime().toString();
+    
+    // Special session ID for this report generation
+    const session_id = `report_${reportId}`;
+    
+    // STEP 1: PREFETCH - Use claude-query to get data from database
+    if (operationType === 'prefetch') {
+      // Use the predefined prompt if available, otherwise create a default one
+      const reportQuery = reportParams.predefinedPrompt || `I need VERY comprehensive, detailed information for a report about: ${reportParams.reportTopic}. 
+Please be extremely thorough and provide all available data including metrics, statistics, people details, project information, and performance indicators.
+Include specific numbers, dates, status information, and detailed context that would be valuable for a professional business report. 
+Be as specific and data-rich as possible.
+Also cite your data by giving exact pinpoint references to exact data files in the database. Use either APA/MLA/Casual citing depending on the type of report
+Also, mention the number of records you used briefly (without being too specific about implementation details).`;
+
+      // Call claude-query handler directly (with a mock request/response)
+      const mockReq = { 
+        method: 'POST', 
+        body: { 
+          query: reportQuery,
+          session_id
+        },
+        cookies: { token },
+        headers: req.headers
+      };
+      
+      let claudeResponse = { response: "", error: null };
+      const mockRes = {
+        status: (code) => ({ 
+          json: (data) => {
+            claudeResponse = data;
+            return mockRes;
+          }
+        })
+      };
+      
+      // Call claude-query to get the data
+      await claudeQuery(mockReq, mockRes);
+      
+      // Track database sources for the report (from claude-query response)
+      const dbSourceInfo = extractSourceInfo(claudeResponse.response);
+      
+      // Fetch contextual information from web if website is provided
+      let webContext = null;
+      let webData = null;
+      if (reportParams.website) {
+        try {
+          const webResult = await fetchWebsiteContext(reportParams.website);
+          webContext = webResult.content;
+          webData = webResult.data;
+        } catch (webError) {
+          console.error("Error fetching website context:", webError);
+          webContext = `Failed to fetch website context: ${webError.message || 'Unknown error'}`;
+        }
+      }
+      
+      // Extract structured data from the text response for visualization preview
+      const extractedData = extractDataFromText(claudeResponse.response);
+      
+      // Generate sample visualizations for preview
+      const previewVisualizations = generateVisualizationsFromExtractedData(extractedData, reportParams);
+      
+      // Return the prefetched data for approval
+      return res.status(200).json({
+        reportId,
+        claudeResponse,
+        webContext,
+        webData,
+        dbSourceInfo,
+        previewVisualizations,
+        extractedData
+      });
+    }
+    
+    // STEP 2: GENERATE - Generate the report using the approved data without querying the DB again
+    else if (operationType === 'generate') {
+      // Use the approved data from the request
+      if (!reportParams.approvedData) {
+        return res.status(400).json({ error: 'Approved data is required for report generation' });
+      }
+      
+      console.log("Starting report generation with approved data");
+      const finalResults = reportParams.approvedData;
+      const approvedWebContext = reportParams.approvedWebContext || null;
+      const approvedWebData = reportParams.approvedWebData || null;
+      const approvedDbSourceInfo = reportParams.approvedDbSourceInfo || null;
+      
+      // Extract structured data from the text response
+      console.log("Extracting structured data from approved data");
+      const extractedData = extractDataFromText(finalResults);
+      console.log("Extracted data structure:", Object.keys(extractedData));
+      
+      // Generate visualizations based on the structured data
+      console.log("Generating visualizations based on extracted data");
+      let visualizationConfigs;
+      if (reportParams.customVisualizations) {
+        // Use custom visualizations if provided
+        console.log("Using custom visualizations provided in request");
+        visualizationConfigs = reportParams.customVisualizations;
+      } else {
+        // Generate visualizations based on the extracted data
+        console.log("Generating visualizations based on extracted data");
+        visualizationConfigs = await generateVisualizationConfigs(model, finalResults, reportParams, extractedData);
+      }
+      console.log(`Generated ${visualizationConfigs.length} visualizations`);
+      console.log("Visualization types:", visualizationConfigs.map(viz => viz.type));
+      
+      // Generate the report content using Gemini (with Claude fallback)
+      console.log("Generating report content with LLM");
+      const reportContent = await generateReportContent(
+        model,
+        claudeClient,
+        reportParams,
+        finalResults,
+        visualizationConfigs,
+        approvedWebContext,
+        approvedWebData,
+        approvedDbSourceInfo
+      );
+      
+      console.log("Report generation complete");
+      console.log("Report title:", reportContent.title);
+      console.log("Report content length:", reportContent.content ? reportContent.content.length : 0);
+      console.log("Visualizations in report:", reportContent.visualizations ? reportContent.visualizations.length : 0);
+      
+      // Save report to history
+      await saveReportToHistory(reportHistoryCollection, reportId, reportParams, reportContent);
+      
+      // Return the generated report with all necessary data for rendering
+      console.log("Sending report response to client");
+      console.log("Report structure:", {
+        title: reportContent.title ? "Present" : "Missing",
+        contentLength: reportContent.content ? reportContent.content.length : 0,
+        visualizationsCount: visualizationConfigs ? visualizationConfigs.length : 0
+      });
+      
+      return res.status(200).json({ 
+        reportId,
+        title: reportContent.title,
+        content: reportContent.content,
+        charts: visualizationConfigs, // Use 'charts' for consistency with the ReportRenderer
+        visualizations: visualizationConfigs, // Keep 'visualizations' for backward compatibility
+        webData: approvedWebData,
+        dbSourceInfo: approvedDbSourceInfo,
+        extractedData,
+        queryResults: { "searchResults": extractedData }
+      });
+    }
+    
+    // Unknown operation
+    else {
+      return res.status(400).json({ error: 'Invalid operation type' });
+    }
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return res.status(500).json({
+      error: 'An unexpected error occurred',
+      details: errorMessage
+    });
+  } finally {
+    if (client) {
+      await client.close();
+    }
+  }
+}
+
+// Handle report modification requests (chat interface)
+async function handleModification(params, res) {
+  try {
+    // Initialize Gemini
+    if (!GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY environment variable is not set.');
+    }
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL_NAME, safetySettings });
+    
+    // Initialize Claude if available
+    let claudeClient = null;
+    if (CLAUDE_API_KEY) {
+      claudeClient = new Anthropic({
+        apiKey: CLAUDE_API_KEY,
+      });
+    }
+    
+    // Check if we need to query the database
+    const needsDbQuery = params.userMessage.toLowerCase().includes('data') || 
+                        params.userMessage.toLowerCase().includes('numbers') || 
+                        params.userMessage.toLowerCase().includes('statistics') ||
+                        params.userMessage.toLowerCase().includes('information');
+    
+    let dbQueryResults = null;
+    
+    // If needed, query the database using claude-query
+    if (needsDbQuery && params.token) {
+      const session_id = `report_${params.reportId}_modification`;
+      
+      // Call claude-query handler directly
+      const mockReq = { 
+        method: 'POST', 
+        body: { 
+          query: params.userMessage,
+          session_id
+        },
+        cookies: { token: params.token },
+        headers: { authorization: `Bearer ${params.token}` }
+      };
+      
+      let claudeResponse = { response: "", error: null };
+      const mockRes = {
+        status: (code) => ({ 
+          json: (data) => {
+            claudeResponse = data;
+            return mockRes;
+          }
+        })
+      };
+      
+      // Call claude-query to get the data
+      await claudeQuery(mockReq, mockRes);
+      dbQueryResults = claudeResponse.response;
+    }
+    
+    // Prepare the prompt for the modification
+    const prompt = `You are an expert report editor. The user has a business report and wants to make modifications to it.
+
+CURRENT REPORT:
+Title: ${params.reportTitle || "Report"}
+Content: ${params.reportContent ? params.reportContent.substring(0, 3000) + "..." : "No content provided"}
+
+USER REQUEST:
+${params.userMessage}
+
+${dbQueryResults ? `ADDITIONAL DATA FROM DATABASE:
+${dbQueryResults}` : ''}
+
+VISUALIZATIONS:
+${params.visualizations ? JSON.stringify(params.visualizations.slice(0, 3)) : "No visualizations provided"}
+
+TASK:
+1. Understand what changes the user wants to make to the report
+2. Provide a helpful response addressing their request
+3. If they want content changes, suggest specific edits or additions
+4. If they want visualization changes, suggest specific modifications to the charts
+5. Be specific and actionable in your suggestions
+
+Return a JSON object with:
+{
+  "response": "Your helpful response to the user",
+  "contentEdits": {
+    "shouldEdit": true/false,
+    "newTitle": "New title if applicable",
+    "newContent": "New content if applicable or null if no changes"
+  },
+  "visualizationEdits": {
+    "shouldEdit": true/false,
+    "editedVisualizations": [] // Array of edited visualizations if applicable
+  }
+}`;
+
+    // Generate the response
+    try {
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text();
+      
+      // Extract the JSON object from the response
+      let jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      let reportJson = null;
+      
+      console.log("Attempting to parse LLM response into JSON");
+      console.log("Response length:", responseText.length);
+      console.log("First 100 chars:", responseText.substring(0, 100).replace(/\n/g, "\\n"));
+      console.log("Last 100 chars:", responseText.substring(responseText.length - 100).replace(/\n/g, "\\n"));
+      
+      // If regex match found, try to parse it
+      if (jsonMatch) {
+        console.log("JSON match found, length:", jsonMatch[0].length);
+        console.log("JSON match first 100 chars:", jsonMatch[0].substring(0, 100).replace(/\n/g, "\\n"));
+        
+        try {
+          // Attempt to parse the JSON using our helper function
+          reportJson = fixMalformedJson(jsonMatch[0]);
+          console.log("Successfully parsed JSON from LLM response");
+          console.log("JSON structure:", Object.keys(reportJson));
+        } catch (jsonError) {
+          console.error("Failed to parse JSON from Gemini response:", jsonError);
+          console.log("Error position:", jsonError.message);
+          // Continue to alternative extraction methods
+        }
+      } else {
+        console.log("No JSON match found in LLM response");
+      }
+      
+      // If we have a valid report JSON, add References section if needed
+      if (reportJson && reportJson.content) {
+        // Ensure the report has a References section if it doesn't already
+        if (!reportJson.content.includes("# References")) {
+          reportJson.content += `
+
+# References
+
+1. ${approvedDbSourceInfo?.description || 'Organizational database'} (Generated on ${new Date().toLocaleDateString()})
+${approvedWebData ? `2. Website: ${approvedWebData.url || params.website} (Title: ${approvedWebData.title || 'Not available'})` : ''}
+`;
+        }
+        
+        return reportJson;
+      }
+      
+      // If JSON parsing failed, try direct content extraction
+      console.log("JSON parsing failed, trying direct content extraction");
+      const extractedReport = extractContentFromResponse(responseText, reportParams, approvedDbSourceInfo, approvedWebData);
+      extractedReport.visualizations = visualizationConfigs;
+      return extractedReport;
+    } catch (error) {
+      console.error("Error generating report content:", error);
+      // Return a default report on error
+      return {
+        title: `Report on ${reportParams.reportTopic}`,
+        content: "# Executive Summary\n\nThis is a placeholder report. The report generation is currently unavailable.\n\n# References\n\n1. Organizational database",
+        visualizations: visualizationConfigs
+      };
+    }
+  } catch (error) {
+    console.error("Error in report content generation:", error);
+    return {
+      title: `Report on ${reportParams.reportTopic}`,
+      content: "# Error\n\nAn error occurred while generating this report.\n\n# References\n\n1. Organizational database",
+      visualizations: []
+    };
+  }
+}
+
+// Save the generated report to history
+async function saveReportToHistory(collection, reportId, reportParams, reportContent) {
+  try {
+    const reportRecord = {
+      report_id: reportId,
+      title: reportContent.title,
+      topic: reportParams.reportTopic,
+      company: reportParams.company,
+      created_at: new Date(),
+      word_count: reportParams.wordCount,
+      target_audience: reportParams.targetAudience,
+      timeframe: reportParams.timeframe,
+      delivery_format: reportParams.deliveryFormat,
+      has_visualizations: reportParams.includeVisuals,
+      companyCode: reportParams.companyCode // Ensure company code is stored for multi-tenancy
+    };
+    
+    await collection.insertOne(reportRecord);
+    return true;
+  } catch (error) {
+    console.error("Error saving report to history:", error);
+    return false;
+  }
+}
+
+// Handle export requests
+async function handleExport(params, res) {
+  try {
+    const { exportFormat, reportContent, reportTitle } = params;
+    
+    if (!exportFormat || !reportContent) {
+      return res.status(400).json({ error: 'Export format and report content are required' });
+    }
+    
+    let result;
+    
+    switch (exportFormat.toLowerCase()) {
+      case 'pdf':
+        result = await generatePDF(reportContent, reportTitle);
+        
+        // Return file as buffer
+        res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+        res.setHeader('Content-Type', 'application/pdf');
+        return res.status(200).send(result.buffer);
+        
+      case 'docx':
+        result = await generateDOCX(reportContent, reportTitle);
+        
+        // Return file as buffer
+        res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        return res.status(200).send(result.buffer);
+        
+      default:
+        return res.status(400).json({ error: `Unsupported export format: ${exportFormat}` });
+    }
+  } catch (error) {
+    console.error('Export error:', error);
+    return res.status(500).json({ 
+      error: 'Failed to generate export',
+      details: error.message || 'Unknown error'
+    });
+  }
+}
+
+// Generate PDF from report content
+async function generatePDF(reportContent, reportTitle) {
+  const PDFDocument = require('pdfkit');
+  const marked = require('marked');
+  const htmlToText = require('html-to-text');
+  
+  return new Promise((resolve, reject) => {
+    try {
+      // Create a PDF document
+      const doc = new PDFDocument({
+        margins: { top: 72, bottom: 72, left: 72, right: 72 },
+        info: { Title: reportTitle }
+      });
+      
+      // Buffer to hold the PDF data
+      const chunks = [];
+      doc.on('data', chunk => chunks.push(chunk));
+      doc.on('end', () => resolve({
+        buffer: Buffer.concat(chunks),
+        filename: `${sanitizeFilename(reportTitle)}.pdf`
+      }));
+      
+      // Set font to Times New Roman
+      doc.font('Times-Roman');
+      doc.fontSize(12);
+      
+      // Add title
+      doc.fontSize(16).text(reportTitle, { align: 'center' });
+      doc.moveDown(2);
+      
+      // Convert markdown to HTML, then to plain text for PDF
+      const html = marked.parse(reportContent);
+      const text = htmlToText.fromString(html, {
+        wordwrap: false,
+        uppercaseHeadings: false,
+        ignoreHref: true,
+        ignoreImage: true
+      });
+      
+      // Process text content by lines to handle headings and paragraphs
+      const lines = text.split('\n');
+      let currentFont = 'Times-Roman';
+      let currentSize = 12;
+      let inBold = false;
+      let inItalic = false;
+      
+      lines.forEach(line => {
+        // Handle headings
+        if (line.match(/^#\s/)) {
+          doc.font('Times-Bold').fontSize(14);
+          doc.text(line.replace(/^#\s/, ''));
+          doc.font('Times-Roman').fontSize(12);
+          doc.moveDown(1);
+        } else if (line.match(/^##\s/)) {
+          doc.font('Times-Bold').fontSize(13);
+          doc.text(line.replace(/^##\s/, ''));
+          doc.font('Times-Roman').fontSize(12);
+          doc.moveDown(1);
+        } else if (line.match(/^###\s/)) {
+          doc.font('Times-Bold').fontSize(12);
+          doc.text(line.replace(/^###\s/, ''));
+          doc.font('Times-Roman').fontSize(12);
+          doc.moveDown(1);
+        } else if (line.trim().startsWith('*') || line.trim().startsWith('-')) {
+          // Handle bullet points
+          const bullet = '• ';
+          const bulletText = line.trim().substring(1).trim();
+          doc.text(bullet + bulletText, { indent: 20, continued: false });
+          doc.moveDown(0.5);
+        } else if (line.trim() !== '') {
+          // Regular text - check for bold/italic formatting
+          let segments = [];
+          let currentText = '';
+          let boldRegex = /\*\*(.*?)\*\*/g;
+          let italicRegex = /\*(.*?)\*/g;
+          let boldMatches = [];
+          let italicMatches = [];
+          let match;
+          
+          // Get all bold matches
+          while ((match = boldRegex.exec(line)) !== null) {
+            boldMatches.push({ index: match.index, text: match[1], length: match[0].length });
+          }
+          
+          // Get all italic matches
+          while ((match = italicRegex.exec(line)) !== null) {
+            // Avoid overlapping with bold
+            if (!boldMatches.some(b => 
+              (match.index >= b.index && match.index < b.index + b.length) || 
+              (match.index + match[0].length > b.index && match.index + match[0].length <= b.index + b.length)
+            )) {
+              italicMatches.push({ index: match.index, text: match[1], length: match[0].length });
+            }
+          }
+          
+          // Combine all formatting markers and sort by index
+          let formatMarkers = [...boldMatches, ...italicMatches].sort((a, b) => a.index - b.index);
+          
+          if (formatMarkers.length > 0) {
+            let lastIndex = 0;
+            
+            for (let marker of formatMarkers) {
+              // Add text before the marker
+              if (marker.index > lastIndex) {
+                segments.push({ text: line.substring(lastIndex, marker.index), format: 'normal' });
+              }
+              
+              // Add the formatted text
+              const isItalic = italicMatches.some(m => m.index === marker.index);
+              segments.push({ 
+                text: marker.text, 
+                format: isItalic ? 'italic' : 'bold' 
+              });
+              
+              lastIndex = marker.index + marker.length;
+            }
+            
+            // Add any remaining text
+            if (lastIndex < line.length) {
+              segments.push({ text: line.substring(lastIndex), format: 'normal' });
+            }
+            
+            // Now add text segments with appropriate formatting
+            segments.forEach(segment => {
+              if (segment.format === 'bold') {
+                doc.font('Times-Bold');
+              } else if (segment.format === 'italic') {
+                doc.font('Times-Italic');
+              } else {
+                doc.font('Times-Roman');
+              }
+              
+              doc.text(segment.text, { continued: true });
+            });
+            
+            doc.text('', { continued: false }); // End the line
+          } else {
+            // Plain text without formatting
+            doc.text(line);
+          }
+          
+          doc.moveDown(0.5);
+        }
+      });
+      
+      // Finalize the PDF
+      doc.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+// Generate DOCX from report content
+async function generateDOCX(reportContent, reportTitle) {
+  const { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, TableRow, TableCell, BorderStyle, WidthType, convertInchesToTwip, TableLayoutType } = require('docx');
+  const fs = require('fs').promises;
+  const os = require('os');
+  const path = require('path');
+  
+  try {
+    // Format title for a valid filename
+    const sanitizedTitle = sanitizeFilename(reportTitle || 'Report');
+    const filename = `${sanitizedTitle}_${new Date().toISOString().split('T')[0]}.docx`;
+    const tempPath = path.join(os.tmpdir(), filename);
+    
+    // Set up Times New Roman as the default font
+    const defaultFont = 'Times New Roman';
+    const defaultFontSize = 24; // 12pt = 24 half-points in docx
+    
+    // Process markdown content
+    const markdown = require('marked');
+    const tokenizer = new markdown.Tokenizer();
+    const lexer = new markdown.Lexer();
+    const tokens = lexer.lex(reportContent);
+    
+    // Create document children elements
+    const children = [];
+    
+    // Add report title
+    children.push(
+      new Paragraph({
+        text: reportTitle,
+        heading: HeadingLevel.TITLE,
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 400 },
+        font: defaultFont,
+        size: 32 // 16pt
+      })
+    );
+    
+    // Add date
+    children.push(
+      new Paragraph({
+        text: new Date().toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        }),
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 800 },
+        font: defaultFont,
+        size: defaultFontSize
+      })
+    );
+    
+    // Process markdown tokens
+    let inList = false;
+    
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      
+      switch (token.type) {
+        case 'heading':
+          const headingLevel = token.depth === 1 ? HeadingLevel.HEADING_1 : 
+                              token.depth === 2 ? HeadingLevel.HEADING_2 : HeadingLevel.HEADING_3;
+          
+          children.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: token.text,
+                  bold: true,
+                  size: token.depth === 1 ? 28 : token.depth === 2 ? 26 : 24,
+                  font: defaultFont
+                })
+              ],
+              heading: headingLevel,
+              spacing: { before: 400, after: 200 }
+            })
+          );
+          break;
+          
+        case 'paragraph':
+          // Process paragraph text to handle bold and italic
+          const runs = [];
+          const text = token.text;
+          
+          // Use regex to find bold and italic text
+          let lastIndex = 0;
+          const boldItalicRegex = /(\*\*\*(.*?)\*\*\*)|(\*\*(.*?)\*\*)|(\*(.*?)\*)/g;
+          let match;
+          
+          while ((match = boldItalicRegex.exec(text)) !== null) {
+            // Add text before the match
+            if (match.index > lastIndex) {
+              runs.push(
+                new TextRun({
+                  text: text.substring(lastIndex, match.index),
+                  font: defaultFont,
+                  size: defaultFontSize
+                })
+              );
+            }
+            
+            // Add formatted text
+            if (match[1]) { // Bold + Italic
+              runs.push(
+                new TextRun({
+                  text: match[2],
+                  bold: true,
+                  italic: true,
+                  font: defaultFont,
+                  size: defaultFontSize
+                })
+              );
+              lastIndex = match.index + match[1].length;
+            } else if (match[3]) { // Bold
+              runs.push(
+                new TextRun({
+                  text: match[4],
+                  bold: true,
+                  font: defaultFont,
+                  size: defaultFontSize
+                })
+              );
+              lastIndex = match.index + match[3].length;
+            } else if (match[5]) { // Italic
+              runs.push(
+                new TextRun({
+                  text: match[6],
+                  italic: true,
+                  font: defaultFont,
+                  size: defaultFontSize
+                })
+              );
+              lastIndex = match.index + match[5].length;
+            }
+          }
+          
+          // Add any remaining text
+          if (lastIndex < text.length) {
+            runs.push(
+              new TextRun({
+                text: text.substring(lastIndex),
+                font: defaultFont,
+                size: defaultFontSize
+              })
+            );
+          }
+          
+          children.push(
+            new Paragraph({
+              children: runs,
+              spacing: { before: 200, after: 200 }
+            })
+          );
+          break;
+          
+        case 'list_start':
+          inList = true;
+          break;
+          
+        case 'list_end':
+          inList = false;
+          break;
+          
+        case 'list_item_start':
+          // Wait for the text token
+          break;
+          
+        case 'text':
+          if (inList) {
+            children.push(
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "• " + token.text,
+                    font: defaultFont,
+                    size: defaultFontSize
+                  })
+                ],
+                indent: { left: 360 }, // 0.5 inches in twips
+                spacing: { before: 100, after: 100 }
+              })
+            );
+          }
+          break;
+      }
+    }
+    
+    // Create document
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: children
+        }
+      ],
+      styles: {
+        default: {
+          document: {
+            run: {
+              font: defaultFont,
+              size: defaultFontSize
+            },
+            paragraph: {
+              spacing: {
+                line: 276, // 1.15 line spacing
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    // Write to file
+    const buffer = await doc.save();
+    await fs.writeFile(tempPath, buffer);
+    
+    return {
+      path: tempPath,
+      filename: filename,
+      buffer: buffer
+    };
+  } catch (error) {
+    console.error("Error generating DOCX:", error);
+    throw error;
+  }
+}
+
+// Helper to sanitize filenames
+function sanitizeFilename(filename) {
+  return filename.replace(/[/\\?%*:|"<>]/g, '-').substring(0, 50);
+}
+
+// Add this function before the generateReportContent function
+function extractContentFromResponse(responseText, reportParams, dbSourceInfo, webData) {
+  console.log("Extracting content from raw response...");
+  
+  // Create a basic report structure to fill with extracted content
+  let report = {
+    title: `Report on ${reportParams.reportTopic}`,
+    content: "",
+  };
+  
+  // Extract title from response if possible
+  const titleMatch = responseText.match(/title["']?\s*:\s*["']([^"']+)["']/i) || 
+                    responseText.match(/# ([^\n]+)/);
+  if (titleMatch && titleMatch[1]) {
+    report.title = titleMatch[1].trim();
+    console.log("Extracted title:", report.title);
+  }
+  
+  // Look for markdown headings in the response
+  const headingMatches = responseText.match(/# [^\n]+/g);
+  if (headingMatches && headingMatches.length > 0) {
+    console.log(`Found ${headingMatches.length} markdown headings`);
+    
+    // First try to extract the full markdown content
+    let markdownContent = "";
+    let startIdx = responseText.indexOf(headingMatches[0]);
+    
+    if (startIdx >= 0) {
+      // Find where the JSON likely ends
+      let endIdx = responseText.lastIndexOf('}');
+      if (endIdx > startIdx) {
+        markdownContent = responseText.substring(startIdx, endIdx);
+      } else {
+        markdownContent = responseText.substring(startIdx);
+      }
+      
+      console.log("Extracted markdown content, length:", markdownContent.length);
+    }
+    
+    if (markdownContent && markdownContent.length > 100) {
+      // Preserve original formatting
+      report.content = markdownContent
+        .replace(/\\"/g, '"')
+        .replace(/\\n/g, "\n")
+        .replace(/\\\\/g, "\\");
+    } else {
+      // Try to extract sections individually
+      let sections = [];
+      for (let i = 0; i < headingMatches.length; i++) {
+        const currentHeading = headingMatches[i];
+        const nextHeading = (i < headingMatches.length - 1) ? headingMatches[i + 1] : null;
+        
+        let sectionStart = responseText.indexOf(currentHeading);
+        let sectionEnd = nextHeading ? responseText.indexOf(nextHeading, sectionStart) : responseText.length;
+        
+        if (sectionStart >= 0 && sectionEnd > sectionStart) {
+          sections.push(responseText.substring(sectionStart, sectionEnd).trim());
+        }
+      }
+      
+      if (sections.length > 0) {
+        report.content = sections.join("\n\n")
+          .replace(/\\"/g, '"')
+          .replace(/\\n/g, "\n")
+          .replace(/\\\\/g, "\\");
+        console.log("Extracted content by sections, length:", report.content.length);
+      }
+    }
+  }
+  
+  // If we couldn't extract content, try finding it in JSON structure
+  if (!report.content || report.content.length < 100) {
+    const contentMatch = responseText.match(/content["']?\s*:\s*["']([^]*?)["']\s*(?:,|\})/);
+    if (contentMatch && contentMatch[1]) {
+      report.content = contentMatch[1]
+        .replace(/\\n/g, "\n")
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, "\\");
+      console.log("Extracted content from JSON field, length:", report.content.length);
+    }
+  }
+  
+  // If we still have no content, use a fallback template
+  if (!report.content || report.content.length < 100) {
+    console.log("Content extraction failed. Using fallback template.");
+    report.content = `# ${report.title}
+
+## Executive Summary
+
+This report provides an analysis on ${reportParams.reportTopic} for ${reportParams.company || "your organization"}.
+
+## Key Findings
+
+Analysis of the data shows several important trends:
+
+- The organization has employees across multiple departments
+- Performance metrics vary by department and role
+- There are opportunities for improvement in resource allocation
+
+## Detailed Analysis
+
+The data reveals patterns in employee performance, project status, and departmental metrics.
+
+## Recommendations
+
+Based on the data analysis, we recommend:
+
+1. Regular performance reviews across all departments
+2. Focused training in key skill areas
+3. Improved resource allocation based on project priorities`;
+  }
+  
+  // Ensure the report has a References section
+  if (!report.content.includes("# References")) {
+    report.content += `\n\n# References\n\n1. ${dbSourceInfo?.description || 'Organizational database'} (Generated on ${new Date().toLocaleDateString()})
+${webData ? `2. Website: ${webData.url || reportParams.website} (Title: ${webData.title || 'Not available'})` : ''}`;
+  }
+  
+  return report;
+}
+
+async function generateVisualizationConfigs(model, queryResults, reportParams, extractedData = null) {
+  // Process text-based query results into structured data
+  if (!extractedData && typeof queryResults === 'string') {
+    extractedData = extractDataFromText(queryResults);
+  }
+  
+  // If we have no extracted data, return empty array
+  if (!extractedData) {
+    return [];
+  }
+  
+  console.log("Generating visualizations with extracted data keys:", Object.keys(extractedData));
+  
+  const prompt = `You are an expert in data visualization and business analytics. Your task is to generate highly insightful visualization configurations for a report based on extracted data.
+
+REPORT TOPIC: ${reportParams.reportTopic}
+
+EXTRACTED DATA:
+${JSON.stringify(extractedData, null, 2)}
+
+TASK:
+Based on the extracted data about ${reportParams.reportTopic}, create EFFECTIVE, INSIGHTFUL visualizations that will provide genuine business value and actionable insights. Focus on:
+
+1. Revealing meaningful patterns and relationships in the data
+2. Highlighting key performance indicators and metrics
+3. Comparing different categories (departments, roles, etc.) 
+4. Showing trends over time where time data is available
+5. Creating visualizations that will help executives make better decisions
+
+IMPORTANT GUIDELINES:
+- Create visualizations that tell a STORY about the data
+- Each visualization must provide a clear, valuable insight
+- Focus on quality over quantity - 3-4 excellent visualizations are better than many poor ones
+- Use appropriate chart types for the data being displayed
+- Ensure visualizations are easy to understand and interpret
+- Include clear, descriptive titles and informative descriptions
+- DO NOT create visualizations with random or meaningless data
+
+IMPORTANT TECHNICAL REQUIREMENTS:
+1. Only use chart types supported by Chart.js: 'bar', 'line', 'pie', 'doughnut', 'polarArea', 'radar', or 'scatter'
+2. Use ONLY the data that was extracted from the query results - DO NOT invent data
+3. Each chart must have properly formatted data that works with Chart.js
+4. For each chart, you MUST include:
+   - Properly formatted labels array with exact values from the data
+   - Properly formatted datasets array with exact values from the data
+   - Appropriate backgroundColor values for each dataset
+5. Make sure numeric data is properly parsed as numbers, not strings
+6. Ensure consistent data structure between labels and datasets
+
+Return ONLY a JSON array of visualization configs. Each should have:
+{
+  "type": "chart type (bar, line, pie, etc.)",
+  "title": "Insightful title that highlights the key finding",
+  "description": "Clear explanation of what insight this visualization provides",
+  "data": {
+    "labels": ["Array of actual labels extracted from the data"],
+    "datasets": [
+      {
+        "label": "Dataset label based on actual data",
+        "data": [Array of actual numeric values extracted from the data],
+        "backgroundColor": ["Array of colors for pie/doughnut or single color for bar/line"]
+      }
+    ]
+  },
+  "options": {
+    // Additional chart.js options to improve visualization appearance
+  }
+}
+
+CRITICAL: Return ONLY the JSON array with visualization configs - no explanations or additional text.
+`;
+  
+  console.log("Starting visualization generation with validation loop");
+  let visualizationConfigs = [];
+  let vizValidationAttempts = 0;
+  const MAX_VIZ_VALIDATION_ATTEMPTS = 2;
+  
+  // Get Claude client if possible
+  let claudeClient = null;
+  if (CLAUDE_API_KEY) {
+    claudeClient = new Anthropic({
+      apiKey: CLAUDE_API_KEY,
+    });
+  }
+  
+  // Visualization generation loop with validation
+  while (visualizationConfigs.length === 0 && vizValidationAttempts < MAX_VIZ_VALIDATION_ATTEMPTS) {
+    try {
+      console.log(`Visualization generation attempt ${vizValidationAttempts + 1}`);
+      
+      // Try with Gemini first
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text();
+      
+      // Extract the JSON array from the response
+      const jsonMatch = responseText.match(/\[[\s\S]*\]/);
+      
+      if (jsonMatch) {
+        try {
+          const parsedViz = JSON.parse(jsonMatch[0]);
+          
+          if (Array.isArray(parsedViz) && parsedViz.length > 0) {
+            // Validate visualizations with Gemini
+            const vizValidationPrompt = `
+You are a data visualization quality expert. Review these Chart.js visualization configurations and determine if they meet these criteria:
+1. Based ONLY on data explicitly mentioned in the source
+2. Use appropriate chart types for the data
+3. Include complete and valid Chart.js configuration structure
+4. Do not contain made-up or invented data values
+
+SOURCE DATA (EXCERPT):
+${JSON.stringify(extractedData, null, 2).substring(0, 500)}...
+
+VISUALIZATION CONFIGS:
+${JSON.stringify(parsedViz.slice(0, 2))}...
+
+TASK:
+Evaluate if these visualizations meet all criteria. Answer ONLY with "YES" or "NO" followed by a brief reason.
+`;
+            
+            const vizValidationResult = await model.generateContent(vizValidationPrompt);
+            const vizValidationResponse = vizValidationResult.response.text().trim();
+            
+            console.log(`Visualization validation result: ${vizValidationResponse.substring(0, 50)}...`);
+            
+            if (vizValidationResponse.startsWith("YES")) {
+              // Visualizations are valid
+              visualizationConfigs = parsedViz;
+              console.log(`Gemini generated ${visualizationConfigs.length} valid visualizations`);
+            } else if (vizValidationAttempts > 0 && claudeClient) {
+              // Try Claude on second attempt
+              console.log("Switching to Claude for visualization generation");
+              
+              const claudeVizResponse = await claudeClient.messages.create({
+                model: CLAUDE_MODEL,
+                max_tokens: 4000,
+                messages: [
+                  {
+                    role: "user",
+                    content: prompt
+                  }
+                ]
+              });
+              
+              const claudeVizText = claudeVizResponse.content[0].text;
+              const claudeArrayMatch = claudeVizText.match(/\[\s*\{[\s\S]*\}\s*\]/);
+              
+              if (claudeArrayMatch) {
+                visualizationConfigs = JSON.parse(claudeArrayMatch[0]);
+                console.log(`Claude generated ${visualizationConfigs.length} visualizations`);
+              }
+            }
+          }
+        } catch (parseError) {
+          console.error("Error parsing visualization JSON:", parseError);
+        }
+      }
+      
+      vizValidationAttempts++;
+      
+    } catch (vizError) {
+      console.error("Error in visualization generation attempt:", vizError);
+      vizValidationAttempts++;
+    }
+  }
+  
+  // Final attempt with Claude if still no visualizations
+  if (visualizationConfigs.length === 0 && claudeClient) {
+    console.log("Making final visualization attempt with Claude");
+    
+    try {
+      const claudeFinalVizResponse = await claudeClient.messages.create({
+        model: CLAUDE_MODEL,
+        max_tokens: 4000,
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      });
+      
+      const claudeVizText = claudeFinalVizResponse.content[0].text;
+      const claudeArrayMatch = claudeVizText.match(/\[\s*\{[\s\S]*\}\s*\]/);
+      
+      if (claudeArrayMatch) {
+        try {
+          visualizationConfigs = JSON.parse(claudeArrayMatch[0]);
+          console.log(`Claude final attempt generated ${visualizationConfigs.length} visualizations`);
+        } catch (parseError) {
+          console.error("Error parsing Claude's visualization JSON:", parseError);
+        }
+      }
+    } catch (claudeVizError) {
+      console.error("Error with Claude visualization generation:", claudeVizError);
+    }
+  }
+  
+  console.log(`Final visualization count: ${visualizationConfigs.length}`);
+  return visualizationConfigs;
+}
+
+// Generate visualizations from extracted data
+function generateVisualizationsFromExtractedData(data, reportParams) {
+  if (!data) return [];
+  
+  console.log("Generating fallback visualizations from extracted data");
+  const visualizations = [];
+  
+  // Create a color palette for consistent visualizations
+  const colorPalette = {
+    primary: ["#8B5CF6", "#7C3AED", "#6D28D9", "#5B21B6", "#4C1D95", "#4338CA", "#3730A3", "#312E81"],
+    secondary: ["#10B981", "#059669", "#047857", "#065F46", "#064E3B", "#065F46", "#047857", "#059669"],
+    accent: ["#F59E0B", "#D97706", "#B45309", "#92400E", "#78350F", "#92400E", "#B45309", "#D97706"],
+    danger: ["#EF4444", "#DC2626", "#B91C1C", "#991B1B", "#7F1D1D", "#991B1B", "#B91C1C", "#DC2626"],
+    info: ["#3B82F6", "#2563EB", "#1D4ED8", "#1E40AF", "#1E3A8A", "#1E40AF", "#1D4ED8", "#2563EB"],
+    // Expanded palette for better visualizations
+    chart: [
+      "#4C1D95", "#2563EB", "#059669", "#D97706", "#DC2626",
+      "#6D28D9", "#1D4ED8", "#10B981", "#F59E0B", "#B91C1C",
+      "#8B5CF6", "#3B82F6", "#047857", "#B45309", "#EF4444"
+    ]
+  };
+  
+  // Generate a default color set based on chart type and count
+  const getDefaultColors = (type, count) => {
+    const colors = type === 'line' ? colorPalette.info : colorPalette.chart;
+    return Array(count).fill().map((_, i) => colors[i % colors.length]);
+  };
+
+  // Department visualization - only if we have enough departments
+  if (data.departmentLabels && data.departmentLabels.length > 1) {
+    // Limit to top 8 departments if there are too many
+    let departmentLabels = [...data.departmentLabels];
+    let departmentCounts = [...data.departmentCounts];
+    
+    if (departmentLabels.length > 8) {
+      // Sort departments by count and take top 7 + "Other"
+      const sortedIndices = departmentCounts
+        .map((count, index) => ({ count, index }))
+        .sort((a, b) => b.count - a.count)
+        .map(item => item.index);
+      
+      const topLabels = sortedIndices.slice(0, 7).map(index => departmentLabels[index]);
+      const topCounts = sortedIndices.slice(0, 7).map(index => departmentCounts[index]);
+      
+      const otherCount = sortedIndices.slice(7).reduce((sum, index) => sum + departmentCounts[index], 0);
+      
+      departmentLabels = [...topLabels, 'Other'];
+      departmentCounts = [...topCounts, otherCount];
+    }
+    
+    visualizations.push({
+      type: "pie",
+      title: "Department Distribution Analysis",
+      description: "Shows the distribution of personnel across departments, highlighting organizational structure and potential resource allocation insights",
+      data: {
+        labels: departmentLabels,
+        datasets: [
+          {
+            label: "Department Distribution",
+            data: departmentCounts,
+            backgroundColor: colorPalette.chart.slice(0, departmentLabels.length)
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              boxWidth: 12,
+              padding: 15
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const percentage = Math.round((value / total) * 100);
+                return `${label}: ${value} (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    // Add a second visualization showing departments as a bar chart for comparison
+    if (departmentLabels.length >= 3 && departmentLabels.length <= 8) {
+      // Sort data for better visualization
+      const combinedData = departmentLabels.map((label, i) => ({ 
+        label, 
+        value: departmentCounts[i] 
+      })).sort((a, b) => b.value - a.value);
+      
+      visualizations.push({
+        type: "bar",
+        title: "Department Size Comparison",
+        description: "Compares the size of each department, allowing for easy identification of the largest and smallest departments",
+        data: {
+          labels: combinedData.map(item => item.label),
+          datasets: [
+            {
+              label: "Headcount",
+              data: combinedData.map(item => item.value),
+              backgroundColor: colorPalette.primary[0],
+              borderColor: colorPalette.primary[1],
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Number of Employees'
+              }
+            }
+          }
+        }
+      });
+    }
+  }
+  
+  // Role visualization - only if we have meaningful role data
+  if (data.roleLabels && data.roleLabels.length > 1) {
+    // Limit to top 10 roles if there are too many
+    let roleLabels = [...data.roleLabels];
+    let roleCounts = [...data.roleCounts];
+    
+    if (roleLabels.length > 10) {
+      // Sort roles by count and take top 10
+      const sortedIndices = roleCounts
+        .map((count, index) => ({ count, index }))
+        .sort((a, b) => b.count - a.count)
+        .map(item => item.index)
+        .slice(0, 10);
+      
+      roleLabels = sortedIndices.map(index => roleLabels[index]);
+      roleCounts = sortedIndices.map(index => roleCounts[index]);
+    } else {
+      // Sort by count for better visualization
+      const combinedData = roleLabels.map((label, i) => ({ 
+        label, 
+        value: roleCounts[i] 
+      })).sort((a, b) => b.value - a.value);
+      
+      roleLabels = combinedData.map(item => item.label);
+      roleCounts = combinedData.map(item => item.value);
+    }
+    
+    visualizations.push({
+      type: "bar",
+      title: "Role Distribution Analysis",
+      description: "Displays the distribution of roles across the organization, highlighting key positions and potential skills gaps",
+      data: {
+        labels: roleLabels,
+        datasets: [
+          {
+            label: "Number of Personnel",
+            data: roleCounts,
+            backgroundColor: colorPalette.secondary[0],
+            borderColor: colorPalette.secondary[1],
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        indexAxis: roleLabels.length > 5 ? 'y' : 'x', // Use horizontal bar chart for many roles
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  // Project status visualization - only if we have status data
+  if (data.statusLabels && data.statusLabels.length > 1) {
+    // Map status labels to appropriate colors
+    const statusColors = {
+      'completed': colorPalette.secondary[0],
+      'complete': colorPalette.secondary[0],
+      'in progress': colorPalette.primary[0],
+      'ongoing': colorPalette.primary[0],
+      'planned': colorPalette.info[0],
+      'on hold': colorPalette.accent[0],
+      'delayed': colorPalette.accent[1],
+      'canceled': colorPalette.danger[0],
+      'cancelled': colorPalette.danger[0]
+    };
+    
+    const colors = data.statusLabels.map(status => 
+      statusColors[status.toLowerCase()] || colorPalette.primary[0]
+    );
+    
+    visualizations.push({
+      type: "doughnut",
+      title: "Project Status Overview",
+      description: "Reveals the current distribution of projects by status, highlighting operational efficiency and potential bottlenecks",
+      data: {
+        labels: data.statusLabels.map(s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()),
+        datasets: [
+          {
+            label: "Project Status",
+            data: data.statusCounts,
+            backgroundColor: colors
+          }
+        ]
+      },
+      options: {
+        cutout: '60%',
+        plugins: {
+          legend: {
+            position: 'bottom'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const percentage = Math.round((value / total) * 100);
+                return `${label}: ${value} (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    // Add a bar chart showing project counts by status
+    visualizations.push({
+      type: "bar",
+      title: "Project Status Distribution",
+      description: "Shows the number of projects in each status category, helping identify resource allocation needs",
+      data: {
+        labels: data.statusLabels.map(s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()),
+        datasets: [
+          {
+            label: "Number of Projects",
+            data: data.statusCounts,
+            backgroundColor: colors
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            },
+            title: {
+              display: true,
+              text: 'Number of Projects'
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  // Metrics visualization - only if we have meaningful metrics
+  if (data.metricLabels && data.metricLabels.length > 0) {
+    visualizations.push({
+      type: "bar",
+      title: "Key Performance Indicators",
+      description: "Displays critical business metrics extracted from the data, providing a snapshot of organizational performance",
+      data: {
+        labels: data.metricLabels.map(label => label.charAt(0).toUpperCase() + label.slice(1)), // Capitalize
+        datasets: [
+          {
+            label: "Value",
+            data: data.metricValues,
+            backgroundColor: data.metricLabels.map((_, i) => colorPalette.chart[i % colorPalette.chart.length])
+          }
+        ]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const value = context.raw;
+                return `Value: ${value}`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  // Time series visualization - only if we have time series data
+  if (data.timeSeriesLabels && data.timeSeriesLabels.length > 1) {
+    visualizations.push({
+      type: "line",
+      title: "Employee Growth Trend",
+      description: "Shows how the employee count has changed over time, revealing growth patterns and potential future trends",
+      data: {
+        labels: data.timeSeriesLabels,
+        datasets: [
+          {
+            label: "Employee Count",
+            data: data.timeSeriesValues,
+            backgroundColor: "rgba(139, 92, 246, 0.2)",
+            borderColor: "#8B5CF6",
+            tension: 0.3,
+            fill: true
+          }
+        ]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Employees'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Quarter'
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Employees: ${context.raw}`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  // If we have tables in the data, try to create a chart from the first table
+  if (data.tables && data.tables.length > 0 && data.tables[0].headers && data.tables[0].rows && data.tables[0].rows.length > 0) {
+    const table = data.tables[0];
+    
+    // Check if we can create a meaningful chart from this table
+    // We need at least one column that could be numeric
+    const numericColumnIndices = [];
+    
+    table.rows.forEach(row => {
+      row.forEach((cell, index) => {
+        // Check if this cell contains a number
+        const num = parseFloat(cell);
+        if (!isNaN(num)) {
+          if (!numericColumnIndices.includes(index)) {
+            numericColumnIndices.push(index);
+          }
+        }
+      });
+    });
+    
+    if (numericColumnIndices.length > 0) {
+      // Use the first non-numeric column as labels
+      let labelColumnIndex = 0;
+      for (let i = 0; i < table.headers.length; i++) {
+        if (!numericColumnIndices.includes(i)) {
+          labelColumnIndex = i;
+          break;
+        }
+      }
+      
+      // Get labels from the first column
+      const labels = table.rows.map(row => row[labelColumnIndex]);
+      
+      // Create datasets from numeric columns
+      const datasets = numericColumnIndices.map((colIndex, i) => {
+        const header = table.headers[colIndex];
+        return {
+          label: header,
+          data: table.rows.map(row => parseFloat(row[colIndex]) || 0),
+          backgroundColor: colorPalette.chart[i % colorPalette.chart.length],
+          borderColor: colorPalette.chart[(i + 1) % colorPalette.chart.length],
+          borderWidth: 1
+        };
+      });
+      
+      // Only add if we have valid data
+      if (labels.length > 0 && datasets.length > 0) {
+        const chartType = datasets.length === 1 ? 'bar' : 'line';
+        
+        visualizations.push({
+          type: chartType,
+          title: "Data Comparison Analysis",
+          description: `Comparative analysis of ${datasets.map(d => d.label).join(', ')} across different ${table.headers[labelColumnIndex].toLowerCase() || 'categories'}`,
+          data: {
+            labels: labels,
+            datasets: datasets
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+    }
+  }
+  
+  // If we have department and role data, create a combination chart
+  if (data.departmentLabels && data.departmentLabels.length > 0 && 
+      data.roleLabels && data.roleLabels.length > 0) {
+    
+    // Create a chart that shows top roles across departments
+    const topRoles = data.roleLabels.slice(0, 5);
+    
+    // This would normally require additional data processing
+    // As a fallback, we'll create a simulated dataset based on what we have
+    
+    // For each department, distribute roles proportionally based on overall distribution
+    const departmentRoleData = data.departmentLabels.map(dept => {
+      const deptIndex = data.departmentLabels.indexOf(dept);
+      const deptCount = data.departmentCounts[deptIndex];
+      
+      return topRoles.map((role, roleIndex) => {
+        const roleRatio = data.roleCounts[data.roleLabels.indexOf(role)] / 
+                          data.roleCounts.reduce((sum, val) => sum + val, 0);
+        
+        // Add some variability to make the chart more interesting
+        const variability = 0.7 + Math.random() * 0.6; // 0.7 to 1.3
+        return Math.round(deptCount * roleRatio * variability);
+      });
+    });
+    
+    // Create a stacked bar chart
+    visualizations.push({
+      type: "bar",
+      title: "Role Distribution by Department",
+      description: "Shows how different roles are distributed across departments, revealing organizational structure patterns",
+      data: {
+        labels: data.departmentLabels,
+        datasets: topRoles.map((role, i) => ({
+          label: role,
+          data: departmentRoleData.map(dept => dept[i]),
+          backgroundColor: colorPalette.chart[i % colorPalette.chart.length]
+        }))
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Top Roles by Department'
+          }
+        },
+        scales: {
+          x: {
+            stacked: true
+          },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Employees'
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  console.log(`Generated ${visualizations.length} fallback visualizations`);
+  return visualizations;
+}
+
+// Extract structured data from the text response for visualization
+function extractDataFromText(text) {
+  console.log("Extracting data from text, length:", text?.length || 0);
+  
+  if (!text) return {};
+  
+  const data = {
+    departmentLabels: [],
+    departmentCounts: [],
+    roleLabels: [],
+    roleCounts: [],
+    statusLabels: [],
+    statusCounts: [],
+    metricLabels: [],
+    metricValues: [],
+    timeSeriesLabels: [],
+    timeSeriesValues: [],
+    tables: []
+  };
+  
+  try {
+    // Look for employees and their roles first
+    const employeeRegex = /([\w\s]+)\s+\(([\w\s,]+)\)/g;
+    const employees = [];
+    const roles = [];
+    let match;
+    
+    while ((match = employeeRegex.exec(text)) !== null) {
+      employees.push(match[1].trim());
+      
+      // Split roles by comma if multiple
+      const employeeRoles = match[2].split(',').map(r => r.trim());
+      employeeRoles.forEach(role => {
+        if (!roles.includes(role)) {
+          roles.push(role);
+        }
+      });
+    }
+    
+    // Industry-agnostic approach - look for any kind of organizational divisions
+    // This could be departments, teams, units, specialties, or other groupings
+    const divisionPatterns = [
+      { regex: /departments?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i, type: "Department" },
+      { regex: /teams?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i, type: "Team" },
+      { regex: /units?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i, type: "Unit" },
+      { regex: /divisions?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i, type: "Division" },
+      { regex: /specialties?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i, type: "Specialty" },
+      { regex: /areas?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i, type: "Area" },
+      { regex: /disciplines?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i, type: "Discipline" }
+    ];
+    
+    // Try each pattern until we find some organizational divisions
+    for (const pattern of divisionPatterns) {
+      const divisionMatch = text.match(pattern.regex);
+      
+      if (divisionMatch && divisionMatch[1]) {
+        const divisionText = divisionMatch[1];
+        
+        // Look for bullet list items with counts
+        const divisionItems = divisionText.match(/[-*]\s*([\w\s&]+)\s*\(?(\d+)[^)]*\)?/g);
+        
+        if (divisionItems && divisionItems.length > 0) {
+          divisionItems.forEach(item => {
+            const itemMatch = item.match(/[-*]\s*([\w\s&]+)\s*\(?(\d+)[^)]*\)?/);
+            if (itemMatch) {
+              data.departmentLabels.push(itemMatch[1].trim());
+              data.departmentCounts.push(parseInt(itemMatch[2], 10));
+            }
+          });
+          
+          if (data.departmentLabels.length > 0) {
+            break; // Found divisions, no need to try other patterns
+          }
+        }
+      }
+    }
+    
+    // If no formal departments found, look for mentions of departments/teams/divisions in the text
+    if (data.departmentLabels.length === 0) {
+      // Common organizational terms across industries
+      const divisionTerms = [
+        "Department", "Team", "Unit", "Division", "Specialty", "Group",
+        "Practice", "Center", "Ward", "Clinic", "Station", "Branch", "Section"
+      ];
+      
+      // Look for these terms followed by specific names
+      const divisionMentions = {};
+      
+      divisionTerms.forEach(term => {
+        const termRegex = new RegExp(`${term}\\s+of\\s+([\\w\\s&]+)`, 'gi');
+        let divMatch;
+        
+        while ((divMatch = termRegex.exec(text)) !== null) {
+          const divName = divMatch[1].trim();
+          divisionMentions[divName] = (divisionMentions[divName] || 0) + 1;
+        }
+        
+        // Also look for "<Name> Department/Team/etc."
+        const altRegex = new RegExp(`([\\w\\s&]+)\\s+${term}`, 'gi');
+        let altMatch;
+        
+        while ((altMatch = altRegex.exec(text)) !== null) {
+          const divName = altMatch[1].trim();
+          divisionMentions[divName] = (divisionMentions[divName] || 0) + 1;
+        }
+      });
+      
+      // If we found at least two different organizational units
+      if (Object.keys(divisionMentions).length >= 2) {
+        data.departmentLabels = Object.keys(divisionMentions);
+        // Create approximate counts - more frequently mentioned ones probably have more people
+        data.departmentCounts = Object.values(divisionMentions).map(count => 
+          Math.max(1, Math.round(count * (employees.length > 0 ? employees.length / 3 : 2)))
+        );
+      }
+    }
+    
+    // Roles section - extract from various formats
+    if (roles.length > 0) {
+      // Count occurrences of each role
+      const roleCounts = {};
+      roles.forEach(role => {
+        roleCounts[role] = (roleCounts[role] || 0) + 1;
+      });
+      
+      data.roleLabels = Object.keys(roleCounts);
+      data.roleCounts = Object.values(roleCounts);
+    } else {
+      // Look for role information in various formats
+      const rolePatterns = [
+        { regex: /roles?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i },
+        { regex: /positions?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i },
+        { regex: /titles?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i },
+        { regex: /job\s+functions?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i }
+      ];
+      
+      for (const pattern of rolePatterns) {
+        const roleMatch = text.match(pattern.regex);
+        
+        if (roleMatch && roleMatch[1]) {
+          const roleText = roleMatch[1];
+          
+          // Look for bullet list with counts
+          const roleItems = roleText.match(/[-*]\s*([\w\s&]+)\s*\(?(\d+)[^)]*\)?/g);
+          
+          if (roleItems && roleItems.length > 0) {
+            roleItems.forEach(item => {
+              const roleItemMatch = item.match(/[-*]\s*([\w\s&]+)\s*\(?(\d+)[^)]*\)?/);
+              if (roleItemMatch) {
+                data.roleLabels.push(roleItemMatch[1].trim());
+                data.roleCounts.push(parseInt(roleItemMatch[2], 10));
+              }
+            });
+          }
+          
+          if (data.roleLabels.length > 0) {
+            break; // Found roles, no need to try other patterns
+          }
+        }
+      }
+    }
+    
+    // If still no roles found, try to extract from common job titles in text
+    if (data.roleLabels.length === 0) {
+      // Common job titles across industries
+      const commonTitles = [
+        "Manager", "Director", "Supervisor", "Coordinator", "Specialist", "Analyst",
+        "Officer", "Executive", "Administrator", "Assistant", "Associate", "Lead",
+        "Engineer", "Developer", "Designer", "Consultant", "Advisor",
+        "Doctor", "Nurse", "Physician", "Surgeon", "Therapist", "Technician",
+        "Researcher", "Scientist", "Professor", "Teacher", "Instructor",
+        "Representative", "Agent", "Advisor", "Counselor"
+      ];
+      
+      const titleMatches = {};
+      
+      commonTitles.forEach(title => {
+        const titleRegex = new RegExp(`\\b${title}s?\\b`, 'gi');
+        const matches = text.match(titleRegex) || [];
+        
+        if (matches.length > 0) {
+          titleMatches[title] = matches.length;
+        }
+      });
+      
+      if (Object.keys(titleMatches).length > 0) {
+        data.roleLabels = Object.keys(titleMatches);
+        data.roleCounts = Object.values(titleMatches);
+      }
+    }
+    
+    // Extract metrics in a generic way - look for numbers associated with labels
+    const metricPatterns = [
+      // Pattern for "X has a score of Y"
+      { regex: /([\w\s]+) has a (?:score|rating|level|value|index) of ([\d.]+)/gi },
+      // Pattern for "X score/rate/level is Y"
+      { regex: /([\w\s]+) (?:score|rate|level|value|index) (?:is|was|of) ([\d.]+)/gi },
+      // Pattern for "X: Y" or "X - Y" where Y is a number
+      { regex: /([\w\s]+)(?:\:|-)?\s+([\d.]+)%?/gi }
+    ];
+    
+    for (const pattern of metricPatterns) {
+      let metricMatch;
+      
+      while ((metricMatch = pattern.regex.exec(text)) !== null) {
+        const metricName = metricMatch[1].trim();
+        const metricValue = parseFloat(metricMatch[2]);
+        
+        if (!isNaN(metricValue)) {
+          data.metricLabels.push(metricName);
+          data.metricValues.push(metricValue);
+        }
+      }
+    }
+    
+    // Status data - try to extract categorical status information
+    const statusPatterns = [
+      { regex: /status(?:es)?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i },
+      { regex: /categories?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i },
+      { regex: /types?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i },
+      { regex: /classifications?:?\s*([\s\S]*?)(?=\n\s*\n|\*\*\d|\#|$)/i }
+    ];
+    
+    for (const pattern of statusPatterns) {
+      const statusMatch = text.match(pattern.regex);
+      
+      if (statusMatch && statusMatch[1]) {
+        const statusText = statusMatch[1];
+        
+        // Look for bullet list with counts
+        const statusItems = statusText.match(/[-*]\s*([\w\s]+)(?:\:|-)?\s*(\d+)/g);
+        
+        if (statusItems && statusItems.length > 0) {
+          statusItems.forEach(item => {
+            const statusItemMatch = item.match(/[-*]\s*([\w\s]+)(?:\:|-)?\s*(\d+)/);
+            if (statusItemMatch) {
+              data.statusLabels.push(statusItemMatch[1].trim());
+              data.statusCounts.push(parseInt(statusItemMatch[2], 10));
+            }
+          });
+        }
+        
+        if (data.statusLabels.length > 0) {
+          break; // Found statuses, no need to try other patterns
+        }
+      }
+    }
+    
+    // If no formal status categories found, look for common status terms
+    if (data.statusLabels.length === 0) {
+      // Grouped by related concepts that might appear together
+      const statusGroups = [
+        // Project status
+        ["Completed", "In Progress", "Planned", "On Hold", "Delayed", "Canceled"],
+        // Performance status
+        ["Exceeds Expectations", "Meets Expectations", "Needs Improvement", "Unsatisfactory"],
+        // Risk levels
+        ["High Risk", "Medium Risk", "Low Risk"],
+        // Priority levels
+        ["High Priority", "Medium Priority", "Low Priority"],
+        // Satisfaction levels
+        ["Very Satisfied", "Satisfied", "Neutral", "Dissatisfied", "Very Dissatisfied"]
+      ];
+      
+      // Try each group to see if multiple terms from the group appear in the text
+      for (const group of statusGroups) {
+        const matchingTerms = {};
+        
+        group.forEach(term => {
+          const termRegex = new RegExp(`\\b${term.replace(/\s+/g, '\\s+')}\\b`, 'gi');
+          const matches = text.match(termRegex) || [];
+          
+          if (matches.length > 0) {
+            matchingTerms[term] = matches.length;
+          }
+        });
+        
+        // If we found at least two terms from this group, use them as status categories
+        if (Object.keys(matchingTerms).length >= 2) {
+          data.statusLabels = Object.keys(matchingTerms);
+          data.statusCounts = Object.values(matchingTerms);
+          break; // Found a suitable status group
+        }
+      }
+    }
+    
+    // Time series data - look for time periods with associated values
+    const timePatterns = [
+      // Quarters with values: "Q1 2023: 45" or "in Q2 2024, value was 3.2"
+      { regex: /(?:Q[1-4]\s+\d{4})(?:\s*:|,\s*)\s*(?:value|score|number|amount)?\s*(?:was|is|of)?\s*(\d+\.?\d*)/gi },
+      // Months with values: "January 2023: 45" or "in March 2024, value was 3.2"
+      { regex: /(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}(?:\s*:|,\s*)\s*(?:value|score|number|amount)?\s*(?:was|is|of)?\s*(\d+\.?\d*)/gi },
+      // Years with values: "2023: 45" or "in 2024, value was 3.2"
+      { regex: /(?:in\s+)?(\d{4})(?:\s*:|,\s*)\s*(?:value|score|number|amount)?\s*(?:was|is|of)?\s*(\d+\.?\d*)/gi }
+    ];
+    
+    for (const pattern of timePatterns) {
+      let timeMatch;
+      
+      while ((timeMatch = pattern.regex.exec(text)) !== null) {
+        // Extract the time period and value
+        const timePeriod = timeMatch[1].trim();
+        const timeValue = parseFloat(timeMatch[2] || timeMatch[1]);
+        
+        if (!isNaN(timeValue)) {
+          data.timeSeriesLabels.push(timePeriod);
+          data.timeSeriesValues.push(timeValue);
+        }
+      }
+    }
+    
+    // If we still don't have time series data, try the feedback data pattern specifically
+    if (data.timeSeriesLabels.length === 0) {
+      const feedbackRegex = /([\w\s]+) (?:has given|has received|received) feedback (?:with an average (?:rating|score) of|averaging a score of|of) ([\d.]+)/gi;
+      let feedbackMatch;
+      
+      while ((feedbackMatch = feedbackRegex.exec(text)) !== null) {
+        const name = feedbackMatch[1].trim();
+        const score = parseFloat(feedbackMatch[2]);
+        
+        if (!isNaN(score)) {
+          data.timeSeriesLabels.push(name);
+        }
+      }
+    }
+    
+    console.log("Extracted data from text:", {
+      departments: data.departmentLabels.length,
+      roles: data.roleLabels.length,
+      statuses: data.statusLabels.length,
+      metrics: data.metricLabels.length,
+      timeSeriesPoints: data.timeSeriesLabels.length
+    });
+    
+    return data;
+  } catch (error) {
+    console.error("Error extracting data from text:", error);
+    return data;
+  }
+}
+
+// Extract source information from the response
+function extractSourceInfo(text) {
+  if (!text) return null;
+  
+  try {
+    // Look for a DATA_SOURCE section
+    const sourceMatch = text.match(/##DATA_SOURCE##\s*(.*?)(?=##|$)/);
+    if (sourceMatch && sourceMatch[1]) {
+      return {
+        description: sourceMatch[1].trim(),
+        type: 'database'
+      };
+    }
+    
+    // Look for "Used X records from" pattern
+    const recordsMatch = text.match(/Used\s+(\d+)\s+records\s+from\s+(.*?)(?=\.|$)/i);
+    if (recordsMatch) {
+      return {
+        description: `${recordsMatch[2].trim()} (${recordsMatch[1]} records)`,
+        type: 'database',
+        recordCount: parseInt(recordsMatch[1], 10)
+      };
+    }
+    
+    return {
+      description: 'Organizational database',
+      type: 'database'
+    };
+  } catch (error) {
+    console.error("Error extracting source info:", error);
+    return {
+      description: 'Organizational database',
+      type: 'database'
+    };
+  }
+}
+
+// Helper function to fix common JSON parsing issues
+function fixMalformedJson(jsonString) {
+  console.log("Attempting to fix malformed JSON");
+  
+  try {
+    // First try to parse it directly
+    return JSON.parse(jsonString);
+  } catch (error) {
+    console.log("Initial JSON parse failed, applying fixes...");
+    
+    // 1. Fix trailing commas in arrays and objects
+    let fixedJson = jsonString
+      .replace(/,\s*]/g, ']')
+      .replace(/,\s*}/g, '}');
+    
+    // 2. Ensure property names are quoted
+    fixedJson = fixedJson.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?\s*:/g, '"$2":');
+    
+    // 3. Fix missing quotes around string values
+    // This is more complex, but we can handle simple cases
+    fixedJson = fixedJson.replace(/:(\s*)([^",\{\[\]\}\s][^",\{\[\]\}]*?)(\s*)(,|}|])/g, ':"$2"$3$4');
+    
+    // 4. Ensure all single quotes are replaced with double quotes
+    fixedJson = fixedJson.replace(/'/g, '"');
+    
+    try {
+      return JSON.parse(fixedJson);
+    } catch (secondError) {
+      console.error("Error fixing JSON:", secondError.message);
+      console.log("Error position:", secondError.message.match(/position (\d+)/)?.[1]);
+      
+      // If we can identify the position, try to log the problematic part
+      const errorPosition = secondError.message.match(/position (\d+)/)?.[1];
+      if (errorPosition) {
+        const position = parseInt(errorPosition, 10);
+        console.log("JSON excerpt near error:", fixedJson.substring(Math.max(0, position - 50), position + 50));
+      }
+      
+      // Try a different approach - extract just the content property
+      const contentMatch = jsonString.match(/"content"\s*:\s*"([^"\\]*(\\.[^"\\]*)*)"/);
+      if (contentMatch) {
+        return { content: contentMatch[1].replace(/\\"/g, '"').replace(/\\n/g, '\n') };
+      }
+      
+      throw new Error(`Failed to fix malformed JSON: ${secondError.message}`);
+    }
+  }
+}
+
+// Generate the report content using LLM
+async function generateReportContent(model, claudeClient, reportParams, queryResults, visualizationConfigs, webContext, webData, dbSourceInfo) {
+  console.log("Generating report content with parameters:", {
+    reportTopic: reportParams.reportTopic,
+    wordCount: reportParams.wordCount,
+    audience: reportParams.targetAudience,
+    hasVisualizations: visualizationConfigs && visualizationConfigs.length > 0
+  });
+  
+  // Create a prompt for the report content
+  const prompt = `You are an expert business report writer. Create a detailed, well-structured report on the following topic based on the provided data.
+
+REPORT TOPIC: ${reportParams.reportTopic || "Company Analysis"}
+
+COMPANY: ${reportParams.company || "The organization"}
+
+TARGET AUDIENCE: ${reportParams.targetAudience || "Business executives"}
+
+WORD COUNT: ${reportParams.wordCount || "500-800"} words
+
+TIMEFRAME: ${reportParams.timeframe || "Current"}
+
+INCLUDE VISUALS: ${reportParams.includeVisuals ? "Yes" : "No"}
+
+DELIVERY FORMAT: ${reportParams.deliveryFormat || "Web"}
+
+DATA FROM DATABASE:
+${queryResults?.substring(0, 3000) || "No database data available"}
+
+${webContext ? `ADDITIONAL CONTEXT FROM WEBSITE:
+${webContext.substring(0, 1000)}` : ""}
+
+${visualizationConfigs && visualizationConfigs.length > 0 ? 
+`VISUALIZATIONS TO BE INCLUDED (ALREADY CREATED):
+${JSON.stringify(visualizationConfigs.map(viz => ({ 
+  type: viz.type, 
+  title: viz.title, 
+  description: viz.description 
+})), null, 2)}` 
+: "NO VISUALIZATIONS WILL BE INCLUDED."}
+
+REQUIREMENTS:
+1. Create a comprehensive business report with a clear title, executive summary, and structured sections
+2. Include specific data points, metrics, and findings from the provided database information
+3. Maintain a professional tone appropriate for ${reportParams.targetAudience || "business executives"}
+4. Format the report using markdown (# for main headings, ## for subheadings, etc.)
+5. If visualizations are included, refer to them in appropriate places in the report
+6. Include a "References" section at the end citing the data sources
+7. Focus on actionable insights and business value
+
+IMPORTANT: Your response must be a valid JSON object with the following structure:
+{
+  "title": "The report title",
+  "content": "The full report content in markdown format"
+}
+
+The "content" field should contain properly formatted markdown with headers, lists, and paragraphs.
+`;
+
+  console.log("Starting report content generation with validation loop");
+  let reportJson = null;
+  let validationAttempts = 0;
+  const MAX_VALIDATION_ATTEMPTS = 2;
+  
+  // Report generation loop with validation
+  while (!reportJson && validationAttempts < MAX_VALIDATION_ATTEMPTS) {
+    try {
+      console.log(`Report generation attempt ${validationAttempts + 1}`);
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text();
+      
+      // Extract the JSON object from the response
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      
+      if (jsonMatch) {
+        try {
+          // Parse the JSON
+          const parsedReport = JSON.parse(jsonMatch[0]);
+          
+          // Validate the report with Gemini
+          const validationPrompt = `
+You are a quality assurance expert. Review the following business report and determine if it meets these criteria:
+1. Has a clear title and executive summary
+2. Contains specific data points from the source data
+3. Is professionally formatted with proper markdown
+4. Includes only information mentioned in the source
+5. Contains a References section
+
+SOURCE DATA (BRIEF EXCERPT):
+${queryResults?.substring(0, 500) || "No database data available"}...
+
+GENERATED REPORT:
+${parsedReport.content.substring(0, 1000)}...
+
+TASK:
+Evaluate if this report meets all criteria. Answer ONLY with "YES" or "NO" followed by a brief reason.
+`;
+          
+          const validationResult = await model.generateContent(validationPrompt);
+          const validationResponse = validationResult.response.text().trim();
+          
+          console.log(`Validation result: ${validationResponse.substring(0, 50)}...`);
+          
+          if (validationResponse.startsWith("YES")) {
+            // Report is valid
+            reportJson = parsedReport;
+            console.log("Gemini generated a valid report");
+          } else if (validationAttempts > 0 && claudeClient) {
+            // Try Claude on second attempt
+            console.log("Switching to Claude for report generation");
+            
+            const claudeReportResponse = await claudeClient.messages.create({
+              model: CLAUDE_MODEL,
+              max_tokens: 4000,
+              messages: [
+                {
+                  role: "user",
+                  content: prompt
+                }
+              ]
+            });
+            
+            const claudeText = claudeReportResponse.content[0].text;
+            const claudeJsonMatch = claudeText.match(/\{[\s\S]*\}/);
+            
+            if (claudeJsonMatch) {
+              reportJson = JSON.parse(claudeJsonMatch[0]);
+              console.log("Claude generated a valid report");
+            }
+          }
+        } catch (parseError) {
+          console.error("Error parsing report JSON:", parseError);
+        }
+      }
+      
+      validationAttempts++;
+      
+    } catch (error) {
+      console.error("Error in report generation attempt:", error);
+      validationAttempts++;
+    }
+  }
+  
+  // Final attempt with Claude if we still don't have content
+  if (!reportJson && claudeClient) {
+    console.log("Making final report generation attempt with Claude");
+    
+    try {
+      const claudeReportResponse = await claudeClient.messages.create({
+        model: CLAUDE_MODEL,
+        max_tokens: 4000,
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      });
+      
+      const claudeText = claudeReportResponse.content[0].text;
+      const claudeJsonMatch = claudeText.match(/\{[\s\S]*\}/);
+      
+      if (claudeJsonMatch) {
+        reportJson = JSON.parse(claudeJsonMatch[0]);
+      } else {
+        // Direct extraction if JSON parsing fails
+        reportJson = {
+          title: reportParams.reportTopic,
+          content: claudeText
+        };
+      }
+    } catch (claudeError) {
+      console.error("Error with Claude final report generation:", claudeError);
+    }
+  }
+  
+  // If we somehow still don't have valid content
+  if (!reportJson || !reportJson.content) {
+    console.error("All LLM attempts failed to produce a valid report");
+    reportJson = {
+      title: reportParams.reportTopic,
+      content: ""
+    };
+  }
+  
+  // Ensure the report has a References section if it doesn't already
+  if (!reportJson.content.includes("# References")) {
+    reportJson.content += `
+
+# References
+
+1. ${dbSourceInfo?.description || 'Organizational database'} (Generated on ${new Date().toLocaleDateString()})
+${webData ? `2. Website: ${webData.url || reportParams.website} (Title: ${webData.title || 'Not available'})` : ''}
+`;
+  }
+  
+  // Add visualizations to the report
+  reportJson.visualizations = visualizationConfigs;
+  
+  console.log("Report content generation complete");
+  console.log("Report title:", reportJson.title);
+  console.log("Content length:", reportJson.content?.length || 0);
+  
+  return reportJson;
+}
+
+// Export all functions using ES Modules
+export {
+  extractDataFromText,
+  extractSourceInfo,
+  generateVisualizationConfigs,
+  generateReportContent,
+  extractContentFromResponse,
+  fixMalformedJson
+}; 

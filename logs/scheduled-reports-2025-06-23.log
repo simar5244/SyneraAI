@@ -1,0 +1,176 @@
+[2025-06-23T00:00:16.298Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:00:17.900Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:00:18.079Z] [INFO] Found 1 company databases
+[2025-06-23T00:00:18.080Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:00:18.183Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:00:18.183Z)
+[2025-06-23T00:00:18.399Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:00:18.401Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:00:18.404Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:00:26.139Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:00:27.455Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:00:27.522Z] [INFO] Found 1 company databases
+[2025-06-23T00:00:27.523Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:00:27.604Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:00:27.604Z)
+[2025-06-23T00:00:27.662Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:00:27.662Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:00:27.665Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:00:46.298Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:00:47.391Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:00:47.628Z] [INFO] Found 1 company databases
+[2025-06-23T00:00:47.628Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:00:47.824Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:00:47.824Z)
+[2025-06-23T00:00:47.907Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:00:47.907Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:00:47.910Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:00:56.139Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:00:56.835Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:00:56.908Z] [INFO] Found 1 company databases
+[2025-06-23T00:00:56.908Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:00:56.973Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:00:56.973Z)
+[2025-06-23T00:00:57.032Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:00:57.032Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:00:57.034Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:01:16.299Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:01:17.054Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:01:17.134Z] [INFO] Found 1 company databases
+[2025-06-23T00:01:17.135Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:01:17.194Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:01:17.194Z)
+[2025-06-23T00:01:17.262Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:01:17.262Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:01:17.265Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:01:26.140Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:01:26.757Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:01:26.827Z] [INFO] Found 1 company databases
+[2025-06-23T00:01:26.827Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:01:26.884Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:01:26.884Z)
+[2025-06-23T00:01:26.942Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:01:26.942Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:01:26.944Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:01:46.300Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:01:47.019Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:01:47.089Z] [INFO] Found 1 company databases
+[2025-06-23T00:01:47.090Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:01:47.150Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:01:47.150Z)
+[2025-06-23T00:01:47.208Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:01:47.208Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:01:47.211Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:01:56.141Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:01:56.822Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:01:56.890Z] [INFO] Found 1 company databases
+[2025-06-23T00:01:56.891Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:01:56.950Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:01:56.950Z)
+[2025-06-23T00:01:57.009Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:01:57.011Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:01:57.013Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:02:16.301Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:02:17.014Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:02:17.083Z] [INFO] Found 1 company databases
+[2025-06-23T00:02:17.083Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:02:17.148Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:02:17.148Z)
+[2025-06-23T00:02:17.205Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:02:17.206Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:02:17.209Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:02:26.142Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:02:26.811Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:02:26.881Z] [INFO] Found 1 company databases
+[2025-06-23T00:02:26.882Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:02:26.941Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:02:26.941Z)
+[2025-06-23T00:02:26.998Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:02:26.998Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:02:27.002Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:02:46.302Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:02:46.935Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:02:47.007Z] [INFO] Found 1 company databases
+[2025-06-23T00:02:47.008Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:02:47.067Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:02:47.067Z)
+[2025-06-23T00:02:47.125Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:02:47.125Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:02:47.127Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:02:56.144Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:02:56.830Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:02:56.898Z] [INFO] Found 1 company databases
+[2025-06-23T00:02:56.899Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:02:56.957Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:02:56.957Z)
+[2025-06-23T00:02:57.014Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:02:57.015Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:02:57.017Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:03:16.303Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:03:17.534Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:03:17.611Z] [INFO] Found 1 company databases
+[2025-06-23T00:03:17.612Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:03:17.699Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:03:17.699Z)
+[2025-06-23T00:03:17.760Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:03:17.761Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:03:17.764Z] [DEBUG] MongoDB connection closed
+[2025-06-23T00:03:26.144Z] [INFO] Checking for scheduled reports...
+[2025-06-23T00:03:26.795Z] [DEBUG] Connected to MongoDB
+[2025-06-23T00:03:26.866Z] [INFO] Found 1 company databases
+[2025-06-23T00:03:26.866Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T00:03:26.926Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T00:03:26.926Z)
+[2025-06-23T00:03:26.984Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T00:03:26.985Z] [INFO] Scheduled reports check completed
+[2025-06-23T00:03:26.988Z] [DEBUG] MongoDB connection closed
+[2025-06-23T01:04:46.959Z] [INFO] Checking for scheduled reports...
+[2025-06-23T01:04:47.658Z] [DEBUG] Connected to MongoDB
+[2025-06-23T01:04:47.727Z] [INFO] Found 1 company databases
+[2025-06-23T01:04:47.728Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T01:04:47.785Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T01:04:47.785Z)
+[2025-06-23T01:04:47.842Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T01:04:47.842Z] [INFO] Scheduled reports check completed
+[2025-06-23T01:04:47.843Z] [DEBUG] MongoDB connection closed
+[2025-06-23T01:04:56.245Z] [INFO] Checking for scheduled reports...
+[2025-06-23T01:04:57.296Z] [DEBUG] Connected to MongoDB
+[2025-06-23T01:04:57.371Z] [INFO] Found 1 company databases
+[2025-06-23T01:04:57.371Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T01:04:57.431Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T01:04:57.431Z)
+[2025-06-23T01:04:57.491Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T01:04:57.492Z] [INFO] Scheduled reports check completed
+[2025-06-23T01:04:57.494Z] [DEBUG] MongoDB connection closed
+[2025-06-23T01:05:16.961Z] [INFO] Checking for scheduled reports...
+[2025-06-23T01:05:18.007Z] [DEBUG] Connected to MongoDB
+[2025-06-23T01:05:18.076Z] [INFO] Found 1 company databases
+[2025-06-23T01:05:18.077Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T01:05:18.139Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T01:05:18.139Z)
+[2025-06-23T01:05:18.198Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T01:05:18.198Z] [INFO] Scheduled reports check completed
+[2025-06-23T01:05:18.200Z] [DEBUG] MongoDB connection closed
+[2025-06-23T01:05:26.246Z] [INFO] Checking for scheduled reports...
+[2025-06-23T01:05:26.998Z] [DEBUG] Connected to MongoDB
+[2025-06-23T01:05:27.098Z] [INFO] Found 1 company databases
+[2025-06-23T01:05:27.099Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T01:05:27.160Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T01:05:27.160Z)
+[2025-06-23T01:05:27.285Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T01:05:27.285Z] [INFO] Scheduled reports check completed
+[2025-06-23T01:05:27.288Z] [DEBUG] MongoDB connection closed
+[2025-06-23T01:05:46.962Z] [INFO] Checking for scheduled reports...
+[2025-06-23T01:05:47.700Z] [DEBUG] Connected to MongoDB
+[2025-06-23T01:05:47.783Z] [INFO] Found 1 company databases
+[2025-06-23T01:05:47.783Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T01:05:47.847Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T01:05:47.847Z)
+[2025-06-23T01:05:47.933Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T01:05:47.934Z] [INFO] Scheduled reports check completed
+[2025-06-23T01:05:47.936Z] [DEBUG] MongoDB connection closed
+[2025-06-23T01:05:56.247Z] [INFO] Checking for scheduled reports...
+[2025-06-23T01:05:56.910Z] [DEBUG] Connected to MongoDB
+[2025-06-23T01:05:56.982Z] [INFO] Found 1 company databases
+[2025-06-23T01:05:56.982Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T01:05:57.045Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T01:05:57.045Z)
+[2025-06-23T01:05:57.102Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T01:05:57.103Z] [INFO] Scheduled reports check completed
+[2025-06-23T01:05:57.105Z] [DEBUG] MongoDB connection closed
+[2025-06-23T01:06:16.963Z] [INFO] Checking for scheduled reports...
+[2025-06-23T01:06:17.919Z] [DEBUG] Connected to MongoDB
+[2025-06-23T01:06:18.003Z] [INFO] Found 1 company databases
+[2025-06-23T01:06:18.004Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T01:06:18.066Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T01:06:18.066Z)
+[2025-06-23T01:06:18.165Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T01:06:18.166Z] [INFO] Scheduled reports check completed
+[2025-06-23T01:06:18.169Z] [DEBUG] MongoDB connection closed
+[2025-06-23T01:06:26.247Z] [INFO] Checking for scheduled reports...
+[2025-06-23T01:06:27.367Z] [DEBUG] Connected to MongoDB
+[2025-06-23T01:06:27.600Z] [INFO] Found 1 company databases
+[2025-06-23T01:06:27.600Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-23T01:06:27.672Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-23T01:06:27.672Z)
+[2025-06-23T01:06:27.736Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-23T01:06:27.746Z] [INFO] Scheduled reports check completed
+[2025-06-23T01:06:27.748Z] [DEBUG] MongoDB connection closed

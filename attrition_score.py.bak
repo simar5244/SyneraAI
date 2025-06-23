@@ -1,0 +1,944 @@
+#!/usr/bin/env python3
+import logging
+import os
+import json
+import math
+import numpy as np
+import pandas as pd
+import re
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure, OperationFailure
+from dotenv import load_dotenv
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
+from typing import List, Dict, Any, Tuple, Optional
+import time
+from datetime import datetime, timedelta
+import faiss
+import requests
+
+# --- Setup Logging ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.info("Attrition Score Analyzer starting up...")
+
+# --- Configuration ---
+# Load environment variables
+load_dotenv('.env.local', override=True)
+load_dotenv()
+
+# MongoDB connection settings
+MONGO_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+# Remove all database name references to avoid copyright issues
+if "org_sim_db" in MONGO_URI:
+    # Remove the specific database from connection string
+    MONGO_URI = MONGO_URI.split("/org_sim_db")[0] + "/"
+    if "?" in MONGO_URI:
+        MONGO_URI = MONGO_URI.split("?")[0] + "/"
+
+logging.info(f"MongoDB URI loaded: {MONGO_URI.replace('user:.*@', '***:***@')}")
+USERS_COLLECTION = "users"
+
+# Dictionary to store active database connections
+active_dbs = {}
+
+# Global variables
+client = None
+model = None
+role_index = None
+resp_index = None
+
+def connect_db():
+    """Connect to MongoDB and identify all available company databases"""
+    global client, active_dbs
+    max_retries = 3
+    retry_count = 0
+    retry_delay = 5  # seconds
+    
+    while retry_count < max_retries:
+        try:
+            if client is None:
+                logging.info(f"Connecting to MongoDB at {MONGO_URI}... (attempt {retry_count + 1}/{max_retries})")
+                
+                # Add options to help with DNS resolution timeouts
+                client_options = {
+                    "serverSelectionTimeoutMS": 30000,  # 30 seconds
+                    "connectTimeoutMS": 30000,
+                    "socketTimeoutMS": 45000,
+                    "retryWrites": True,
+                    "retryReads": True
+                }
+                
+                client = MongoClient(MONGO_URI, **client_options)
+                
+                # Test connection - this will raise exception if connection fails
+                client.admin.command('ismaster')
+                logging.info("MongoDB connection successful.")
+                
+                # Get list of all databases
+                refresh_database_list()
+                
+                # If we got here, connection was successful
+                return
+                
+        except ConnectionFailure as e:
+            retry_count += 1
+            logging.warning(f"MongoDB connection attempt {retry_count} failed: {e}")
+            if retry_count < max_retries:
+                logging.info(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+                retry_delay *= 2  # Exponential backoff
+            else:
+                logging.error(f"MongoDB connection failed after {max_retries} attempts: {e}")
+                client = None
+                active_dbs = {}
+        except Exception as e:
+            retry_count += 1
+            logging.error(f"An error occurred during DB connection: {e}")
+            if retry_count < max_retries:
+                logging.info(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+                retry_delay *= 2  # Exponential backoff
+            else:
+                logging.error(f"Failed to connect after {max_retries} attempts")
+                client = None
+                active_dbs = {}
+
+def refresh_database_list():
+    """Get the list of all databases and update active_dbs dictionary"""
+    global client, active_dbs
+    
+    if not client:
+        logging.error("Cannot refresh database list: MongoDB client is not connected")
+        return
+        
+    try:
+        # Get list of all database names
+        db_list = client.list_database_names()
+        
+        # Filter out system databases and auth_db
+        db_list = [db_name for db_name in db_list 
+                   if db_name not in ['admin', 'local', 'config', 'auth', 'auth_db']]
+        
+        logging.info(f"Found {len(db_list)} databases: {', '.join(db_list)}")
+        
+        # Update active_dbs dictionary
+        for db_name in db_list:
+            if db_name not in active_dbs:
+                db = client[db_name]
+                # Check if the required collections exist
+                collections = db.list_collection_names()
+                # For each database, we'll process entries as long as it has a users collection
+                if USERS_COLLECTION in collections:
+                    active_dbs[db_name] = db
+                    # Ensure indexes for faster lookups
+                    db[USERS_COLLECTION].create_index("email", unique=True)
+                    logging.info(f"Added database {db_name} to active databases")
+                else:
+                    logging.info(f"Skipping database {db_name}: No {USERS_COLLECTION} collection")
+        
+        logging.info(f"Active databases for processing: {len(active_dbs)}")
+    except Exception as e:
+        logging.error(f"Error refreshing database list: {e}")
+
+def load_model():
+    """Load sentence transformer model"""
+    global model
+    try:
+        logging.info("Loading sentence transformer model...")
+        start_time = time.time()
+        # Use a lightweight model for efficiency
+        model = SentenceTransformer('all-MiniLM-L6-v2')
+        logging.info(f"Model loaded in {time.time() - start_time:.2f} seconds")
+    except Exception as e:
+        logging.error(f"Error loading model: {e}")
+        model = None
+
+def initialize_vector_indexes():
+    """Initialize FAISS indexes for vector search"""
+    global model, role_index, resp_index
+    
+    if model is None:
+        logging.error("Cannot initialize vector indexes: model not loaded")
+        return
+    
+    try:
+        # Sample role data for seniority calculations
+        roles = [
+            "Intern",
+            "Junior Developer",
+            "Developer",
+            "Senior Developer",
+            "Team Lead",
+            "Engineering Manager",
+            "Director",
+            "VP of Engineering",
+            "CTO",
+            "CEO",
+            "Founder"
+        ]
+        
+        # Create embedding dimension
+        dim = model.get_sentence_embedding_dimension()
+        
+        # Create role index
+        role_embeddings = model.encode(roles, show_progress_bar=False)
+        role_index = faiss.IndexFlatIP(dim)
+        role_index.add(np.array(role_embeddings).astype('float32'))
+        logging.info(f"Initialized role vector index with {len(roles)} items")
+        
+        # Sample responsibility data
+        responsibilities = [
+            "junior level responsibilities",
+            "mid level responsibilities",
+            "senior level responsibilities"
+        ]
+        
+        # Create responsibility index
+        resp_embeddings = model.encode(responsibilities, show_progress_bar=False)
+        resp_index = faiss.IndexFlatIP(dim)
+        resp_index.add(np.array(resp_embeddings).astype('float32'))
+        logging.info(f"Initialized responsibility vector index with {len(responsibilities)} items")
+        
+    except Exception as e:
+        logging.error(f"Error initializing vector indexes: {e}")
+        role_index = None
+        resp_index = None
+
+def calculate_responsibility_mismatch(job_duties: List[str], job_title: str) -> Dict[str, Any]:
+    """
+    Calculate mismatch between job responsibilities and title seniority
+    
+    Args:
+        job_duties: List of job duties/responsibilities
+        job_title: Job title string
+        
+    Returns:
+        Dictionary with mismatch score and explanation
+    """
+    # This is a stub implementation, will be replaced with actual logic
+    logging.warning("Using stub implementation for calculate_responsibility_mismatch")
+    
+    return {
+        "mismatch_score": 0.5,
+        "confidence": 0.5,
+        "explanation": "Responsibility mismatch calculation is a stub"
+    }
+
+def calculate_tenure_factor(time_with_company_months: int, time_in_role_months: int) -> Dict[str, Any]:
+    """
+    Calculate tenure factor effect on attrition risk
+    
+    Args:
+        time_with_company_months: Months with company
+        time_in_role_months: Months in current role
+        
+    Returns:
+        Dictionary with tenure factor and explanation
+    """
+    # This is a stub implementation, will be replaced with actual logic
+    logging.warning("Using stub implementation for calculate_tenure_factor")
+    
+    return {
+        "tenure_factor": 0.5,
+        "confidence": 0.5,
+        "explanation": "Tenure factor calculation is a stub"
+    }
+
+def calculate_utilization_factor(utilization_assessment: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Calculate utilization factor effect on attrition risk
+    
+    Args:
+        utilization_assessment: Utilization assessment data
+        
+    Returns:
+        Dictionary with utilization factor and explanation
+    """
+    # This is a stub implementation, will be replaced with actual logic
+    logging.warning("Using stub implementation for calculate_utilization_factor")
+    
+    return {
+        "utilization_factor": 0.5,
+        "confidence": 0.5,
+        "explanation": "Utilization factor calculation is a stub"
+    }
+
+def calculate_seniority_factor(job_title: str) -> Dict[str, Any]:
+    """
+    Calculate seniority factor effect on attrition risk
+    
+    Args:
+        job_title: Job title string
+        
+    Returns:
+        Dictionary with seniority factor and explanation
+    """
+    # This is a stub implementation, will be replaced with actual logic
+    logging.warning("Using stub implementation for calculate_seniority_factor")
+    
+    return {
+        "seniority_factor": 0.5,
+        "confidence": 0.5,
+        "explanation": "Seniority factor calculation is a stub"
+    }
+
+def calculate_task_variety_index(job_duties: List[str], projects: List[Any], tools: List[str]) -> Dict[str, Any]:
+    """
+    Calculate task variety index effect on attrition risk
+    
+    Args:
+        job_duties: List of job duties
+        projects: List of projects
+        tools: List of tools used
+        
+    Returns:
+        Dictionary with task variety index and explanation
+    """
+    # This is a stub implementation, will be replaced with actual logic
+    logging.warning("Using stub implementation for calculate_task_variety_index")
+    
+    return {
+        "task_variety_index": 0.5,
+        "confidence": 0.5,
+        "explanation": "Task variety index calculation is a stub"
+    }
+
+def calculate_job_intensity_factor(job_intensity_analysis: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Calculate job intensity factor effect on attrition risk
+    
+    Args:
+        job_intensity_analysis: Job intensity analysis data
+        
+    Returns:
+        Dictionary with job intensity factor and explanation
+    """
+    # This is a stub implementation, will be replaced with actual logic
+    logging.warning("Using stub implementation for calculate_job_intensity_factor")
+    
+    return {
+        "job_intensity_factor": 0.5,
+        "confidence": 0.5,
+        "explanation": "Job intensity factor calculation is a stub"
+    }
+
+def calculate_role_project_ratio(projects: List[Any], seniority_level: float) -> Dict[str, Any]:
+    """
+    Calculate role project ratio effect on attrition risk
+    
+    Args:
+        projects: List of projects
+        seniority_level: Seniority level value (0-1)
+        
+    Returns:
+        Dictionary with role project ratio and explanation
+    """
+    # This is a stub implementation, will be replaced with actual logic
+    logging.warning("Using stub implementation for calculate_role_project_ratio")
+    
+    return {
+        "role_project_ratio": 0.5,
+        "confidence": 0.5,
+        "explanation": "Role project ratio calculation is a stub"
+    }
+
+def calculate_collaboration_factor(doc: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Calculate collaboration factor effect on attrition risk
+    
+    Args:
+        doc: Employee document
+        
+    Returns:
+        Dictionary with collaboration factor and explanation
+    """
+    # This is a stub implementation, will be replaced with actual logic
+    logging.warning("Using stub implementation for calculate_collaboration_factor")
+    
+    return {
+        "collaboration_factor": 0.5,
+        "confidence": 0.5,
+        "explanation": "Collaboration factor calculation is a stub"
+    }
+
+def calculate_salary_satisfaction(salary: float, job_title: str, work_mode: str, 
+                                 location: str, industry: str, doc: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Calculate salary satisfaction effect on attrition risk
+    
+    Args:
+        salary: Employee salary
+        job_title: Job title
+        work_mode: Work mode (remote, hybrid, on-site)
+        location: Employee location
+        industry: Company industry
+        doc: Full employee document
+        
+    Returns:
+        Dictionary with salary satisfaction and explanation
+    """
+    # This is a stub implementation, will be replaced with actual logic
+    logging.warning("Using stub implementation for calculate_salary_satisfaction")
+    
+    return {
+        "salary_satisfaction": 0.5,
+        "confidence": 0.5,
+        "explanation": "Salary satisfaction calculation is a stub"
+    }
+
+def calculate_attrition_score(doc: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Calculate attrition score based on various factors
+    
+    This combines multiple risk factors into a single attrition score
+    with detailed explanations of contributing factors
+    """
+    # Ensure doc is a dictionary
+    if not isinstance(doc, dict):
+        logging.error(f"Invalid document format: {type(doc)}")
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "email": "unknown",
+            "error": "Invalid document format"
+        }
+    
+    # Extract relevant fields with robust fallbacks
+    email = doc.get("email", "unknown")
+    
+    # Log data quality
+    logging.info(f"Calculating attrition score for {email}")
+    
+    try:
+        # Extract basic employee data
+        job_title = doc.get("role", "") or doc.get("jobTitle", "")
+        job_duties_raw = doc.get("jobDuties", []) or doc.get("jobResponsibilities", [])
+        
+        job_duties = []
+        if isinstance(job_duties_raw, list):
+            # Handle both string and dictionary formats
+            for duty in job_duties_raw:
+                if isinstance(duty, str):
+                    job_duties.append(duty)
+                elif isinstance(duty, dict) and "description" in duty:
+                    job_duties.append(duty["description"])
+                elif isinstance(duty, dict) and "duty" in duty:
+                    job_duties.append(duty["duty"])
+        
+        # Extract projects
+        projects = doc.get("projects", [])
+        
+        # Extract tools
+        tools_raw = doc.get("toolsProficient", [])
+        tools = []
+        if isinstance(tools_raw, list):
+            for tool in tools_raw:
+                if isinstance(tool, str):
+                    tools.append(tool)
+                elif isinstance(tool, dict) and "name" in tool:
+                    tools.append(tool["name"])
+        elif isinstance(tools_raw, str):
+            tools = [t.strip() for t in tools_raw.split(",")]
+        
+        # Extract time with company and in role
+        time_with_company_str = doc.get("timeWithCompany", "")
+        time_in_role_str = doc.get("timeInCurrentRole", "")
+        
+        time_with_company_months = doc.get("timeWithCompanyMonths", 0)
+        time_in_role_months = doc.get("timeInCurrentRoleMonths", 0)
+        
+        # Get other assessments
+        utilization_assessment = doc.get("utilizationAssessment", {})
+        job_intensity_analysis = doc.get("job_intensity_analysis", {})
+        
+        # Location and work mode
+        location = doc.get("location", "")
+        work_mode = doc.get("workMode", "") or "on-site"  # Default to on-site if not specified
+        
+        # Company details
+        company_name = doc.get("company_name", "")
+        industry = doc.get("industry", "")
+        
+        # Salary information (if available)
+        salary = 0
+        salary_history = doc.get("salaryHistory", [])
+        if salary_history and isinstance(salary_history, list) and len(salary_history) > 0:
+            latest_salary = salary_history[-1]
+            if isinstance(latest_salary, dict):
+                salary = latest_salary.get("amount", 0)
+        
+        # Calculate factors that contribute to attrition risk
+        try:
+            responsibility_mismatch = calculate_responsibility_mismatch(job_duties, job_title)
+        except Exception as e:
+            logging.error(f"calculate_responsibility_mismatch not available, using stub fallback")
+            responsibility_mismatch = {
+                "mismatch_score": 0.5,
+                "confidence": 0.3,
+                "explanation": "Could not calculate responsibility mismatch"
+            }
+            
+        try:
+            tenure_factor = calculate_tenure_factor(time_with_company_months, time_in_role_months)
+        except Exception as e:
+            logging.error(f"calculate_tenure_factor not available, using stub fallback")
+            tenure_factor = {
+                "tenure_factor": 0.5,
+                "confidence": 0.3,
+                "explanation": "Could not calculate tenure factor"
+            }
+            
+        try:
+            utilization_factor = calculate_utilization_factor(utilization_assessment)
+        except Exception as e:
+            logging.error(f"calculate_utilization_factor not available, using stub fallback")
+            utilization_factor = {
+                "utilization_factor": 0.5,
+                "confidence": 0.3,
+                "explanation": "Could not calculate utilization factor"
+            }
+            
+        try:
+            seniority_factor = calculate_seniority_factor(job_title)
+        except Exception as e:
+            logging.error(f"calculate_seniority_factor not available, using stub fallback")
+            seniority_factor = {
+                "seniority_factor": 0.5,
+                "confidence": 0.3,
+                "explanation": "Could not calculate seniority factor"
+            }
+            
+        try:
+            task_variety_index = calculate_task_variety_index(job_duties, projects, tools)
+        except Exception as e:
+            logging.error(f"calculate_task_variety_index not available, using stub fallback")
+            task_variety_index = {
+                "task_variety_index": 0.5,
+                "confidence": 0.3,
+                "explanation": "Could not calculate task variety index"
+            }
+            
+        try:
+            job_intensity_factor = calculate_job_intensity_factor(job_intensity_analysis)
+        except Exception as e:
+            logging.error(f"calculate_job_intensity_factor not available, using stub fallback")
+            job_intensity_factor = {
+                "job_intensity_factor": 0.5,
+                "confidence": 0.3,
+                "explanation": "Could not calculate job intensity factor"
+            }
+            
+        try:
+            role_project_ratio = calculate_role_project_ratio(projects, seniority_factor.get("seniority_factor", 0.5))
+        except Exception as e:
+            logging.error(f"calculate_role_project_ratio not available, using stub fallback")
+            role_project_ratio = {
+                "role_project_ratio": 0.5,
+                "confidence": 0.3,
+                "explanation": "Could not calculate role project ratio"
+            }
+            
+        try:
+            collaboration_factor = calculate_collaboration_factor(doc)
+        except Exception as e:
+            logging.error(f"calculate_collaboration_factor not available, using stub fallback")
+            collaboration_factor = {
+                "collaboration_factor": 0.5,
+                "confidence": 0.3,
+                "explanation": "Could not calculate collaboration factor"
+            }
+            
+        try:
+            salary_satisfaction = calculate_salary_satisfaction(
+                salary, job_title, work_mode, location, industry, doc)
+        except Exception as e:
+            logging.error(f"calculate_salary_satisfaction not available, using stub fallback")
+            salary_satisfaction = {
+                "salary_satisfaction": 0.5,
+                "confidence": 0.3,
+                "explanation": "Could not calculate salary satisfaction"
+            }
+        
+        # Compute weighted attrition score
+        factor_scores = {
+            "responsibility_mismatch": {
+                "weight": 0.15,
+                "score": responsibility_mismatch.get("mismatch_score", 0.5),
+                "explanation": responsibility_mismatch.get("explanation", "")
+            },
+            "tenure_factor": {
+                "weight": 0.1,
+                "score": tenure_factor.get("tenure_factor", 0.5),
+                "explanation": tenure_factor.get("explanation", "")
+            },
+            "utilization_factor": {
+                "weight": 0.15,
+                "score": utilization_factor.get("utilization_factor", 0.5),
+                "explanation": utilization_factor.get("explanation", "")
+            },
+            "seniority_factor": {
+                "weight": 0.05,
+                "score": seniority_factor.get("seniority_factor", 0.5),
+                "explanation": seniority_factor.get("explanation", "")
+            },
+            "task_variety_index": {
+                "weight": 0.1,
+                "score": task_variety_index.get("task_variety_index", 0.5),
+                "explanation": task_variety_index.get("explanation", "")
+            },
+            "job_intensity_factor": {
+                "weight": 0.15,
+                "score": job_intensity_factor.get("job_intensity_factor", 0.5),
+                "explanation": job_intensity_factor.get("explanation", "")
+            },
+            "role_project_ratio": {
+                "weight": 0.05,
+                "score": role_project_ratio.get("role_project_ratio", 0.5),
+                "explanation": role_project_ratio.get("explanation", "")
+            },
+            "collaboration_factor": {
+                "weight": 0.1,
+                "score": collaboration_factor.get("collaboration_factor", 0.5),
+                "explanation": collaboration_factor.get("explanation", "")
+            },
+            "salary_satisfaction": {
+                "weight": 0.15,
+                "score": salary_satisfaction.get("salary_satisfaction", 0.5),
+                "explanation": salary_satisfaction.get("explanation", "")
+            }
+        }
+        
+        # Calculate weighted score
+        weighted_score = sum(
+            factor_data["weight"] * factor_data["score"] 
+            for factor, factor_data in factor_scores.items()
+        )
+        
+        # Determine primary risk factors (highest scores)
+        risk_factors = [
+            {
+                "factor": factor,
+                "score": factor_data["score"],
+                "explanation": factor_data["explanation"]
+            }
+            for factor, factor_data in factor_scores.items()
+            if factor_data["score"] > 0.6  # High risk threshold
+        ]
+        
+        # Sort by score (highest first)
+        risk_factors.sort(key=lambda x: x["score"], reverse=True)
+        
+        # Determine confidence level
+        confidence_scores = [
+            responsibility_mismatch.get("confidence", 0.3),
+            tenure_factor.get("confidence", 0.3),
+            utilization_factor.get("confidence", 0.3),
+            seniority_factor.get("confidence", 0.3),
+            task_variety_index.get("confidence", 0.3),
+            job_intensity_factor.get("confidence", 0.3),
+            role_project_ratio.get("confidence", 0.3),
+            collaboration_factor.get("confidence", 0.3),
+            salary_satisfaction.get("confidence", 0.3)
+        ]
+        
+        confidence_score = sum(confidence_scores) / len(confidence_scores)
+        
+        # Generate summary
+        if weighted_score >= 0.8:
+            summary = "Very high attrition risk"
+        elif weighted_score >= 0.6:
+            summary = "High attrition risk"
+        elif weighted_score >= 0.4:
+            summary = "Moderate attrition risk"
+        elif weighted_score >= 0.2:
+            summary = "Low attrition risk"
+        else:
+            summary = "Very low attrition risk"
+        
+        # Add primary risk factors to summary
+        if risk_factors:
+            summary += f". Primary concerns: {risk_factors[0]['factor'].replace('_', ' ')}"
+            if len(risk_factors) > 1:
+                summary += f" and {risk_factors[1]['factor'].replace('_', ' ')}"
+        
+        # Create result
+        result = {
+            "timestamp": datetime.now().isoformat(),
+            "email": email,
+            "attrition_score": weighted_score,
+            "confidence_score": confidence_score,
+            "summary": summary,
+            "factor_scores": factor_scores,
+            "primary_risk_factors": risk_factors[:3]  # Top 3 risk factors
+        }
+        
+        return result
+    
+    except Exception as e:
+        logging.error(f"Error in attrition calculation for {email}: {str(e)}")
+        import traceback
+        logging.error(traceback.format_exc())
+        
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "email": email,
+            "error": f"Calculation error: {str(e)}",
+            "attrition_score": 0.5,  # Default score
+            "confidence_score": 0.1,  # Low confidence due to error
+            "summary": "Could not calculate attrition risk due to error"
+        }
+
+def watch_single_database(db_name, db):
+    """Watch for changes in a single database"""
+    logging.info(f"Starting change stream on {db_name}.{USERS_COLLECTION}...")
+    
+    try:
+        # Watch for any changes in the users collection 
+        pipeline = [
+            {"$match": {
+                "$and": [
+                    {"operationType": {"$in": ["insert", "update", "replace"]}},
+                    # Skip our own updates to attritionAssessment to avoid infinite loops
+                    {"updateDescription.updatedFields.attritionAssessment": {"$exists": False}},
+                    # Only watch for fields that affect attrition score
+                    {"$or": [
+                        {"updateDescription.updatedFields.jobDuties": {"$exists": True}},
+                        {"updateDescription.updatedFields.jobResponsibilities": {"$exists": True}},
+                        {"updateDescription.updatedFields.toolsProficient": {"$exists": True}},
+                        {"updateDescription.updatedFields.projects": {"$exists": True}},
+                        {"updateDescription.updatedFields.timeWithCompany": {"$exists": True}},
+                        {"updateDescription.updatedFields.timeInCurrentRole": {"$exists": True}},
+                        {"updateDescription.updatedFields.utilizationAssessment": {"$exists": True}},
+                        {"updateDescription.updatedFields.job_intensity_analysis": {"$exists": True}},
+                        {"updateDescription.updatedFields.salaryHistory": {"$exists": True}},
+                        {"fullDocument.jobDuties": {"$exists": True}},
+                        {"fullDocument.jobResponsibilities": {"$exists": True}},
+                        {"fullDocument.toolsProficient": {"$exists": True}},
+                        {"fullDocument.projects": {"$exists": True}},
+                        {"operationType": "insert"}  # Always process new documents
+                    ]}
+                ]
+            }}
+        ]
+        
+        with db[USERS_COLLECTION].watch(
+            pipeline=pipeline, 
+            full_document='updateLookup'
+        ) as stream:
+            for change in stream:
+                try:
+                    operation_type = change.get("operationType")
+                    document = change.get("fullDocument")
+                    
+                    if not document:
+                        logging.warning(f"Change event without full document in {db_name}")
+                        continue
+                        
+                    email = document.get("email")
+                    if not email:
+                        logging.warning(f"Document without email in {db_name}: {document.get('_id')}")
+                        continue
+                    
+                    # Check if the change was to attritionAssessment field
+                    if operation_type == "update":
+                        updated_fields = change.get("updateDescription", {}).get("updatedFields", {})
+                        if "attritionAssessment" in updated_fields:
+                            logging.info(f"Skipping our own update for {email} in {db_name}")
+                            continue
+                    
+                    logging.info(
+                        f"Processing attrition update for {email} in {db_name} (operation: {operation_type})"
+                    )
+                    
+                    # Process only this specific document
+                    process_single_document(email, db_name)
+                    
+                except Exception as e:
+                    logging.error(
+                        f"Error handling change event in {db_name}: {e}"
+                    )
+                    # Include more details for debugging
+                    import traceback
+                    logging.error(traceback.format_exc())
+    
+    except Exception as e:
+        logging.error(f"Error setting up change stream for {db_name}: {e}")
+        # Try to reconnect after a delay
+        time.sleep(10)
+        
+        # Reconnect just for this database
+        try:
+            if client:
+                db = client[db_name]
+                active_dbs[db_name] = db
+                watch_single_database(db_name, db)
+        except Exception as reconnect_error:
+            logging.error(f"Failed to reconnect to {db_name}: {reconnect_error}")
+
+def process_single_document(email: str, db_name: str = None) -> Optional[Dict[str, Any]]:
+    """
+    Process attrition score for a single document by email
+    
+    Args:
+        email: Email of the employee to analyze
+        db_name: Optional database name to search in
+    
+    Returns:
+        Attrition assessment result or None if processing failed
+    """
+    global active_dbs
+    
+    if not active_dbs:
+        logging.error("No active databases available")
+        return None
+    
+    # If db_name wasn't specified, search all databases
+    dbs_to_check = {db_name: active_dbs[db_name]} if db_name and db_name in active_dbs else active_dbs
+    
+    for current_db_name, db in dbs_to_check.items():
+        try:
+            # Find the employee by email
+            employee = db[USERS_COLLECTION].find_one({"email": email})
+            
+            if employee:
+                # Calculate attrition score
+                attrition_assessment = calculate_attrition_score(employee)
+                
+                # Update in users collection
+                db[USERS_COLLECTION].update_one(
+                    {"email": email}, 
+                    {"$set": {"attritionAssessment": attrition_assessment}}
+                )
+                
+                logging.info(f"Processed attrition assessment for {email} in {current_db_name}")
+                return attrition_assessment
+        
+        except Exception as e:
+            logging.error(f"Error processing attrition assessment for {email} in {current_db_name}: {e}")
+    
+    logging.warning(f"Employee not found for email: {email}")
+    return None
+
+def watch_for_changes():
+    """Start watching for changes across all databases"""
+    global active_dbs
+    
+    if not active_dbs:
+        logging.warning("No active databases available for change streams")
+        return
+    
+    import threading
+    
+    # Create a thread for each database
+    for db_name, db in active_dbs.items():
+        thread = threading.Thread(
+            target=watch_single_database,
+            args=(db_name, db),
+            daemon=True
+        )
+        thread.start()
+        logging.info(f"Started change stream thread for {db_name}")
+
+def process_all_documents():
+    """Process all documents across all databases"""
+    global active_dbs
+    
+    if not active_dbs:
+        logging.warning("No active databases available. Attempting to reconnect.")
+        connect_db()
+        if not active_dbs:
+            logging.error("Database connection failed. Cannot process documents.")
+            return 0
+    
+    # Refresh the database list to ensure we have the latest databases
+    refresh_database_list()
+    logging.info(f"Processing documents across {len(active_dbs)} databases")
+    
+    # Keep track of total documents processed
+    total_processed = 0
+    
+    # Process each active database
+    for db_name, db in active_dbs.items():
+        logging.info(f"Processing documents in {db_name} database...")
+        
+        # Get all documents from users collection
+        users_cursor = db[USERS_COLLECTION].find()
+        
+        # Process each document
+        processed_count = 0
+        for doc in users_cursor:
+            try:
+                email = doc.get("email")
+                if not email:
+                    continue
+                
+                logging.info(f"Processing attrition assessment for {email}")
+                
+                # Calculate attrition score
+                attrition_assessment = calculate_attrition_score(doc)
+                
+                # Update document with assessment
+                db[USERS_COLLECTION].update_one(
+                    {"email": email}, 
+                    {"$set": {"attritionAssessment": attrition_assessment}}
+                )
+                
+                processed_count += 1
+                
+            except Exception as e:
+                logging.error(f"Error in attrition calculation for {doc.get('email', 'unknown')}: {str(e)}")
+        
+        total_processed += processed_count
+        logging.info(f"Completed processing {processed_count} documents in {db_name}")
+    
+    logging.info(f"Total documents processed across all databases: {total_processed}")
+    return total_processed
+
+if __name__ == "__main__":
+    import argparse
+    import sys
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Attrition Score Analyzer')
+    parser.add_argument('--watch', action='store_true', help='Run in continuous watch mode')
+    parser.add_argument('--email', help='Email of employee to analyze')
+    parser.add_argument('--db', help='Database name to process (optional)')
+    parser.add_argument('--npm', action='store_true', help='Flag to indicate running from npm script')
+    args = parser.parse_args()
+    
+    # Check if being run from npm
+    is_npm_run = args.npm or any(arg in ' '.join(sys.argv) for arg in ['npm', 'node'])
+    
+    # Connect to the database
+    connect_db()
+    
+    # Load models and initialize indexes
+    load_model()
+    initialize_vector_indexes()
+    
+    if args.email:
+        # Process a single employee
+        process_single_document(args.email, args.db)
+        sys.exit(0)
+    
+    # Default to processing all documents and watching for changes
+    # when started with npm run or --watch flag
+    if args.watch or is_npm_run:
+        # Process all documents first
+        process_all_documents()
+        
+        # Then start watching for changes
+        watch_for_changes()
+        
+        # Keep the main thread alive
+        try:
+            logging.info("Attrition Score Analyzer is now watching for changes...")
+            logging.info("Press Ctrl+C to exit.")
+            while True:
+                time.sleep(3600)  # Sleep for an hour
+        except KeyboardInterrupt:
+            logging.info("Received keyboard interrupt, shutting down...")
+    else:
+        # Just process all documents and exit
+        process_all_documents()
+        logging.info("Initial processing completed. Exiting.")

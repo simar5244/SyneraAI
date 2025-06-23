@@ -1,0 +1,8 @@
+Starting with config:
+- WEBHOOK_PORT: 3333
+- WEBHOOK_SECRET: configured
+- MONGODB_URI: configured
+- STRIPE_SECRET_KEY: configured
+
+Stripe webhook listener running on port 3333
+Webhook URL: http://your-server:3333/webhook

@@ -1,0 +1,33 @@
+
+[1m[34m
+╔═══════════════════════════════════════╗
+║        STRIPE WEBHOOK SERVER         ║
+║            STARTING UP...            ║
+╚═══════════════════════════════════════╝
+[0m
+
+[0m[2025-06-06T09:40:11.435Z] [INFO] 🚀 Starting Stripe Webhook Server...[0m
+[35m[2025-06-06T09:40:11.436Z] [DEBUG] 🔍 Validating environment variables...[0m
+[32m[2025-06-06T09:40:11.436Z] [SUCCESS] ✅ Environment validation passed[0m
+[0m[2025-06-06T09:40:11.436Z] [INFO] 📊 Configuration:
+- WEBHOOK_PORT: 3333
+- WEBHOOK_SECRET: whsec_4ff0...
+- MONGODB_URI: mongodb+srv://***:***@cluster0.nen0dzs.mongodb.net/
+- STRIPE_SECRET_KEY: sk_***[0m
+[32m[2025-06-06T09:40:11.440Z] [SUCCESS] 🎯 Webhook server initialization complete - waiting for events...[0m
+[32m[2025-06-06T09:40:11.443Z] [SUCCESS] 🚀 Stripe webhook listener READY on port 3333[0m
+[0m[2025-06-06T09:40:11.443Z] [INFO] 🌐 Webhook URL: http://your-server:3333/webhook[0m
+[0m[2025-06-06T09:40:11.443Z] [INFO] 🔧 Test endpoint: http://your-server:3333/test-webhook[0m
+[0m[2025-06-06T09:40:11.444Z] [INFO] 💓 Health check: http://your-server:3333/health[0m
+[0m[2025-06-06T09:40:11.444Z] [INFO] 🔌 Database test: http://your-server:3333/test-db[0m
+
+[1m[32m
+╔═══════════════════════════════════════╗
+║   🎉 SERVER RUNNING SUCCESSFULLY! 🎉  ║
+║                                       ║
+║   Port: 3333                        ║
+║   Webhook: /webhook                   ║
+║   Test: /test-webhook                 ║
+╚═══════════════════════════════════════╝
+[0m
+  

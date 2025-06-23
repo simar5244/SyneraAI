@@ -1,0 +1,74 @@
+[2025-06-06T08:22:57.686Z] {temp debug} Starting with config:
+- WEBHOOK_PORT: 3333
+- WEBHOOK_SECRET: configured
+- MONGODB_URI: configured
+- STRIPE_SECRET_KEY: configured
+
+[2025-06-06T08:22:57.690Z] Stripe webhook listener running on port 3333
+[2025-06-06T08:22:57.690Z] {temp debug} Server started successfully on port 3333
+[2025-06-06T08:23:27.576Z] {temp debug} Starting with config:
+- WEBHOOK_PORT: 3333
+- WEBHOOK_SECRET: configured
+- MONGODB_URI: configured
+- STRIPE_SECRET_KEY: configured
+
+[2025-06-06T08:23:27.581Z] Stripe webhook listener running on port 3333
+[2025-06-06T08:23:27.581Z] {temp debug} Server started successfully on port 3333
+[2025-06-06T08:23:53.421Z] {temp debug} Starting with config:
+- WEBHOOK_PORT: 3333
+- WEBHOOK_SECRET: configured
+- MONGODB_URI: configured
+- STRIPE_SECRET_KEY: configured
+
+[2025-06-06T08:23:53.428Z] Stripe webhook listener running on port 3333
+[2025-06-06T08:23:53.429Z] {temp debug} Server started successfully on port 3333
+[2025-06-06T08:39:38.276Z] Stripe webhook listener running on port 3333
+[2025-06-06T08:46:25.507Z] Stripe webhook listener running on port 3333
+[2025-06-06T08:47:14.532Z] Stripe webhook listener running on port 3333
+[2025-06-06T08:58:39.570Z] Stripe webhook listener running on port 3333
+[2025-06-06T09:02:01.856Z] Using MongoDB URI: mongodb+srv://simarjotsingh5244:NUMotMgntP7AcNrQ@cluster0.nen0dzs.mongodb.net/
+[2025-06-06T09:02:01.864Z] Stripe webhook listener running on port 3333
+[2025-06-06T09:14:13.319Z] {temp debug} Starting with config:
+- WEBHOOK_PORT: 3333
+- WEBHOOK_SECRET: configured
+- MONGODB_URI: configured
+- STRIPE_SECRET_KEY: configured
+
+[2025-06-06T09:14:13.324Z] Stripe webhook listener running on port 3333
+[2025-06-06T09:14:13.324Z] {temp debug} Server started successfully on port 3333
+[2025-06-06T09:20:54.412Z] Starting with config:
+- WEBHOOK_PORT: 3333
+- WEBHOOK_SECRET: configured
+- MONGODB_URI: configured
+- STRIPE_SECRET_KEY: configured
+
+[2025-06-06T09:20:54.426Z] Stripe webhook listener running on port 3333
+[2025-06-06T09:20:54.426Z] Webhook URL: http://your-server:3333/webhook
+[2025-06-06T09:30:31.038Z] [INFO] 🚀 Starting Stripe Webhook Server...
+[2025-06-06T09:30:31.039Z] [DEBUG] 🔍 Validating environment variables...
+[2025-06-06T09:30:31.039Z] [SUCCESS] ✅ Environment validation passed
+[2025-06-06T09:30:31.039Z] [INFO] 📊 Configuration:
+- WEBHOOK_PORT: 3333
+- WEBHOOK_SECRET: whsec_4ff0...
+- MONGODB_URI: mongodb+srv://***:***@cluster0.nen0dzs.mongodb.net/
+- STRIPE_SECRET_KEY: sk_***
+[2025-06-06T09:30:31.042Z] [SUCCESS] 🎯 Webhook server initialization complete - waiting for events...
+[2025-06-06T09:30:31.047Z] [SUCCESS] 🚀 Stripe webhook listener READY on port 3333
+[2025-06-06T09:30:31.047Z] [INFO] 🌐 Webhook URL: http://your-server:3333/webhook
+[2025-06-06T09:30:31.047Z] [INFO] 🔧 Test endpoint: http://your-server:3333/test-webhook
+[2025-06-06T09:30:31.047Z] [INFO] 💓 Health check: http://your-server:3333/health
+[2025-06-06T09:30:31.047Z] [INFO] 🔌 Database test: http://your-server:3333/test-db
+[2025-06-06T09:40:11.435Z] [INFO] 🚀 Starting Stripe Webhook Server...
+[2025-06-06T09:40:11.436Z] [DEBUG] 🔍 Validating environment variables...
+[2025-06-06T09:40:11.436Z] [SUCCESS] ✅ Environment validation passed
+[2025-06-06T09:40:11.436Z] [INFO] 📊 Configuration:
+- WEBHOOK_PORT: 3333
+- WEBHOOK_SECRET: whsec_4ff0...
+- MONGODB_URI: mongodb+srv://***:***@cluster0.nen0dzs.mongodb.net/
+- STRIPE_SECRET_KEY: sk_***
+[2025-06-06T09:40:11.440Z] [SUCCESS] 🎯 Webhook server initialization complete - waiting for events...
+[2025-06-06T09:40:11.443Z] [SUCCESS] 🚀 Stripe webhook listener READY on port 3333
+[2025-06-06T09:40:11.443Z] [INFO] 🌐 Webhook URL: http://your-server:3333/webhook
+[2025-06-06T09:40:11.443Z] [INFO] 🔧 Test endpoint: http://your-server:3333/test-webhook
+[2025-06-06T09:40:11.444Z] [INFO] 💓 Health check: http://your-server:3333/health
+[2025-06-06T09:40:11.444Z] [INFO] 🔌 Database test: http://your-server:3333/test-db
