@@ -17,22 +17,27 @@ WORKDIR /app
 COPY package*.json ./
 COPY requirements*.txt ./
 
-# Install system dependencies for native modules
-RUN apk add --no-cache --virtual .gyp \
+# Install build dependencies
+RUN apk add --no-cache --virtual .build-deps \
     python3 \
     make \
     g++ \
+    pkgconfig \
     cairo-dev \
     jpeg-dev \
     pango-dev \
     giflib-dev \
     librsvg \
-    pkgconfig \
     pango \
-    jpeg
+    jpeg \
+    && npm config set python /usr/bin/python3
 
-# Install Node.js dependencies
-RUN rm -rf node_modules && npm install --production=false
+# Install Node.js dependencies with production flag
+RUN npm ci --only=production \
+    && npm cache clean --force
+
+# Remove build dependencies
+RUN apk del .build-deps
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
