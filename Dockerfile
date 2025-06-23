@@ -52,7 +52,7 @@ RUN npm install --only=production --legacy-peer-deps && \
 RUN apk del .build-deps
 
 # Install Python dependencies
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
 
 # Copy the rest of the application
 COPY . .
@@ -89,7 +89,7 @@ COPY --from=builder /app/requirements*.txt ./
 RUN npm install --only=production --legacy-peer-deps
 
 # Install production Python dependencies
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
 
 # Copy built application and other necessary files
 COPY --from=builder /app/.next ./.next
