@@ -17,8 +17,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY requirements*.txt ./
 
-# Clean install dependencies
-RUN rm -rf node_modules && npm ci
+# Install dependencies
+RUN rm -rf node_modules && npm install --production=false
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
