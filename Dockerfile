@@ -20,8 +20,11 @@ COPY requirements*.txt ./
 # Install build dependencies
 RUN apk add --no-cache --virtual .build-deps \
     python3 \
+    python3-dev \
+    py3-pip \
     make \
     g++ \
+    gcc \
     pkgconfig \
     cairo-dev \
     jpeg-dev \
@@ -30,11 +33,16 @@ RUN apk add --no-cache --virtual .build-deps \
     librsvg \
     pango \
     jpeg \
-    && npm config set python /usr/bin/python3
+    musl-dev
+
+# Set Python path for node-gyp
+ENV PYTHON=/usr/bin/python3
+ENV npm_config_python=/usr/bin/python3
 
 # Install Node.js dependencies with production flag
-RUN npm ci --only=production \
-    && npm cache clean --force
+RUN npm config set python /usr/bin/python3 && \
+    npm ci --only=production && \
+    npm cache clean --force
 
 # Remove build dependencies
 RUN apk del .build-deps
