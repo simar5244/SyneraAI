@@ -35,8 +35,8 @@ ENV npm_config_python=/usr/bin/python3
 RUN npm install --only=production --legacy-peer-deps && \
     npm cache clean --force
 
-# Remove build dependencies
-RUN apk del .build-deps
+
+
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
@@ -48,23 +48,14 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Create the production image
-FROM node:20-alpine
+FROM node:20-slim
 
 # Install Python and runtime dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     python3 \
-    py3-pip \
-    g++ \
-    make \
     python3-dev \
-    gcc \
-    musl-dev \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
