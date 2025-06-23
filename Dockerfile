@@ -17,19 +17,19 @@ WORKDIR /app
 COPY package*.json ./
 COPY requirements*.txt ./
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libcairo2-dev \
-    libpango1.0-dev \
-    libjpeg-dev \
-    libgif-dev \
-    librsvg2-dev \
-    pkg-config \
+# Install system dependencies for native modules
+RUN apk add --no-cache --virtual .gyp \
     python3 \
-    python3-pip \
-    python3-setuptools \
-    && rm -rf /var/lib/apt/lists/*
+    make \
+    g++ \
+    cairo-dev \
+    jpeg-dev \
+    pango-dev \
+    giflib-dev \
+    librsvg \
+    pkgconfig \
+    pango \
+    jpeg
 
 # Install Node.js dependencies
 RUN rm -rf node_modules && npm install --production=false
