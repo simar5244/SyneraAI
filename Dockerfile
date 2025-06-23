@@ -33,14 +33,15 @@ RUN apk add --no-cache --virtual .build-deps \
     librsvg \
     pango \
     jpeg \
-    musl-dev
+    musl-dev \
+    && ln -sf python3 /usr/bin/python
 
 # Set Python path for node-gyp
 ENV PYTHON=/usr/bin/python3
 ENV npm_config_python=/usr/bin/python3
 
 # Install Node.js dependencies with production flag
-RUN npm config set python /usr/bin/python3 && \
+RUN npm config set python python3 && \
     npm ci --only=production && \
     npm cache clean --force
 
