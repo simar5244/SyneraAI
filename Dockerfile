@@ -44,8 +44,8 @@ RUN apk add --no-cache --virtual .build-deps \
 ENV PYTHON=/usr/bin/python3
 ENV npm_config_python=/usr/bin/python3
 
-# Install Node.js dependencies with production flag
-RUN npm ci --only=production && \
+# Install Node.js dependencies with production flag (allow legacy peer deps)
+RUN npm install --only=production --legacy-peer-deps && \
     npm cache clean --force
 
 # Remove build dependencies
@@ -85,8 +85,8 @@ WORKDIR /app
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/requirements*.txt ./
 
-# Install production Node.js dependencies
-RUN npm ci --only=production
+# Install production Node.js dependencies (allow legacy peer deps)
+RUN npm install --only=production --legacy-peer-deps
 
 # Install production Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
