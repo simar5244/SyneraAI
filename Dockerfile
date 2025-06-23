@@ -18,7 +18,7 @@ COPY package*.json ./
 COPY requirements*.txt ./
 
 # Clean install dependencies
-RUN rm -rf node_modules package-lock.json && npm ci
+RUN rm -rf node_modules && npm ci
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
