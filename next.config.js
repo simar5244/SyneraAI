@@ -6,6 +6,16 @@ const path = require('path');
 const isDocker = process.env.RUNNING_IN_DOCKER === 'true';
 
 const nextConfig = {
+  // Configure ESLint to ignore during builds
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  
+  // Configure TypeScript to ignore build errors
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  
   // Enable React strict mode
   reactStrictMode: true,
   

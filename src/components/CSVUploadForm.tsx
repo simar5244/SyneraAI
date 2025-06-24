@@ -18,10 +18,14 @@ import { Input } from "@/components/ui/input";
 import { FiUpload, FiCheckCircle, FiAlertTriangle, FiDownload } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 
+// Dynamic schema to handle both server and client side rendering
 const formSchema = z.object({
-  csvFile: z.instanceof(FileList).refine(files => files.length > 0, {
-    message: "Please select a CSV file to upload.",
-  })
+  csvFile: typeof window === 'undefined' 
+    ? z.any() // On server, accept any value (will be validated on client)
+    : z.instanceof(FileList).refine(
+        (files) => files && files.length > 0,
+        { message: "Please select a CSV file to upload." }
+      )
 });
 
 export function CSVUploadForm({ onSuccess }: { onSuccess?: () => void } = {}) {
@@ -41,6 +45,11 @@ export function CSVUploadForm({ onSuccess }: { onSuccess?: () => void } = {}) {
     setErrorMessage("");
 
     try {
+      // Skip if no files or file list is empty
+      if (!values.csvFile || values.csvFile.length === 0) {
+        throw new Error("No file selected");
+      }
+
       const formData = new FormData();
       formData.append("file", values.csvFile[0]);
 

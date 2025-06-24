@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,7 @@ interface EmployeeData {
   employees: Employee[];
 }
 
-const VisualizeERPPage = () => {
+const VisualizeERPPageContent = () => {
   const searchParams = useSearchParams();
   const connectionId = searchParams.get('connectionId');
   
@@ -259,6 +259,18 @@ const VisualizeERPPage = () => {
         </TabsContent>
       </Tabs>
     </div>
+  );
+};
+
+const VisualizeERPPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    }>
+      <VisualizeERPPageContent />
+    </Suspense>
   );
 };
 

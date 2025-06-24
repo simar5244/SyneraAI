@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -39,7 +39,7 @@ function generateRandomCompanyCode() {
   return code;
 }
 
-export default function CompanySignupPage() {
+function CompanySignupPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { register, handleSubmit, watch, formState: { errors } } = useForm<CompanySignupFormData>();
@@ -724,5 +724,13 @@ export default function CompanySignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CompanySignupPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CompanySignupPageContent />
+    </Suspense>
   );
 }

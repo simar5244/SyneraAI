@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ interface User {
   status: string;
 }
 
-export default function CompanyUsersPage() {
+function CompanyUsersPageContent() {
   const router = useRouter();
   const params = useSearchParams();
   const companyName = params?.get("company") || '';
@@ -86,5 +86,17 @@ export default function CompanyUsersPage() {
         </Card>
       )}
     </div>
+  );
+}
+
+export default function CompanyUsersPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    }>
+      <CompanyUsersPageContent />
+    </Suspense>
   );
 }

@@ -147051,3 +147051,11 @@ Running initial light refresh...
 2025-06-22 18:26:03,429 - WARNING - No potential successor candidates found in company_9jxwph8g
 2025-06-22 18:26:03,503 - INFO - Processed successor analysis for a@testing2.com in company_9jxwph8g
 2025-06-22 18:26:03,581 - INFO - Skipping successor update for user1@testing2.com: missing required fields
+Traceback (most recent call last):
+  File [35m"/Users/sim/Project2/./successor_identification.py"[0m, line [35m6[0m, in [35m<module>[0m
+    import numpy as np
+[1;35mModuleNotFoundError[0m: [35mNo module named 'numpy'[0m
+Traceback (most recent call last):
+  File [35m"/Users/sim/Project2/./successor_identification.py"[0m, line [35m6[0m, in [35m<module>[0m
+    import numpy as np
+[1;35mModuleNotFoundError[0m: [35mNo module named 'numpy'[0m

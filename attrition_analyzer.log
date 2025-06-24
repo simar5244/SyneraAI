@@ -68666,3 +68666,11 @@ ImportError: Error importing numpy: you should not try to import numpy from
 2025-06-22 18:26:03,258 - INFO - Skipping a@testing2.com: processed 0.1s ago
 2025-06-22 18:26:03,332 - INFO - Processing attrition update for user1@testing2.com in company_9jxwph8g (operation: update)
 2025-06-22 18:26:03,396 - INFO - Skipping user1@testing2.com: recent assessment updated 2.6s ago
+Traceback (most recent call last):
+  File [35m"/Users/sim/Project2/./attrition_score.py"[0m, line [35m6[0m, in [35m<module>[0m
+    import numpy as np
+[1;35mModuleNotFoundError[0m: [35mNo module named 'numpy'[0m
+Traceback (most recent call last):
+  File [35m"/Users/sim/Project2/./attrition_score.py"[0m, line [35m6[0m, in [35m<module>[0m
+    import numpy as np
+[1;35mModuleNotFoundError[0m: [35mNo module named 'numpy'[0m

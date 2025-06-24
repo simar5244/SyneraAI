@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { 
   FaSpinner, FaCheck, FaTimes, FaUsers, FaCreditCard, 
   FaCalendarAlt, FaArrowRight, FaCoins, FaInfoCircle,
@@ -81,7 +81,7 @@ type Invoice = {
   }[];
 };
 
-export default function BillingPage() {
+function BillingPageContent() {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState(0);
@@ -1405,5 +1405,17 @@ export default function BillingPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BillingPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    }>
+      <BillingPageContent />
+    </Suspense>
   );
 } 
