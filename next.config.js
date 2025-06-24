@@ -1,11 +1,19 @@
 /** @type {import('next').NextConfig} */
 const webpack = require('webpack');
 const path = require('path');
+require('dotenv').config({ path: path.resolve(process.cwd(), '.env.local') });
 
 // Check if we're running in a Docker container
 const isDocker = process.env.RUNNING_IN_DOCKER === 'true';
 
 const nextConfig = {
+  // Configure environment variables
+  env: {
+    MONGODB_URI: process.env.MONGODB_URI,
+    MONGODB_URI_BASE: process.env.MONGODB_URI_BASE,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+  },
+  
   // Configure ESLint to ignore during builds
   eslint: {
     ignoreDuringBuilds: true,

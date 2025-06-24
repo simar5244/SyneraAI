@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FiBan, FiLogOut, FiArrowLeft, FiMail } from 'react-icons/fi';
+import { FiBan, FiLogOut, FiArrowLeft, FiMail } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -113,7 +113,7 @@ export default function AccessBlockedPage() {
                   <span className="font-medium inline-block w-24">Company:</span> {user.company}
                 </p>
                 <p className="text-gray-700">
-                  <span className="font-medium inline-block w-24">Role:</span> {user.role?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  <span className="font-medium inline-block w-24">Role:</span> {user.role?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
                 </p>
               </div>
             </div>

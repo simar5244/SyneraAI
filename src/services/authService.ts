@@ -751,8 +751,44 @@ const authService = {
   generateMfaSessionTokenAsync: authServiceObj.generateMfaSessionTokenAsync.bind(authServiceObj)
 };
 
+// Session related functions
+const getSession = async (req: Request) => {
+  try {
+    // Get the token from the Authorization header
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return null;
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return null;
+    }
+
+    // Verify the token
+    const decoded = await authService.verifyTokenAsync(token);
+    if (!decoded) {
+      return null;
+    }
+
+    // Get the user from the database
+    const user = await User.findById(decoded.userId).select('-password').lean();
+    if (!user) {
+      return null;
+    }
+
+    return {
+      user,
+      expires: new Date(decoded.exp * 1000).toISOString(),
+    };
+  } catch (error) {
+    console.error('Error in getSession:', error);
+    return null;
+  }
+};
+
 // Export the AuthService class for static methods
-export { AuthService };
+export { AuthService, getSession };
 
 // Export the combined service instance as default
 export default authService;

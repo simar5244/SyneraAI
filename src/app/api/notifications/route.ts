@@ -13,7 +13,7 @@ export interface Notification {
 }
 
 // Mock notifications for development/testing
-const mockNotifications: Notification[] = [
+export const mockNotifications: Notification[] = [
   {
     id: '1',
     userId: 'user123',
