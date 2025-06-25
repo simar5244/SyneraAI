@@ -12,7 +12,8 @@ import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, AlertCircle, BarChart3, ArrowRight, Users, TrendingUp, Briefcase, DollarSign, Clock, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import Spinner from '@/components/ui/spinner';
+import { Spinner } from '@/components/ui/spinner';
+import { cn } from '@/lib/utils';
 
 // Define simulation types and interfaces
 type SimulationType = 'attrition' | 'reorganization' | 'growth' | 'cost_reduction';
@@ -723,19 +724,28 @@ export default function SimulationPage() {
                       </Badge>
                       <Badge 
                         variant={
-                          rec.impact === 'high' ? 'default' : 
-                          rec.impact === 'low' ? 'outline' : 
-                          'secondary'
+                          rec.impact === 'high' 
+                            ? 'default' 
+                            : rec.impact === 'low' 
+                              ? 'outline' 
+                              : undefined
                         }
+                        className={cn(
+                          'whitespace-nowrap',
+                          rec.impact === 'medium' ? 'bg-secondary text-secondary-foreground' : ''
+                        )}
                       >
                         Impact: {rec.impact}
                       </Badge>
                       <Badge 
                         variant={
-                          rec.implementationEffort === 'low' ? 'default' : 
-                          rec.implementationEffort === 'high' ? 'destructive' : 
-                          'secondary'
+                          rec.implementationEffort === 'low' 
+                            ? 'default' 
+                            : rec.implementationEffort === 'high' 
+                              ? 'destructive' 
+                              : 'outline'
                         }
+                        className="whitespace-nowrap"
                       >
                         Effort: {rec.implementationEffort}
                       </Badge>

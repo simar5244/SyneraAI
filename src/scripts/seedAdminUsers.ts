@@ -1,12 +1,17 @@
-import connectToDatabase from '@/services/mongodb';import connectToDatabase from '../lib/dbConnect';
-import User from '../models/User';
+import { MongoClient } from 'mongodb';
 import { hashPassword } from '../services/authService';
+import mongoose from 'mongoose';
 
 async function seedAdminUsers() {
   try {
-    // Connect to the database
-    await connectToDatabase();
+    // Connect to the main database
+    const client = new MongoClient(process.env.MONGODB_URI || '');
+    await client.connect();
     console.log('Connected to database');
+    
+    try {
+      const db = client.db('org_sim_db');
+      const usersCollection = db.collection('users');
 
     // Admin account (from logininfo.txt)
     const adminUser = {
@@ -29,43 +34,50 @@ async function seedAdminUsers() {
     };
 
     // Check if admin user already exists
-    const existingAdmin = await User.findOne({ email: adminUser.email });
+    const existingAdmin = await usersCollection.findOne({ email: adminUser.email });
     if (!existingAdmin) {
       // Hash password
       const hashedAdminPassword = await hashPassword(adminUser.password);
       
       // Create admin user
-      const newAdminUser = new User({
+      await usersCollection.insertOne({
         ...adminUser,
-        password: hashedAdminPassword
+        password: hashedAdminPassword,
+        createdAt: new Date(),
+        updatedAt: new Date()
       });
       
-      await newAdminUser.save();
       console.log('Admin user created');
     } else {
       console.log('Admin user already exists');
     }
 
     // Check if test user already exists
-    const existingTestUser = await User.findOne({ email: testUser.email });
+    const existingTestUser = await usersCollection.findOne({ email: testUser.email });
     if (!existingTestUser) {
       // Hash password
       const hashedTestPassword = await hashPassword(testUser.password);
       
       // Create test user
-      const newTestUser = new User({
+      await usersCollection.insertOne({
         ...testUser,
-        password: hashedTestPassword
+        password: hashedTestPassword,
+        createdAt: new Date(),
+        updatedAt: new Date()
       });
       
-      await newTestUser.save();
       console.log('Test user created');
     } else {
       console.log('Test user already exists');
     }
 
-    console.log('Seeding completed successfully');
-    process.exit(0);
+      console.log('Seeding completed successfully');
+    } catch (error) {
+      console.error('Error during database operations:', error);
+      throw error;
+    } finally {
+      await client.close();
+    }
   } catch (error) {
     console.error('Error seeding users:', error);
     process.exit(1);

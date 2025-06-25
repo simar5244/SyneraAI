@@ -28,7 +28,7 @@ import {
   Business, 
   CalendarToday, 
   WorkOutline, 
-  AssignmentOutline,
+  AssignmentOutlined,
   WarningAmber,
   CheckCircleOutline,
   DeleteOutline,
@@ -450,7 +450,7 @@ const OrgSimulationPage = () => {
               </Box>
               
               <Typography variant="subtitle1" gutterBottom sx={{ mt: 2 }}>
-                <AssignmentOutline fontSize="small" sx={{ verticalAlign: 'middle', mr: 1 }} />
+                <AssignmentOutlined fontSize="small" sx={{ verticalAlign: 'middle', mr: 1 }} />
                 Projects:
               </Typography>
               <List dense>

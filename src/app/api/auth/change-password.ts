@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { MongoClient } from 'mongodb';
-import mongoose from 'mongoose';
-import connectToMongoDB from '@/lib/dbConnect';
-import User, { getUserModel } from '@/models/User';
+import { MongoClient, ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 
 // MongoDB connection string from environment variable
 const uri = process.env.MONGODB_URI || '';
@@ -13,8 +10,6 @@ export async function POST(request: NextRequest) {
   let mongoClient: MongoClient | null = null;
   
   try {
-    await connectToMongoDB();
-
     // Extract token from header
     const token = request.headers.get('authorization')?.replace('Bearer ', '');
     if (!token) {
@@ -47,11 +42,16 @@ export async function POST(request: NextRequest) {
 
     console.log(`[CHANGE PASSWORD] Updating password for user ${verifiedPayload.id} in company ${companyCode}`);
 
-    // Get the company-specific User model
-    const UserModel = getUserModel(companyCode);
+    // Connect to MongoDB
+    mongoClient = new MongoClient(uri);
+    await mongoClient.connect();
     
-    // Fetch user using the ID from the verified token
-    const user = await UserModel.findById(verifiedPayload.id).select('+password');
+    // Get the company database and users collection
+    const companyDb = mongoClient.db(`company_${companyCode}`);
+    const usersCollection = companyDb.collection('users');
+    
+    // Find user by ID
+    const user = await usersCollection.findOne({ _id: new ObjectId(verifiedPayload.id) });
     if (!user) {
       return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
     }
@@ -66,13 +66,15 @@ export async function POST(request: NextRequest) {
     const salt = await bcrypt.genSalt(10);
     const hashedNewPassword = await bcrypt.hash(newPassword, salt);
 
-    // Connect to MongoDB directly for updating multiple collections
-    mongoClient = new MongoClient(uri);
-    await mongoClient.connect();
-
-    // 1. Update user in company's users collection using Mongoose (already connected)
-    user.password = hashedNewPassword;
-    await user.save();
+    // 1. Update user in company's users collection
+    await usersCollection.updateOne(
+      { _id: user._id },
+      { $set: { 
+          password: hashedNewPassword,
+          updatedAt: new Date() 
+        } 
+      }
+    );
     console.log(`[CHANGE PASSWORD] Updated password in company_${companyCode}.users collection`);
 
     // 2. Update auth collection in company database

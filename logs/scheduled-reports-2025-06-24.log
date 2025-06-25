@@ -4277,3 +4277,829 @@ Tue Jun 24 06:24:00 CDT 2025: Checking if NextJS server is running...
 Tue Jun 24 06:24:00 CDT 2025: Running scheduled reports
 /Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
 Tue Jun 24 06:24:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-24T11:24:19.649Z] [INFO] Checking for scheduled reports...
+[2025-06-24T11:24:20.265Z] [DEBUG] Connected to MongoDB
+[2025-06-24T11:24:20.333Z] [INFO] Found 1 company databases
+[2025-06-24T11:24:20.334Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T11:24:20.392Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T11:24:20.392Z)
+[2025-06-24T11:24:20.450Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T11:24:20.451Z] [INFO] Scheduled reports check completed
+[2025-06-24T11:24:20.453Z] [DEBUG] MongoDB connection closed
+[2025-06-24T11:24:49.650Z] [INFO] Checking for scheduled reports...
+[2025-06-24T11:24:50.378Z] [DEBUG] Connected to MongoDB
+[2025-06-24T11:24:50.447Z] [INFO] Found 1 company databases
+[2025-06-24T11:24:50.447Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T11:24:50.506Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T11:24:50.506Z)
+[2025-06-24T11:24:50.565Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T11:24:50.565Z] [INFO] Scheduled reports check completed
+[2025-06-24T11:24:50.568Z] [DEBUG] MongoDB connection closed
+Tue Jun 24 06:25:00 CDT 2025: Running scheduled reports
+Tue Jun 24 06:25:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 06:25:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-24T11:30:44.722Z] [INFO] Checking for scheduled reports...
+[2025-06-24T11:30:45.514Z] [DEBUG] Connected to MongoDB
+[2025-06-24T11:30:45.583Z] [INFO] Found 1 company databases
+[2025-06-24T11:30:45.584Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T11:30:45.640Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T11:30:45.640Z)
+[2025-06-24T11:30:45.697Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T11:30:45.698Z] [INFO] Scheduled reports check completed
+[2025-06-24T11:30:45.700Z] [DEBUG] MongoDB connection closed
+[2025-06-24T11:32:54.676Z] [INFO] Checking for scheduled reports...
+[2025-06-24T11:32:55.655Z] [DEBUG] Connected to MongoDB
+[2025-06-24T11:32:55.739Z] [INFO] Found 1 company databases
+[2025-06-24T11:32:55.739Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T11:32:55.809Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T11:32:55.809Z)
+[2025-06-24T11:32:55.867Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T11:32:55.867Z] [INFO] Scheduled reports check completed
+[2025-06-24T11:32:55.869Z] [DEBUG] MongoDB connection closed
+[2025-06-24T11:40:02.212Z] [INFO] Checking for scheduled reports...
+[2025-06-24T11:40:03.016Z] [DEBUG] Connected to MongoDB
+[2025-06-24T11:40:03.083Z] [INFO] Found 1 company databases
+[2025-06-24T11:40:03.084Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T11:40:03.147Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T11:40:03.147Z)
+[2025-06-24T11:40:03.206Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T11:40:03.207Z] [INFO] Scheduled reports check completed
+[2025-06-24T11:40:03.209Z] [DEBUG] MongoDB connection closed
+[2025-06-24T11:40:58.082Z] [INFO] Checking for scheduled reports...
+[2025-06-24T11:40:58.915Z] [DEBUG] Connected to MongoDB
+[2025-06-24T11:40:58.985Z] [INFO] Found 1 company databases
+[2025-06-24T11:40:58.986Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T11:40:59.043Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T11:40:59.043Z)
+[2025-06-24T11:40:59.107Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T11:40:59.107Z] [INFO] Scheduled reports check completed
+[2025-06-24T11:40:59.108Z] [DEBUG] MongoDB connection closed
+[2025-06-24T12:05:51.236Z] [INFO] Checking for scheduled reports...
+[2025-06-24T12:05:52.584Z] [DEBUG] Connected to MongoDB
+[2025-06-24T12:05:52.653Z] [INFO] Found 1 company databases
+[2025-06-24T12:05:52.654Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T12:05:52.719Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T12:05:52.719Z)
+[2025-06-24T12:05:52.783Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T12:05:52.783Z] [INFO] Scheduled reports check completed
+[2025-06-24T12:05:52.786Z] [DEBUG] MongoDB connection closed
+[2025-06-24T12:08:06.385Z] [INFO] Checking for scheduled reports...
+[2025-06-24T12:08:07.129Z] [DEBUG] Connected to MongoDB
+[2025-06-24T12:08:07.198Z] [INFO] Found 1 company databases
+[2025-06-24T12:08:07.199Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T12:08:07.259Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T12:08:07.259Z)
+[2025-06-24T12:08:07.316Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T12:08:07.316Z] [INFO] Scheduled reports check completed
+[2025-06-24T12:08:07.318Z] [DEBUG] MongoDB connection closed
+[2025-06-24T13:41:44.046Z] [INFO] Checking for scheduled reports...
+[2025-06-24T13:41:46.291Z] [DEBUG] Connected to MongoDB
+[2025-06-24T13:41:46.433Z] [INFO] Found 1 company databases
+[2025-06-24T13:41:46.434Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T13:41:47.064Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T13:41:47.064Z)
+[2025-06-24T13:41:47.332Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T13:41:47.333Z] [INFO] Scheduled reports check completed
+[2025-06-24T13:41:47.335Z] [DEBUG] MongoDB connection closed
+[2025-06-24T14:12:23.040Z] [INFO] Checking for scheduled reports...
+[2025-06-24T14:13:00.583Z] [INFO] Checking for scheduled reports...
+[2025-06-24T14:13:00.586Z] [ERROR] Error in checkScheduledReports: Socket 'secureConnect' timed out after 32465ms (connectTimeoutMS: 30000)
+[2025-06-24T14:13:00.587Z] [ERROR] Stack trace: MongoServerSelectionError: Socket 'secureConnect' timed out after 32465ms (connectTimeoutMS: 30000)
+    at Topology.selectServer (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:321:38)
+    at async Topology._connect (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:200:28)
+    at async Topology.connect (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:152:13)
+    at async topologyConnect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:233:17)
+    at async MongoClient._connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:246:13)
+    at async MongoClient.connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:171:13)
+    at async MongoClient.connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:360:16)
+    at async checkScheduledReports (/Users/sim/Project2/scripts/scheduled-reports-daemon.js:146:14)
+    at async Timeout._onTimeout (/Users/sim/Project2/scripts/scheduled-reports-daemon.js:267:7)
+[2025-06-24T14:26:58.387Z] [INFO] Checking for scheduled reports...
+[2025-06-24T14:26:58.391Z] [ERROR] Error in checkScheduledReports: Server selection timed out after 30000 ms
+[2025-06-24T14:26:58.392Z] [ERROR] Stack trace: MongoServerSelectionError: Server selection timed out after 30000 ms
+    at Topology.selectServer (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:321:38)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at listOnTimeout (node:internal/timers:569:9)
+    at process.processTimers (node:internal/timers:543:7)
+    at async Topology._connect (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:200:28)
+    at async Topology.connect (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:152:13)
+    at async topologyConnect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:233:17)
+    at async MongoClient._connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:246:13)
+    at async MongoClient.connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:171:13)
+    at async MongoClient.connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:360:16)
+[2025-06-24T15:24:19.952Z] [INFO] Checking for scheduled reports...
+[2025-06-24T15:24:21.286Z] [DEBUG] Connected to MongoDB
+[2025-06-24T15:24:21.304Z] [DEBUG] Connected to MongoDB
+[2025-06-24T15:24:21.368Z] [INFO] Found 1 company databases
+[2025-06-24T15:24:21.369Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T15:24:21.374Z] [INFO] Found 1 company databases
+[2025-06-24T15:24:21.375Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T15:24:21.429Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T15:24:21.429Z)
+[2025-06-24T15:24:21.436Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T15:24:21.436Z)
+[2025-06-24T15:24:21.488Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T15:24:21.488Z] [INFO] Scheduled reports check completed
+[2025-06-24T15:24:21.491Z] [DEBUG] MongoDB connection closed
+[2025-06-24T15:24:21.494Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T15:24:21.495Z] [INFO] Scheduled reports check completed
+[2025-06-24T15:24:21.496Z] [DEBUG] MongoDB connection closed
+[2025-06-24T15:28:00.867Z] [INFO] Checking for scheduled reports...
+[2025-06-24T15:28:01.655Z] [DEBUG] Connected to MongoDB
+[2025-06-24T15:28:01.729Z] [INFO] Found 1 company databases
+[2025-06-24T15:28:01.729Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T15:28:01.790Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T15:28:01.790Z)
+[2025-06-24T15:28:01.852Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T15:28:01.852Z] [INFO] Scheduled reports check completed
+[2025-06-24T15:28:01.854Z] [DEBUG] MongoDB connection closed
+[2025-06-24T15:54:23.481Z] [INFO] Checking for scheduled reports...
+[2025-06-24T15:54:24.813Z] [DEBUG] Connected to MongoDB
+[2025-06-24T15:54:24.890Z] [INFO] Found 1 company databases
+[2025-06-24T15:54:24.891Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T15:54:25.071Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T15:54:25.071Z)
+[2025-06-24T15:54:25.159Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T15:54:25.160Z] [INFO] Scheduled reports check completed
+[2025-06-24T15:54:25.162Z] [DEBUG] MongoDB connection closed
+[2025-06-24T16:29:00.754Z] [INFO] Checking for scheduled reports...
+[2025-06-24T16:29:01.611Z] [DEBUG] Connected to MongoDB
+[2025-06-24T16:29:01.761Z] [INFO] Found 1 company databases
+[2025-06-24T16:29:01.762Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T16:29:01.829Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T16:29:01.829Z)
+[2025-06-24T16:29:01.905Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T16:29:01.905Z] [INFO] Scheduled reports check completed
+[2025-06-24T16:29:01.907Z] [DEBUG] MongoDB connection closed
+[2025-06-24T17:37:52.324Z] [INFO] Checking for scheduled reports...
+[2025-06-24T17:37:53.113Z] [DEBUG] Connected to MongoDB
+[2025-06-24T17:37:53.187Z] [INFO] Found 1 company databases
+[2025-06-24T17:37:53.187Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T17:37:53.249Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T17:37:53.249Z)
+[2025-06-24T17:37:53.337Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T17:37:53.338Z] [INFO] Scheduled reports check completed
+[2025-06-24T17:37:53.340Z] [DEBUG] MongoDB connection closed
+[2025-06-24T19:01:32.761Z] [INFO] Checking for scheduled reports...
+[2025-06-24T19:02:02.772Z] [INFO] Checking for scheduled reports...
+[2025-06-24T19:02:07.882Z] [ERROR] Error in checkScheduledReports: Server selection timed out after 30000 ms
+[2025-06-24T19:02:07.883Z] [ERROR] Stack trace: MongoServerSelectionError: Server selection timed out after 30000 ms
+    at Topology.selectServer (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:321:38)
+    at async Topology._connect (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:200:28)
+    at async Topology.connect (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:152:13)
+    at async topologyConnect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:233:17)
+    at async MongoClient._connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:246:13)
+    at async MongoClient.connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:171:13)
+    at async MongoClient.connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:360:16)
+    at async checkScheduledReports (/Users/sim/Project2/scripts/scheduled-reports-daemon.js:146:14)
+    at async Timeout._onTimeout (/Users/sim/Project2/scripts/scheduled-reports-daemon.js:267:7)
+Tue Jun 24 14:02:07 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 14:02:07 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 14:02:07 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-24T19:02:43.840Z] [INFO] Checking for scheduled reports...
+[2025-06-24T19:02:43.844Z] [ERROR] Error in checkScheduledReports: Server selection timed out after 30000 ms
+[2025-06-24T19:02:43.844Z] [ERROR] Stack trace: MongoServerSelectionError: Server selection timed out after 30000 ms
+    at Topology.selectServer (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:321:38)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at listOnTimeout (node:internal/timers:569:9)
+    at process.processTimers (node:internal/timers:543:7)
+    at async Topology._connect (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:200:28)
+    at async Topology.connect (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:152:13)
+    at async topologyConnect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:233:17)
+    at async MongoClient._connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:246:13)
+    at async MongoClient.connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:171:13)
+    at async MongoClient.connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:360:16)
+[2025-06-24T19:03:13.842Z] [INFO] Checking for scheduled reports...
+Tue Jun 24 14:03:13 CDT 2025: Running scheduled reports
+Tue Jun 24 14:03:13 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 14:03:13 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-24T19:03:27.319Z] [DEBUG] Connected to MongoDB
+[2025-06-24T19:03:27.603Z] [INFO] Found 1 company databases
+[2025-06-24T19:03:27.604Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T19:03:27.878Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T19:03:27.878Z)
+[2025-06-24T19:03:28.449Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T19:03:28.450Z] [INFO] Scheduled reports check completed
+[2025-06-24T19:03:28.452Z] [DEBUG] MongoDB connection closed
+[2025-06-24T19:03:43.505Z] [DEBUG] Connected to MongoDB
+[2025-06-24T19:03:43.573Z] [INFO] Found 1 company databases
+[2025-06-24T19:03:43.574Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T19:03:43.638Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T19:03:43.638Z)
+[2025-06-24T19:03:43.693Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T19:03:43.694Z] [INFO] Scheduled reports check completed
+[2025-06-24T19:03:43.696Z] [DEBUG] MongoDB connection closed
+[2025-06-24T19:03:43.844Z] [INFO] Checking for scheduled reports...
+[2025-06-24T19:03:45.744Z] [DEBUG] Connected to MongoDB
+[2025-06-24T19:03:46.401Z] [INFO] Found 1 company databases
+[2025-06-24T19:03:46.402Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T19:03:47.032Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T19:03:47.032Z)
+[2025-06-24T19:03:49.883Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T19:03:49.884Z] [INFO] Scheduled reports check completed
+[2025-06-24T19:03:49.886Z] [DEBUG] MongoDB connection closed
+[2025-06-24T19:31:57.531Z] [INFO] Checking for scheduled reports...
+[2025-06-24T20:18:02.519Z] [INFO] Checking for scheduled reports...
+[2025-06-24T20:18:02.523Z] [ERROR] Error in checkScheduledReports: Socket 'secureConnect' timed out after 2761399ms (connectTimeoutMS: 30000)
+[2025-06-24T20:18:02.524Z] [ERROR] Stack trace: MongoServerSelectionError: Socket 'secureConnect' timed out after 2761399ms (connectTimeoutMS: 30000)
+    at Topology.selectServer (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:321:38)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at process.processTimers (node:internal/timers:540:9)
+    at async Topology._connect (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:200:28)
+    at async Topology.connect (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:152:13)
+    at async topologyConnect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:233:17)
+    at async MongoClient._connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:246:13)
+    at async MongoClient.connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:171:13)
+    at async MongoClient.connect (/Users/sim/Project2/node_modules/mongodb/lib/mongo_client.js:360:16)
+    at async checkScheduledReports (/Users/sim/Project2/scripts/scheduled-reports-daemon.js:146:14)
+[2025-06-24T20:18:05.724Z] [DEBUG] Connected to MongoDB
+[2025-06-24T20:18:14.549Z] [INFO] Found 1 company databases
+[2025-06-24T20:18:14.549Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T20:49:05.671Z] [INFO] Checking for scheduled reports...
+[2025-06-24T21:33:57.568Z] [INFO] Checking for scheduled reports...
+[2025-06-24T21:33:57.570Z] [ERROR] Error processing company database company_9jxwph8g: connection <monitor> to 89.192.236.0:27017 timed out
+[2025-06-24T21:33:57.571Z] [ERROR] Stack trace: MongoServerSelectionError: connection <monitor> to 89.192.236.0:27017 timed out
+    at Topology.selectServer (/Users/sim/Project2/node_modules/mongodb/lib/sdam/topology.js:321:38)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at listOnTimeout (node:internal/timers:569:9)
+    at process.processTimers (node:internal/timers:543:7)
+    at async tryOperation (/Users/sim/Project2/node_modules/mongodb/lib/operations/execute_operation.js:192:22)
+    at async executeOperation (/Users/sim/Project2/node_modules/mongodb/lib/operations/execute_operation.js:75:16)
+    at async ListCollectionsCursor._initialize (/Users/sim/Project2/node_modules/mongodb/lib/cursor/list_collections_cursor.js:29:26)
+    at async ListCollectionsCursor.cursorInit (/Users/sim/Project2/node_modules/mongodb/lib/cursor/abstract_cursor.js:633:27)
+    at async ListCollectionsCursor.fetchBatch (/Users/sim/Project2/node_modules/mongodb/lib/cursor/abstract_cursor.js:667:13)
+    at async ListCollectionsCursor.next (/Users/sim/Project2/node_modules/mongodb/lib/cursor/abstract_cursor.js:347:17)
+[2025-06-24T21:33:57.571Z] [INFO] Scheduled reports check completed
+[2025-06-24T21:33:57.572Z] [DEBUG] MongoDB connection closed
+[2025-06-24T21:33:57.573Z] [ERROR] Error in checkScheduledReports: Socket 'secureConnect' timed out after 2689820ms (connectTimeoutMS: 30000)
+[2025-06-24T21:33:57.573Z] [ERROR] Stack trace: MongoNetworkTimeoutError: Socket 'secureConnect' timed out after 2689820ms (connectTimeoutMS: 30000)
+    at TLSSocket.<anonymous> (/Users/sim/Project2/node_modules/mongodb/lib/cmap/connect.js:287:20)
+    at Object.onceWrapper (node:events:621:28)
+    at TLSSocket.emit (node:events:507:28)
+    at Socket._onTimeout (node:net:609:8)
+    at listOnTimeout (node:internal/timers:608:17)
+    at process.processTimers (node:internal/timers:543:7)
+[2025-06-24T21:34:03.938Z] [DEBUG] Connected to MongoDB
+[2025-06-24T21:34:04.275Z] [INFO] Found 1 company databases
+[2025-06-24T21:34:04.275Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T21:34:04.501Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T21:34:04.501Z)
+[2025-06-24T21:34:05.277Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T21:34:05.278Z] [INFO] Scheduled reports check completed
+[2025-06-24T21:34:05.280Z] [DEBUG] MongoDB connection closed
+[2025-06-24T22:34:59.700Z] [INFO] Checking for scheduled reports...
+[2025-06-24T23:21:12.757Z] [INFO] Checking for scheduled reports...
+[2025-06-24T23:21:50.464Z] [INFO] Checking for scheduled reports...
+[2025-06-24T23:21:50.472Z] [ERROR] Error in checkScheduledReports: connection 1 to 89.192.236.29:27017 timed out
+[2025-06-24T23:21:50.473Z] [ERROR] Stack trace: MongoNetworkTimeoutError: connection 1 to 89.192.236.29:27017 timed out
+    at Timeout._onTimeout (/Users/sim/Project2/node_modules/mongodb/lib/cmap/connection.js:119:26)
+    at listOnTimeout (node:internal/timers:608:17)
+    at process.processTimers (node:internal/timers:543:7)
+Tue Jun 24 18:22:00 CDT 2025: Running scheduled reports
+Tue Jun 24 18:22:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 18:22:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-24T23:22:01.429Z] [DEBUG] Connected to MongoDB
+[2025-06-24T23:35:57.984Z] [INFO] Checking for scheduled reports...
+[2025-06-24T23:35:58.559Z] [ERROR] Error in checkScheduledReports: read ETIMEDOUT
+[2025-06-24T23:35:58.560Z] [ERROR] Stack trace: Error: read ETIMEDOUT
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:216:20)
+[2025-06-24T23:36:03.593Z] [INFO] Found 1 company databases
+[2025-06-24T23:36:03.594Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-24T23:36:03.665Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-24T23:36:03.665Z)
+[2025-06-24T23:36:03.726Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-24T23:36:03.727Z] [INFO] Scheduled reports check completed
+[2025-06-24T23:36:03.730Z] [DEBUG] MongoDB connection closed
+[2025-06-24T23:51:40.606Z] [INFO] Checking for scheduled reports...
+[2025-06-24T23:51:40.610Z] [ERROR] Error in checkScheduledReports: Socket 'secureConnect' timed out after 936532ms (connectTimeoutMS: 30000)
+[2025-06-24T23:51:40.611Z] [ERROR] Stack trace: MongoNetworkTimeoutError: Socket 'secureConnect' timed out after 936532ms (connectTimeoutMS: 30000)
+    at TLSSocket.<anonymous> (/Users/sim/Project2/node_modules/mongodb/lib/cmap/connect.js:287:20)
+    at Object.onceWrapper (node:events:621:28)
+    at TLSSocket.emit (node:events:507:28)
+    at Socket._onTimeout (node:net:609:8)
+    at listOnTimeout (node:internal/timers:608:17)
+    at process.processTimers (node:internal/timers:543:7)
+Tue Jun 24 20:09:50 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 20:09:50 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 20:09:50 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 20:10:25 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 20:10:25 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 20:10:25 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:26:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:26:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:26:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:27:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:27:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:27:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:28:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:28:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:28:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:29:01 CDT 2025: Running scheduled reports
+Tue Jun 24 21:29:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:29:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:30:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:30:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:30:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:31:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:31:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:31:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:32:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:32:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:32:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:33:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:33:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:33:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:34:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:34:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:34:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:35:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:35:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:35:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:36:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:36:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:36:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:37:01 CDT 2025: Running scheduled reports
+Tue Jun 24 21:37:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:37:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:38:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:38:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:38:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:39:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:39:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:39:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:40:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:40:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:40:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:41:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:41:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:41:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:42:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:42:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:42:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:43:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:43:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:43:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:44:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:44:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:44:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:45:01 CDT 2025: Running scheduled reports
+Tue Jun 24 21:45:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:45:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:46:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:46:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:46:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:47:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:47:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:47:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:48:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:48:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:48:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:49:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:49:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:49:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:50:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:50:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:50:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:51:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:51:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:51:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:52:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:52:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:52:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:53:01 CDT 2025: Running scheduled reports
+Tue Jun 24 21:53:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:53:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:54:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:54:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:54:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:55:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:55:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:55:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:56:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:56:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:56:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:57:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:57:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:57:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:58:00 CDT 2025: Running scheduled reports
+Tue Jun 24 21:58:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:58:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 21:59:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 21:59:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 21:59:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:00:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:00:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:00:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:01:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:01:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:01:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:02:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:02:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:02:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:03:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:03:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:03:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:04:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:04:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:04:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:05:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:05:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:05:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:06:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:06:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:06:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:07:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:07:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:07:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:08:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:08:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:08:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:09:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:09:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:09:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:10:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:10:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:10:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:11:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:11:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:11:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:12:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:12:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:12:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:13:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:13:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:13:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:14:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:14:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:14:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:15:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:15:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:15:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:16:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:16:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:16:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:17:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:17:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:17:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:18:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:18:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:18:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:19:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:19:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:19:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:20:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:20:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:20:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:21:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:21:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:21:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:22:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:22:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:22:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:23:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:23:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:23:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:24:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:24:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:24:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:25:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:25:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:25:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:26:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:26:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:26:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:27:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:27:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:27:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:28:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:28:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:28:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:29:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:29:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:29:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:30:01 CDT 2025: Running scheduled reports
+Tue Jun 24 22:30:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:30:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:31:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:31:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:31:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:32:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:32:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:32:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:33:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:33:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:33:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:34:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:34:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:34:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:35:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:35:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:35:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:36:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:36:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:36:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:37:01 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:37:01 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:37:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:38:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:38:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:38:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:39:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:39:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:39:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:40:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:40:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:40:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:41:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:41:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:41:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:42:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:42:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:42:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:43:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:43:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:43:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:44:01 CDT 2025: Running scheduled reports
+Tue Jun 24 22:44:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:44:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:45:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:45:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:45:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:46:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:46:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:46:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:47:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:47:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:47:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:48:01 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:48:01 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:48:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:49:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:49:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:49:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:50:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:50:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:50:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:51:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:51:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:51:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:52:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:52:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:52:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:53:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:53:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:53:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:54:01 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:54:01 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:54:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:55:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:55:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:55:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:56:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:56:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:56:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:57:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:57:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:57:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:58:00 CDT 2025: Running scheduled reports
+Tue Jun 24 22:58:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:58:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 22:59:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 22:59:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 22:59:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:00:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:00:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:00:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:01:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:01:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:01:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:02:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:02:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:02:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:03:01 CDT 2025: Running scheduled reports
+Tue Jun 24 23:03:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:03:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:04:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:04:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:04:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:05:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:05:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:05:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:06:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:06:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:06:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:07:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:07:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:07:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:08:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:08:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:08:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:09:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:09:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:09:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:10:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:10:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:10:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:11:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:11:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:11:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:12:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:12:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:12:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:13:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:13:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:13:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:14:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:14:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:14:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:15:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:15:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:15:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:16:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:16:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:16:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:17:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:17:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:17:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:18:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:18:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:18:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:19:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:19:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:19:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:20:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:20:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:20:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:21:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:21:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:21:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:22:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:22:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:22:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:23:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:23:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:23:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:24:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:24:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:24:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:25:01 CDT 2025: Running scheduled reports
+Tue Jun 24 23:25:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:25:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:26:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:26:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:26:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:27:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:27:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:27:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:28:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:28:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:28:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:29:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:29:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:29:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:30:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:30:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:30:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:31:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:31:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:31:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:32:01 CDT 2025: Running scheduled reports
+Tue Jun 24 23:32:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:32:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:33:00 CDT 2025: Checking if NextJS server is running...
+Tue Jun 24 23:33:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:33:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:34:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:34:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:34:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:35:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:35:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:35:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:36:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:36:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:36:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:37:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:37:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:37:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+Tue Jun 24 23:38:00 CDT 2025: Running scheduled reports
+Tue Jun 24 23:38:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Tue Jun 24 23:38:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.

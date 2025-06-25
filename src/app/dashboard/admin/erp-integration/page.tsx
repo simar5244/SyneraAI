@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FiArrowLeft, FiRefreshCw, FiDownload, FiSettings, FiAlertTriangle, FiCheckCircle, FiTrash2, FiEdit, FiTimes } from 'react-icons/fi';
+import { FiArrowLeft, FiRefreshCw, FiDownload, FiSettings, FiAlertTriangle, FiCheckCircle, FiTrash2, FiEdit } from 'react-icons/fi';
+import { FiTimes } from '@/lib/icons';
 import Link from 'next/link';
 import { UserRole, Permission, hasPermission } from '@/utils/roles';
 

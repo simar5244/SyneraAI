@@ -6,7 +6,7 @@ import { getToken } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import connectDB from '@/lib/dbConnect';
 import User, { getUserModel } from '@/models/User';
-import { verifyEdgeToken, EdgeVerifiedTokenPayload } from '@/lib/edgeAuth';
+import { verifyEdgeToken, EdgeVerifiedTokenPayload } from './edgeAuth';
 
 /**
  * Authentication Utilities
@@ -16,8 +16,19 @@ import { verifyEdgeToken, EdgeVerifiedTokenPayload } from '@/lib/edgeAuth';
 
 // In a real app, these would be stored in environment variables
 const JWT_SECRET = process.env.JWT_SECRET || 'organization-galaxy-secret-key';
-// Token expiry duration: extend default from 1 day to 7 days
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+
+// Parse JWT expiration time from environment or use default (7 days in seconds)
+const parseJwtExpiresIn = (): number => {
+  const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
+  const value = parseInt(expiresIn);
+  
+  if (expiresIn.endsWith('d')) return value * 24 * 60 * 60; // days to seconds
+  if (expiresIn.endsWith('h')) return value * 60 * 60; // hours to seconds
+  if (expiresIn.endsWith('m')) return value * 60; // minutes to seconds
+  return value || 60 * 60 * 24 * 7; // default to 7 days if invalid
+};
+
+const JWT_EXPIRES_IN = parseJwtExpiresIn();
 
 interface TokenPayload extends JwtPayload {
   id: string;
@@ -78,10 +89,18 @@ export interface VerifiedTokenPayload {
  * @returns Signed JWT token
  */
 export const generateToken = (payload: Omit<Partial<TokenPayload>, 'exp' | 'iat'>, options?: SignOptions): string => {
-  return sign(payload as JwtPayload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
-    ...options
-  });
+  // Create a new options object to avoid mutating the original
+  const signOptions: SignOptions = {
+    ...options,
+  };
+  
+  // Only set expiresIn if it's not already set in options
+  if (!signOptions.expiresIn) {
+    // Use the pre-parsed JWT_EXPIRES_IN value (already in seconds)
+    signOptions.expiresIn = JWT_EXPIRES_IN;
+  }
+  
+  return sign(payload as JwtPayload, JWT_SECRET, signOptions);
 };
 
 /**
@@ -94,11 +113,11 @@ export const verifyToken = (token: string): TokenPayload | null => {
     // Only use this in Node.js environment, NOT in Edge Runtime
     try {
       return verify(token, JWT_SECRET) as TokenPayload;
-    } catch (err: any) {
+    } catch (err: unknown) {
       // If token expired, ignore expiration to allow seamless access
-      if (err.name === 'TokenExpiredError') {
+      if (err instanceof Error && 'name' in err && err.name === 'TokenExpiredError') {
         console.warn('Token expired, proceeding by ignoring expiration:', err);
-        return verify(token, JWT_SECRET, { ignoreExpiration: true } as any) as TokenPayload;
+        return verify(token, JWT_SECRET, { ignoreExpiration: true }) as TokenPayload;
       } else {
         console.error('Token verification failed:', err);
         return null;
@@ -110,68 +129,7 @@ export const verifyToken = (token: string): TokenPayload | null => {
   }
 };
 
-/**
- * Verify auth token and return payload - WORKS IN BOTH NODE.JS AND EDGE
- * Ensures the returned payload includes id, userId, and role.
- * @param token JWT token to verify
- * @returns Decoded and normalized token payload or null if invalid/missing required fields
- */
-export const verifyAuth = async (token: string): Promise<VerifiedTokenPayload | null> => {
-  try {
-    // For Edge Runtime, use the edge-compatible verifier
-    if (typeof process === 'undefined' || process.env.NEXT_RUNTIME === 'edge') {
-      return await verifyEdgeToken(token) as VerifiedTokenPayload;
-    }
-    
-    // For Node.js runtime
-    let decoded: JwtPayload;
-    try {
-      decoded = verify(token, JWT_SECRET) as JwtPayload;
-    } catch (err: unknown) {
-      // If token expired, ignore expiration to allow seamless access
-      if (err instanceof Error && err.name === 'TokenExpiredError') {
-        console.warn('Token expired, proceeding by ignoring expiration:', err);
-        decoded = verify(token, JWT_SECRET, { ignoreExpiration: true }) as JwtPayload;
-      } else {
-        console.error('Node.js token verification failed:', err);
-        return null;
-      }
-    }
-
-    const normalized: Partial<VerifiedTokenPayload> = { ...decoded }; // Start with decoded fields
-
-    // Ensure both id and userId are present
-    if (normalized.userId && !normalized.id) {
-      normalized.id = normalized.userId;
-    } else if (normalized.id && !normalized.userId) {
-      normalized.userId = normalized.id;
-    }
-
-    // CRITICAL: Ensure id and role are present. organizationId is now OPTIONAL.
-    if (!normalized.id || !normalized.role) {
-        console.error('Token verification result missing required fields (id or role):', normalized);
-        return null; // Invalid token if essential fields are missing
-    }
-    
-    // Ensure role is a string
-    normalized.role = String(normalized.role);
-
-    // Ensure companyCode is present if we have company or company_code
-    if (!normalized.companyCode) {
-      if (normalized.company_code) {
-        normalized.companyCode = normalized.company_code;
-      } else if (normalized.organizationCode) {
-        normalized.companyCode = normalized.organizationCode;
-      }
-      // Do not perform DB lookup here to avoid CastErrors; require token to include companyCode or company_code
-    }
-
-    return normalized as VerifiedTokenPayload;
-  } catch (error) {
-    console.error('Auth verification failed unexpectedly:', error);
-    return null;
-  }
-};
+// verifyAuth is now imported directly from edgeAuth.ts
 
 /**
  * Refresh user data from database (ONLY IN NODE.JS, never in Edge)
@@ -180,41 +138,29 @@ export const verifyAuth = async (token: string): Promise<VerifiedTokenPayload | 
  * @returns Updated user data or null if not found
  */
 export const refreshUserFromDb = async (userId: string, companyCode?: string) => {
+  const { MongoClient, ObjectId } = require('mongodb');
+  const client = new MongoClient(process.env.MONGODB_URI);
+  
   try {
-    await connectDB();
+    await client.connect();
     
-    // Check if userId is a valid MongoDB ObjectId
-    const isValidObjectId = (id: string): boolean => {
-      try {
-        const { ObjectId } = require('mongodb');
-        return ObjectId.isValid(id) && String(new ObjectId(id)) === id;
-      } catch (err) {
-        return false;
-      }
+    // Determine which database to use
+    const dbName = companyCode ? `company_${companyCode}` : 'org_sim_db';
+    const db = client.db(dbName);
+    const usersCollection = db.collection('users');
+    
+    // Build query to find user by ID or email
+    const query = {
+      $or: [
+        { _id: ObjectId.isValid(userId) ? new ObjectId(userId) : null },
+        { userId },
+        { email: userId }
+      ].filter(Boolean)
     };
     
-    // Use the appropriate User model based on company code
-    if (companyCode) {
-      const CompanyUser = getUserModel(companyCode);
-      
-      // If userId is a valid ObjectId, use findById, otherwise try to find by other fields
-      if (isValidObjectId(userId)) {
-        return await CompanyUser.findById(userId).select('role company companyCode');
-      } else {
-        // Try to find by userId field first, then by email
-        return await CompanyUser.findOne({ 
-          $or: [{ userId: userId }, { email: userId }] 
-        }).select('role company companyCode');
-      }
-    } else {
-      if (isValidObjectId(userId)) {
-        return await User.findById(userId).select('role company companyCode');
-      } else {
-        return await User.findOne({ 
-          $or: [{ userId: userId }, { email: userId }] 
-        }).select('role company companyCode');
-      }
-    }
+    // Execute query and exclude password field
+    const user = await usersCollection.findOne(query, { projection: { password: 0 } });
+    return user;
   } catch (err) {
     console.error('Error fetching user data:', err);
     return null;
@@ -273,8 +219,8 @@ export const authMiddleware = async (req: NextRequest) => {
       );
     }
 
-    // Verify token
-    const decoded = await verifyAuth(token);
+    // Verify the token
+    const decoded = await (await import('./edgeAuth')).verifyAuth(token);
     if (!decoded) {
       return NextResponse.json(
         { error: 'Invalid or expired token' },
@@ -395,8 +341,7 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET || 'your-secret-key',
 };
 
-// Re-export all the auth functions that were already exported individually
-export { verifyAuth } from './edgeAuth';
+// Re-exports are now handled at the top of the file
 
 // Get session from request
 export async function getSession(req: Request) {
@@ -407,7 +352,7 @@ export async function getSession(req: Request) {
   if (!token) return null;
   
   try {
-    const payload = await verifyAuth(token);
+    const payload = await (await import('./edgeAuth')).verifyAuth(token);
     if (!payload) return null;
     
     return {

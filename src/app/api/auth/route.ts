@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectToMongoDB from '@/lib/dbConnect';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 
 // This consolidated auth route currently supports only password change.
 // Endpoint: POST /api/auth  with JSON { currentPassword, newPassword }
