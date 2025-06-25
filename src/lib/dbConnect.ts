@@ -184,5 +184,18 @@ export async function connectToMainDatabase() {
 }
 
 // Export connectToMongoDB as both default and named export
-export { connectToMongoDB };
-export default connectToMongoDB;
+// Add this at the very end of your dbConnect file to ensure all exports are available
+
+// Make sure all functions are exported properly
+export { connectToMongoDB as default, connectToMongoDB };
+
+// Also export getCompanyMongoURI in case it's needed elsewhere
+export { getCompanyMongoURI };
+
+// Alternative: you can also do this if the above doesn't work
+module.exports = {
+  connectToMongoDB,
+  connectToMainDatabase,
+  getCompanyMongoURI,
+  default: connectToMongoDB
+};

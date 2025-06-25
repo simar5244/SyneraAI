@@ -1,6 +1,6 @@
-import { connectToDatabase } from '../lib/db';
+import connectToDatabase from '@/services/mongodb';import connectToDatabase from '../lib/dbConnect';
 import User from '../models/User';
-import { hashPassword } from '../lib/auth';
+import { hashPassword } from '../services/authService';
 
 async function seedAdminUsers() {
   try {

@@ -1,8 +1,8 @@
 // src/lib/auth.ts
-import { SignOptions, sign, verify } from 'jsonwebtoken';
+import { SignOptions, sign, verify, JwtPayload } from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
-import { NextAuthOptions } from 'next-auth';
-import { Session, User as NextAuthUser } from 'next-auth';
+import { NextAuthOptions, DefaultSession, DefaultUser } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import connectDB from '@/lib/dbConnect';
 import User, { getUserModel } from '@/models/User';
@@ -19,31 +19,42 @@ const JWT_SECRET = process.env.JWT_SECRET || 'organization-galaxy-secret-key';
 // Token expiry duration: extend default from 1 day to 7 days
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
-interface TokenPayload {
+interface TokenPayload extends JwtPayload {
   id: string;
+  userId?: string;
   email: string;
   role: string;
   company?: string;
   companyCode?: string;
-  [key: string]: any;
-}
-
-interface ExtendedUser extends NextAuthUser {
-  id: string;
-  role?: string;
   tier?: number;
+  notificationPreferences?: {
+    email: boolean;
+    browser: boolean;
+    types: {
+      system: boolean;
+      project: boolean;
+      mention: boolean;
+      task: boolean;
+    };
+  };
+  [key: string]: unknown;
 }
 
-// Custom session type
-interface ExtendedSession extends Session {
-  user: {
+declare module 'next-auth' {
+  interface Session extends DefaultSession {
+    user: {
+      id: string;
+      role?: string;
+      tier?: number;
+      notificationPreferences?: TokenPayload['notificationPreferences'];
+    } & DefaultSession['user'];
+  }
+
+  interface User extends DefaultUser {
     id: string;
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
     role?: string;
     tier?: number;
-    notificationPreferences?: any;
+    notificationPreferences?: TokenPayload['notificationPreferences'];
   }
 }
 
@@ -66,8 +77,8 @@ export interface VerifiedTokenPayload {
  * @param options Additional JWT sign options
  * @returns Signed JWT token
  */
-export const generateToken = (payload: Partial<TokenPayload>, options?: SignOptions): string => {
-  return sign(payload, JWT_SECRET, {
+export const generateToken = (payload: Omit<Partial<TokenPayload>, 'exp' | 'iat'>, options?: SignOptions): string => {
+  return sign(payload as JwtPayload, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
     ...options
   });
@@ -113,22 +124,19 @@ export const verifyAuth = async (token: string): Promise<VerifiedTokenPayload | 
     }
     
     // For Node.js runtime
-    let decoded: any;
+    let decoded: JwtPayload;
     try {
-      decoded = verify(token, JWT_SECRET);
-    } catch (err: any) {
+      decoded = verify(token, JWT_SECRET) as JwtPayload;
+    } catch (err: unknown) {
       // If token expired, ignore expiration to allow seamless access
-      if (err.name === 'TokenExpiredError') {
+      if (err instanceof Error && err.name === 'TokenExpiredError') {
         console.warn('Token expired, proceeding by ignoring expiration:', err);
-        decoded = verify(token, JWT_SECRET, { ignoreExpiration: true } as any);
+        decoded = verify(token, JWT_SECRET, { ignoreExpiration: true }) as JwtPayload;
       } else {
         console.error('Node.js token verification failed:', err);
         return null;
       }
     }
-
-    // Normalize the payload to ensure it has the expected structure
-    if (!decoded) return null;
 
     const normalized: Partial<VerifiedTokenPayload> = { ...decoded }; // Start with decoded fields
 
@@ -176,7 +184,7 @@ export const refreshUserFromDb = async (userId: string, companyCode?: string) =>
     await connectDB();
     
     // Check if userId is a valid MongoDB ObjectId
-    const isValidObjectId = (id: string) => {
+    const isValidObjectId = (id: string): boolean => {
       try {
         const { ObjectId } = require('mongodb');
         return ObjectId.isValid(id) && String(new ObjectId(id)) === id;
@@ -256,8 +264,7 @@ export const generateRandomToken = (): string => {
 export const authMiddleware = async (req: NextRequest) => {
   try {
     const token = req.cookies.get('token')?.value || 
-                  req.headers.get('authorization')?.replace('Bearer ', '') || 
-                  '';
+                 (req.headers.get('authorization') || '').replace('Bearer ', '');
 
     if (!token) {
       return NextResponse.json(
@@ -286,7 +293,11 @@ export const authMiddleware = async (req: NextRequest) => {
     }
 
     // Attach user to request for use in route handler
-    (req as any).user = decoded;
+    Object.defineProperty(req, 'user', {
+      value: decoded,
+      enumerable: true,
+      configurable: true
+    });
     
     return null; // Continue to route handler
   } catch (error) {
@@ -297,57 +308,15 @@ export const authMiddleware = async (req: NextRequest) => {
   }
 };
 
-// Mock user database - Update with all accounts
-const users = [
-  {
-    id: 'user-001',
-    name: 'Admin User',
-    email: 'admin@organizationgalaxy.com',
-    password: 'AdminPassword123!', // In production, these would be hashed
-    role: 'admin',
-    tier: 1,
-  },
-  {
-    id: 'user-002',
-    name: 'Test Admin',
-    email: 'test@example.com',
-    password: 'TestPassword123!',
-    role: 'admin',
-    tier: 1,
-  },
-  {
-    id: 'user-003',
-    name: 'Top Manager',
-    email: 'topmanager@organizationgalaxy.com',
-    password: 'ManagerPassword123!',
-    role: 'top_management',
-    tier: 1,
-  },
-  {
-    id: 'user-004',
-    name: 'Test Top Manager',
-    email: 'testmanager@example.com',
-    password: 'TestManager123!',
-    role: 'top_management',
-    tier: 1,
-  },
-  {
-    id: 'user-005',
-    name: 'Employee',
-    email: 'employee@organizationgalaxy.com',
-    password: 'EmployeePassword123!',
-    role: 'employee',
-    tier: 3,
-  },
-  {
-    id: 'user-006',
-    name: 'Test Employee',
-    email: 'testemployee@example.com',
-    password: 'TestEmployee123!',
-    role: 'employee',
-    tier: 3,
-  },
-];
+
+
+
+// Extend the Next.js request type
+declare module 'next' {
+  interface NextApiRequest {
+    user?: TokenPayload;
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -361,7 +330,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials) return null;
         
         // Find user by email
-        const user = users.find(user => user.email === credentials.email);
+        const user = await User.findOne({ email: credentials.email });
         
         // Check if user exists and password matches
         if (user && user.password === credentials.password) {
@@ -383,31 +352,34 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         // Add custom user properties to the token
-        token.id = user.id;
-        token.role = user.role;
-        token.tier = user.tier;
-        
-        // Default preferences
-        token.notificationPreferences = {
-          email: true,
-          browser: true,
-          types: {
-            system: true,
-            project: true,
-            mention: true,
-            task: true,
+        return {
+          ...token,
+          id: user.id,
+          role: user.role,
+          tier: user.tier,
+          notificationPreferences: {
+            email: true,
+            browser: true,
+            types: {
+              system: true,
+              project: true,
+              mention: true,
+              task: true,
+            },
           },
         };
       }
       return token;
     },
     async session({ session, token }) {
-      if (token) {
+      if (session.user) {
         // Add custom token properties to the session
         session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.user.tier = token.tier as number;
-        session.user.notificationPreferences = token.notificationPreferences as any;
+        if (token.notificationPreferences) {
+          session.user.notificationPreferences = token.notificationPreferences as TokenPayload['notificationPreferences'];
+        }
       }
       return session;
     },
@@ -421,4 +393,35 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   secret: process.env.NEXTAUTH_SECRET || 'your-secret-key',
-}; 
+};
+
+// Re-export all the auth functions that were already exported individually
+export { verifyAuth } from './edgeAuth';
+
+// Get session from request
+export async function getSession(req: Request) {
+  const authHeader = req.headers.get('authorization');
+  if (!authHeader?.startsWith('Bearer ')) return null;
+  
+  const token = authHeader.split(' ')[1];
+  if (!token) return null;
+  
+  try {
+    const payload = await verifyAuth(token);
+    if (!payload) return null;
+    
+    return {
+      user: {
+        id: payload.id,
+        email: payload.email,
+        role: payload.role,
+        company: payload.company,
+        companyCode: payload.companyCode,
+      },
+      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+  } catch (error) {
+    console.error('Error in getSession:', error);
+    return null;
+  }
+}

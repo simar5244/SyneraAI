@@ -792,3 +792,28 @@ export { AuthService, getSession };
 
 // Export the combined service instance as default
 export default authService;
+
+export const verifyToken = authServiceObj.verifyToken.bind(authServiceObj);
+export const verifyTokenAsync = authServiceObj.verifyTokenAsync.bind(authServiceObj);
+export const generateToken = authServiceObj.generateToken.bind(authServiceObj);
+export const generateTokenAsync = authServiceObj.generateTokenAsync.bind(authServiceObj);
+export const hashPassword = authServiceObj.hashPassword.bind(authServiceObj);
+export const verifyPassword = authServiceObj.verifyPassword.bind(authServiceObj);
+export const generateVerificationCode = authServiceObj.generateVerificationCode.bind(authServiceObj);
+export const storeVerificationCode = authServiceObj.storeVerificationCode.bind(authServiceObj);
+export const verifyCode = authServiceObj.verifyCode.bind(authServiceObj);
+export const sendVerificationEmail = authServiceObj.sendVerificationEmail.bind(authServiceObj);
+export const isTwoFactorExempt = authServiceObj.isTwoFactorExempt.bind(authServiceObj);
+export const usesMockData = authServiceObj.usesMockData.bind(authServiceObj);
+export const generateMfaSessionTokenAsync = authServiceObj.generateMfaSessionTokenAsync.bind(authServiceObj);
+
+// Export the missing functions that were being imported
+export const extractToken = (req: Request): string | null => {
+  const authHeader = req.headers.get('authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null;
+  }
+  return authHeader.split(' ')[1] || null;
+};
+
+export const comparePassword = authServiceObj.verifyPassword.bind(authServiceObj);
