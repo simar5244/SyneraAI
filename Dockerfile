@@ -44,6 +44,12 @@ RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
 # Copy the rest of the application
 COPY . .
 
+# Copy .env.local specifically for the build
+COPY .env.local .env.local
+
+# Ensure proper permissions
+RUN chmod 644 .env.local
+
 # Build the application
 RUN npm run build
 

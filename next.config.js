@@ -1,10 +1,29 @@
 /** @type {import('next').NextConfig} */
 const webpack = require('webpack');
 const path = require('path');
-require('dotenv').config({ path: path.resolve(process.cwd(), '.env.local') });
+const fs = require('fs');
+
+// Load environment variables
+const envPath = path.resolve(process.cwd(), '.env.local');
+if (fs.existsSync(envPath)) {
+  require('dotenv').config({ path: envPath });
+} else {
+  console.warn('.env.local not found, using environment variables from the system');
+}
 
 // Check if we're running in a Docker container
 const isDocker = process.env.RUNNING_IN_DOCKER === 'true';
+
+// Log environment variables being used (without sensitive values)
+console.log('Environment variables loaded for build:');
+console.log(`- MONGODB_URI: ${process.env.MONGODB_URI ? 'Set' : 'Not set'}`);
+console.log(`- MONGODB_URI_BASE: ${process.env.MONGODB_URI_BASE ? 'Set' : 'Not set'}`);
+console.log(`- NEXT_PUBLIC_APP_URL: ${process.env.NEXT_PUBLIC_APP_URL || 'Not set'}`);
+
+// Validate required environment variables
+if (!process.env.MONGODB_URI && !process.env.MONGODB_URI_BASE) {
+  console.warn('Warning: Neither MONGODB_URI nor MONGODB_URI_BASE is set. Database connections will fail.');
+}
 
 const nextConfig = {
   // Configure environment variables
