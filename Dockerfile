@@ -13,6 +13,7 @@ RUN echo "Cache bust: $CACHE_DATE"
 # Install system dependencies (Python and build tools)
 RUN apt-get update && apt-get install -y \
     python3 \
+    python3-venv \
     python3-dev \
     python3-pip \
     build-essential \
@@ -26,7 +27,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy package and requirements files
+# Copy package files
 COPY package*.json ./
 COPY requirements*.txt ./
 
@@ -34,15 +35,18 @@ COPY requirements*.txt ./
 ENV PYTHON=/usr/bin/python3
 ENV npm_config_python=/usr/bin/python3
 
-# Install Node.js dependencies
+# Install Node.js dependencies with production flag (allow legacy peer deps)
 RUN npm install --only=production --legacy-peer-deps && \
     npm cache clean --force
 
-# ✅ FIX APPLIED HERE: Create and use virtualenv for Python
-RUN python3 -m venv /venv && \
-    . /venv/bin/activate && \
-    pip install --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir -r requirements.txt
+# Create and activate a virtual environment for Python in builder stage
+RUN python3 -m venv /opt/venv
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Install Python dependencies in the virtual environment
+RUN python -m pip install --upgrade pip setuptools wheel && \
+    python -m pip install --no-cache-dir -r requirements.txt
 
 # Copy the full app source code
 COPY . .
@@ -83,20 +87,23 @@ COPY --from=builder /app/*.sh ./
 RUN npm install --only=production --legacy-peer-deps
 
 # Set up virtualenv in production container
-RUN python3 -m venv /venv && \
-    . /venv/bin/activate && \
-    pip install --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir -r requirements.txt
+RUN python3 -m venv /opt/venv
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Install Python dependencies in the virtual environment
+RUN python -m pip install --upgrade pip setuptools wheel && \
+    python -m pip install --no-cache-dir -r requirements.txt
 
 # Make shell scripts executable
 RUN chmod +x ./*.sh
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=10000
 
-# Expose the app port
-EXPOSE 3000
+# Expose the port the app runs on
+EXPOSE 10000
 
-# Start the app
-CMD ["npm", "run", "start"]
+# Start the application
+CMD ["node_modules/.bin/next", "start"]
