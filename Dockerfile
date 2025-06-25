@@ -41,14 +41,18 @@ RUN npm install --only=production --legacy-peer-deps && \
 # Install Python dependencies
 RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
 
-# Copy the rest of the application
+# Copy the rest of the application (excluding .env.local)
 COPY . .
 
-# Copy .env.local specifically for the build
-COPY .env.local .env.local
-
-# Ensure proper permissions
-RUN chmod 644 .env.local
+# Create a default .env.local if it doesn't exist
+RUN if [ ! -f .env.local ]; then \
+      echo "# Auto-generated empty .env.local" > .env.local && \
+      echo "# Add your environment variables here" >> .env.local && \
+      echo "MONGODB_URI=${MONGODB_URI}" >> .env.local && \
+      echo "MONGODB_URI_BASE=${MONGODB_URI_BASE}" >> .env.local && \
+      echo "NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}" >> .env.local; \
+    fi && \
+    chmod 644 .env.local
 
 # Build the application
 RUN npm run build

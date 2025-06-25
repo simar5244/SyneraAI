@@ -2,10 +2,8 @@ node_modules
 .next
 .git
 .gitignore
-.env.local
-.env.development
-.env.production
-.env.test
+# Environment files are handled in the Dockerfile
+# to ensure they're available during build
 README.md
 .next
 out
