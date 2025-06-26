@@ -7,11 +7,12 @@ ARG MONGODB_URI_BASE
 ARG NEXT_PUBLIC_APP_URL
 
 # Cache bust argument to force layer rebuild
-ARG CACHE_DATE=2025-06-22
+ARG CACHE_DATE=2025-06-26
 RUN echo "Cache bust: $CACHE_DATE"
 
-# Install system dependencies (Python, build tools, and dos2unix)
+# Install system dependencies including Git and build tools
 RUN apt-get update && apt-get install -y \
+    git \
     python3 \
     python3-venv \
     python3-dev \
@@ -36,8 +37,15 @@ COPY requirements*.txt ./
 ENV PYTHON=/usr/bin/python3
 ENV npm_config_python=/usr/bin/python3
 
+# Set Python path for node-gyp
+ENV PYTHON=/usr/bin/python3
+ENV npm_config_python=/usr/bin/python3
+
 # Install Node.js dependencies with production flag (allow legacy peer deps)
-RUN npm install --only=production --legacy-peer-deps && \
+RUN npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm install --only=production --legacy-peer-deps --prefer-offline --no-audit --progress=false && \
     npm cache clean --force
 
 # Create and activate a virtual environment for Python in builder stage
@@ -49,7 +57,13 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN python -m pip install --upgrade pip setuptools wheel && \
     python -m pip install --no-cache-dir -r requirements.txt
 
-# Copy the full app source code
+# Copy package-lock.json (if exists) for better dependency resolution
+COPY package-lock.json* ./
+
+# Install development dependencies
+RUN npm install --legacy-peer-deps --no-audit --progress=false
+
+# Copy the rest of the application
 COPY . .
 
 # Generate .env.local from build args
@@ -57,9 +71,6 @@ RUN echo "MONGODB_URI=$MONGODB_URI" > .env.local && \
     echo "MONGODB_URI_BASE=$MONGODB_URI_BASE" >> .env.local && \
     echo "NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL" >> .env.local && \
     chmod 644 .env.local
-
-# Install dependencies with legacy peer deps
-RUN npm install --legacy-peer-deps --force
 
 # Copy and prepare the build script
 COPY build.sh /app/
