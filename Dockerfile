@@ -82,31 +82,15 @@ if [ ! -f .next/package.json ]; then\
 fi\n\
 # Create routes-manifest.json if it doesn\'t exist\
 if [ ! -f .next/routes-manifest.json ]; then\
-  echo '{
-    "version": 3,
-    "basePath": "",
-    "pages404": false,
-    "dynamicRoutes": []
-  }' > .next/routes-manifest.json\
+  echo '{\"version\":3,\"basePath\":\"\",\"pages404\":false,\"dynamicRoutes\":[]}' > .next/routes-manifest.json\
 fi\n\
 # Create build-manifest.json if it doesn\'t exist\
 if [ ! -f .next/build-manifest.json ]; then\
-  echo '{
-    "pages": {},
-    "dev": false,
-    "polyfillFiles": [],
-    "lowPriorityFiles": []
-  }' > .next/build-manifest.json\
+  echo '{\"pages\":{},\"dev\":false,\"polyfillFiles\":[],\"lowPriorityFiles\":[]}' > .next/build-manifest.json\
 fi\n\
 # Create required-server-files.json if it doesn\'t exist\
 if [ ! -f .next/required-server-files.json ]; then\
-  echo '{
-    "version": 1,
-    "files": [],
-    "config": {
-      "pageExtensions": ["tsx", "ts", "jsx", "js", "mjs"]
-    }
-  }' > .next/required-server-files.json\
+  echo '{\"version\":1,\"files\":[],\"config\":{\"pageExtensions\":[\"tsx\",\"ts\",\"jsx\",\"js\",\"mjs\"]}}' > .next/required-server-files.json\
 fi\n\
 echo "Build files verification complete"\n' > /app/build.sh && \
 chmod +x /app/build.sh
