@@ -1,3 +1,7 @@
+// This file prevents Next.js from trying to pre-render this API route
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { generateToken } from '@/lib/auth';
 import connectDB from '@/lib/dbConnect';
@@ -9,7 +13,12 @@ import { Types } from 'mongoose';
 import { getAuthUserModel } from '@/models/AuthUser';
 
 // Initialize Stripe with your secret key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.error('STRIPE_SECRET_KEY is not set in environment variables');
+  throw new Error('Stripe secret key is not configured');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2025-05-28.basil',
   typescript: true,
   timeout: 10000, // 10 second timeout

@@ -2,14 +2,37 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Redis } from 'ioredis';
 import { z } from 'zod';
 import { getToken } from 'next-auth/jwt';
+import type { SessionUser } from '@/types/next-auth';
 import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs';
-import { connectToMongoDB } from '@/lib/dbConnect';
-import Organization from '@/models/Organization';
-import connectDB from '@/lib/db';
+import { MongoClient } from 'mongodb';
+import mongoose from 'mongoose';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import { connectToMongoDB } from '@/lib/dbConnect';
+import Organization from '@/models/Organization';
+
+// Session types are now imported from @/types/next-auth
+
+interface IERPConnection {
+  type: string;
+  details: {
+    host?: string;
+    port?: string;
+    username?: string;
+    password?: string;
+    apiKey?: string;
+    tenantId?: string;
+    systemId?: string;
+    [key: string]: any;
+  };
+  status: 'error' | 'active' | 'inactive';
+  lastSyncDate: Date;
+  connectedBy: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 // Configuration for Redis
 // In production, ensure this is configured with proper security
@@ -143,8 +166,9 @@ async function storeConnectionData(userId: string, connectionData: any, companyC
     }
     
     // Always store in MongoDB for persistence
-    if (uri) {
-      const client = new MongoClient(uri);
+    const mongoUri = process.env.MONGODB_URI || '';
+    if (mongoUri) {
+      const client = new MongoClient(mongoUri);
       await client.connect();
       
       // Store in company-specific database
@@ -433,11 +457,16 @@ export async function POST(req: NextRequest) {
     
     // Get session data
     const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get request data
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET || '' });
+    if (!token) {
+      return NextResponse.json({ error: 'Failed to authenticate token' }, { status: 401 });
+    }
+    
     const data = await req.json();
     
     // Validate basic connection data
@@ -479,13 +508,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Connect to MongoDB
-    await connectToMongoDB();
+    // Get user information with proper typing
+    const user = session.user as unknown as SessionUser;
+    const companyCode = user.companyCode;
     
-    // Get user information
-    const userId = session.user.id || session.user.email || '';
-    const userEmail = session.user.email || '';
-    const companyCode = (session.user.companyCode || '').toLowerCase();
+    if (!companyCode) {
+      return NextResponse.json({ error: 'Company code not found' }, { status: 400 });
+    }
+    
+    // Connect to MongoDB with company code
+    await connectToMongoDB(companyCode);
+    if (!mongoose.connection?.db) {
+      throw new Error('Failed to connect to database');
+    }
+    
+    const userId = user.id || '';
+    const userEmail = user.email || '';
     
     // Check if user has a company code
     if (!companyCode) {
@@ -534,9 +572,9 @@ export async function POST(req: NextRequest) {
         apiKey: data.apiKey,
         tenantId: data.tenantId
       },
-      status: 'active',
+      status: 'active' as const,
       lastSyncDate: new Date(),
-      connectedBy: session.user.email,
+      connectedBy: new mongoose.Types.ObjectId(session.user.id),
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -569,7 +607,7 @@ export async function POST(req: NextRequest) {
     
     // Make sure we have a valid token for the API call
     const tokenValue = req.headers.get('authorization')?.split(' ')[1] || 
-                      req.cookies.get('token')?.value || getToken({});
+                      req.cookies.get('token')?.value || (await getToken({ req }))?.accessToken;
     
     // Trigger the automatic merge process via internal API
     try {
@@ -618,12 +656,23 @@ export async function GET() {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
-    if (!session) {
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Connect to MongoDB
-    await connectDB();
+    // Get user information with proper typing
+    const user = session.user as unknown as SessionUser;
+    const companyCode = user.companyCode;
+    
+    if (!companyCode) {
+      return NextResponse.json({ error: 'Company code not found' }, { status: 400 });
+    }
+
+    // Connect to MongoDB with company code
+    await connectToMongoDB(companyCode);
+    if (!mongoose.connection?.db) {
+      throw new Error('Failed to connect to database');
+    }
     
     // Find the organization
     const organization = await Organization.findOne({});

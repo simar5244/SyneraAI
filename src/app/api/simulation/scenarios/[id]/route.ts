@@ -1,7 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/dbConnect';
-import { verifyToken, TokenPayload } from '@/lib/auth';
-import { ObjectId } from 'mongodb';
+import connectToMongoDB from '@/lib/dbConnect';
+import { verifyToken } from '@/lib/auth';
+import mongoose from 'mongoose';
+
+// Define TokenPayload interface since it's not exported from auth.ts
+interface TokenPayload {
+  id: string;
+  userId?: string;
+  email: string;
+  role: string;
+  company?: string;
+  companyCode?: string;
+  tier?: number;
+  notificationPreferences?: {
+    email: boolean;
+    browser: boolean;
+    types: {
+      system: boolean;
+      project: boolean;
+      mention: boolean;
+      task: boolean;
+    };
+  };
+}
 
 // Helper function to get session (replace original getSession)
 const getSession = async (request: NextRequest): Promise<{ user: TokenPayload | null } | null> => {
@@ -27,9 +48,27 @@ const getSession = async (request: NextRequest): Promise<{ user: TokenPayload | 
 // Types
 type SimulationType = 'attrition' | 'reorganization' | 'growth' | 'cost_reduction';
 
+interface AuthenticatedUser extends Omit<TokenPayload, 'role'> {
+  id: string;
+  email: string;
+  companyCode: string;
+  role: string; // Make role required
+  tier?: number;
+  notificationPreferences?: {
+    email: boolean;
+    browser: boolean;
+    types: {
+      system: boolean;
+      project: boolean;
+      mention: boolean;
+      task: boolean;
+    };
+  };
+}
+
 interface SimulationScenario {
   id?: string;
-  _id?: string | ObjectId;
+  _id?: string | mongoose.Types.ObjectId;
   name: string;
   description: string;
   type: SimulationType;
@@ -134,8 +173,17 @@ export async function GET(
     const id = params.id;
     
     try {
-      // Connect to database
-      const { db } = await connectToDatabase();
+      // Connect to database with company code
+      const user = session.user as TokenPayload;
+      if (!user.companyCode) {
+        throw new Error('Company code is required');
+      }
+      
+      await connectToMongoDB(user.companyCode);
+      if (!mongoose.connection?.db) {
+        throw new Error('Failed to connect to database');
+      }
+      const db = mongoose.connection.db;
       
       // Query for the scenario
       let scenario;
@@ -145,9 +193,9 @@ export async function GET(
         scenario = await db.collection('simulationScenarios').findOne({
           $or: [
             // Either it belongs to the user
-            { _id: new ObjectId(id), userId: session.user.id },
+            { _id: new mongoose.Types.ObjectId(id) as any, userId: session.user.id },
             // Or it's a template
-            { _id: new ObjectId(id), isTemplate: true }
+            { _id: new mongoose.Types.ObjectId(id) as any, isTemplate: true }
           ]
         });
       } catch (idError) {
@@ -217,19 +265,30 @@ export async function PUT(
     };
     
     try {
-      // Connect to database
-      const { db } = await connectToDatabase();
+      // Connect to database with company code
+      const user = session.user as TokenPayload;
+      if (!user.companyCode) {
+        throw new Error('Company code is required');
+      }
+      
+      await connectToMongoDB(user.companyCode);
+      if (!mongoose.connection?.db) {
+        throw new Error('Failed to connect to database');
+      }
+      const db = mongoose.connection.db;
       
       // Check if scenario exists and belongs to user
       let scenario;
       try {
         scenario = await db.collection('simulationScenarios').findOne({
-          _id: new ObjectId(id)
+          _id: new mongoose.Types.ObjectId(id) as any,
+          userId: user.id
         });
       } catch (idError) {
         // If ObjectId conversion fails, try as string ID
         scenario = await db.collection('simulationScenarios').findOne({
-          id: id
+          id: id,
+          userId: user.id
         });
       }
       
@@ -253,9 +312,6 @@ export async function PUT(
           name: `Copy of ${scenario.name}`
         };
         
-        // Remove the _id to create a new document
-        delete newScenario._id;
-        
         const result = await db.collection('simulationScenarios').insertOne(newScenario);
         return NextResponse.json({
           ...newScenario,
@@ -267,18 +323,18 @@ export async function PUT(
       
       // Otherwise update the existing scenario
       await db.collection('simulationScenarios').updateOne(
-        { _id: new ObjectId(id) },
+        { _id: new mongoose.Types.ObjectId(id) },
         { $set: finalUpdateData }
       );
       
       // Return the updated scenario
       const updatedScenario = await db.collection('simulationScenarios').findOne({
-        _id: new ObjectId(id)
+        _id: new mongoose.Types.ObjectId(id)
       });
       
       return NextResponse.json({
         ...updatedScenario,
-        id: updatedScenario._id.toString(),
+        id: updatedScenario?._id.toString(),
         _id: undefined
       });
     } catch (dbError) {
@@ -330,19 +386,30 @@ export async function DELETE(
     const id = params.id;
     
     try {
-      // Connect to database
-      const { db } = await connectToDatabase();
+      // Connect to database with company code
+      const user = session.user as TokenPayload;
+      if (!user.companyCode) {
+        throw new Error('Company code is required');
+      }
+      
+      await connectToMongoDB(user.companyCode);
+      if (!mongoose.connection?.db) {
+        throw new Error('Failed to connect to database');
+      }
+      const db = mongoose.connection.db;
       
       // Check if scenario exists and belongs to user
       let scenario;
       try {
         scenario = await db.collection('simulationScenarios').findOne({
-          _id: new ObjectId(id)
+          _id: new mongoose.Types.ObjectId(id) as any,
+          userId: user.id
         });
       } catch (idError) {
         // If ObjectId conversion fails, try as string ID
         scenario = await db.collection('simulationScenarios').findOne({
-          id: id
+          id: id,
+          userId: user.id
         });
       }
       
@@ -366,7 +433,7 @@ export async function DELETE(
       
       // Delete the scenario
       await db.collection('simulationScenarios').deleteOne({
-        _id: new ObjectId(id)
+        _id: new mongoose.Types.ObjectId(id)
       });
       
       return NextResponse.json({ 

@@ -1,7 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/dbConnect";
+import connectToMongoDB from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import mongoose from "mongoose";
+
+// Define TokenPayload interface
+interface TokenPayload {
+  id: string;
+  userId?: string;
+  email: string;
+  role: string;
+  company?: string;
+  companyCode?: string;
+  tier?: number;
+  notificationPreferences?: {
+    email: boolean;
+    browser: boolean;
+    types: {
+      system: boolean;
+      project: boolean;
+      mention: boolean;
+      task: boolean;
+    };
+  };
+}
 
 // Mock results for development
 const mockResults = [
@@ -89,13 +111,21 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate');
     
     try {
-      // Connect to database
-      const client = await connectToDatabase();
-      const db = client.db();
+      // Connect to database with company code
+      const user = session.user as TokenPayload;
+      if (!user.companyCode) {
+        throw new Error('Company code is required');
+      }
+      
+      await connectToMongoDB(user.companyCode);
+      if (!mongoose.connection?.db) {
+        throw new Error('Failed to connect to database');
+      }
+      const db = mongoose.connection.db;
       const resultsCollection = db.collection('simulationResults');
       
       // Build query
-      const query: any = { userId: session.user.id };
+      const query: any = { userId: user.id };
       
       if (scenarioId) {
         query.scenarioId = scenarioId;
@@ -183,15 +213,23 @@ export async function POST(request: NextRequest) {
     }
     
     try {
-      // Connect to database
-      const client = await connectToDatabase();
-      const db = client.db();
+      // Connect to database with company code
+      const user = session.user as TokenPayload;
+      if (!user.companyCode) {
+        throw new Error('Company code is required');
+      }
+      
+      await connectToMongoDB(user.companyCode);
+      if (!mongoose.connection?.db) {
+        throw new Error('Failed to connect to database');
+      }
+      const db = mongoose.connection.db;
       const resultsCollection = db.collection('simulationResults');
       
       // Get the result
       const result = await resultsCollection.findOne({ 
         _id: resultId,
-        userId: session.user.id
+        userId: user.id
       });
       
       if (!result) {

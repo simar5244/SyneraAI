@@ -2268,3 +2268,758 @@ Thu Jun 26 14:45:01 CDT 2025: NextJS server is not running. Skipping scheduled r
 [2025-06-26T19:45:26.879Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
 [2025-06-26T19:45:26.879Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
     at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T19:45:48.897Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T19:45:48.897Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T19:45:54.555Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 14:46:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 14:46:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 14:46:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T19:46:23.929Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T19:46:23.930Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T19:46:24.557Z] [INFO] Checking for scheduled reports...
+[2025-06-26T19:46:45.953Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T19:46:45.953Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T19:46:54.559Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 14:47:00 CDT 2025: Running scheduled reports
+Thu Jun 26 14:47:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 14:47:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T20:02:57.968Z] [INFO] Checking for scheduled reports...
+[2025-06-26T20:02:57.969Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T20:02:57.969Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T20:20:55.821Z] [INFO] Checking for scheduled reports...
+[2025-06-26T20:20:55.900Z] [ERROR] Error in checkScheduledReports: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T20:20:55.910Z] [ERROR] Stack trace: Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T20:20:55.911Z] [ERROR] Error in checkScheduledReports: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T20:20:55.911Z] [ERROR] Stack trace: Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T20:20:55.911Z] [ERROR] Error in checkScheduledReports: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T20:20:55.911Z] [ERROR] Stack trace: Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T20:20:55.911Z] [ERROR] Error in checkScheduledReports: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T20:20:55.911Z] [ERROR] Stack trace: Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T20:20:55.911Z] [ERROR] Error in checkScheduledReports: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T20:20:55.911Z] [ERROR] Stack trace: Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T20:40:05.519Z] [INFO] Checking for scheduled reports...
+[2025-06-26T20:40:05.523Z] [ERROR] Error in checkScheduledReports: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T20:40:05.523Z] [ERROR] Stack trace: Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T21:48:01.683Z] [INFO] Checking for scheduled reports...
+[2025-06-26T21:48:01.686Z] [ERROR] Error in checkScheduledReports: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T21:48:01.686Z] [ERROR] Stack trace: Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 16:48:04 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 16:48:04 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 16:48:04 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:31:14.349Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:31:14.353Z] [ERROR] Error in checkScheduledReports: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:31:14.354Z] [ERROR] Stack trace: Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:31:44.351Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:31:44.355Z] [ERROR] Error in checkScheduledReports: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:31:44.356Z] [ERROR] Stack trace: Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:32:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:32:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:32:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:32:14.149Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:32:44.149Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:33:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:33:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:33:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:33:14.151Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:33:44.152Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:34:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 17:34:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:34:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:34:14.153Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:34:16.248Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:34:16.249Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:34:44.154Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:34:45.275Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:34:45.276Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:35:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:35:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:35:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:35:11.300Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:35:11.300Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:35:14.156Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:35:35.320Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:35:35.321Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:35:44.156Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:36:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:36:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:36:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:36:14.157Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:36:25.366Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:36:25.367Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:36:30.369Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:36:30.370Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:36:44.158Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:37:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:37:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:37:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:37:01.395Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:37:01.396Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:37:13.405Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:37:13.406Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:37:14.159Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:37:44.161Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:38:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:38:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:38:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:38:09.462Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:38:09.463Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:38:14.161Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:38:37.488Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:38:37.490Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:38:44.163Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:39:01 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 17:39:01 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:39:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:39:06.516Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:39:06.517Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:39:14.164Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:39:41.551Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:39:41.552Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:39:44.165Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:40:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:40:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:40:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:40:14.166Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:40:16.579Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:40:16.579Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:40:32.592Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:40:32.592Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:40:44.169Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:40:48.608Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:40:48.608Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:41:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:41:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:41:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:41:14.170Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:41:44.172Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:42:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:42:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:42:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:42:05.678Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:42:05.679Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:42:14.173Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:42:25.697Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:42:25.697Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:42:44.175Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:42:47.719Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:42:47.720Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:43:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:43:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:43:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:43:13.746Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:43:13.747Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:43:14.175Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:43:40.771Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:43:40.772Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:43:44.177Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:44:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 17:44:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:44:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:44:06.793Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:44:06.794Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:44:14.178Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:44:32.822Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:44:32.823Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:44:44.179Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:45:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 17:45:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:45:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:45:14.183Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:45:22.867Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:45:22.869Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:45:36.881Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:45:36.882Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:45:44.185Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:46:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 17:46:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:46:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:46:12.917Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:46:12.918Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:46:14.185Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:46:44.186Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:46:47.950Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:46:47.950Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:46:58.962Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:46:58.963Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:47:01 CDT 2025: Running scheduled reports
+Thu Jun 26 17:47:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:47:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:47:14.187Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:47:44.188Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:47:45.002Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:47:45.002Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:47:58.015Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:47:58.015Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:48:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 17:48:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:48:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:48:14.189Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:48:44.190Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:48:46.062Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:48:46.063Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:49:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:49:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:49:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:49:05.080Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:49:05.081Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:49:14.191Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:49:43.116Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:49:43.117Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:49:44.192Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:50:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:50:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:50:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:50:04.134Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:50:04.135Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:50:14.194Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:50:44.195Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:50:48.178Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:50:48.179Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:51:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:51:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:51:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:51:14.197Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:51:20.205Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:51:20.206Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:51:44.198Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:51:45.229Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:51:45.229Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:52:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:52:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:52:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:52:14.199Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:52:22.270Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:52:22.272Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:52:44.200Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:53:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:53:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:53:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:53:04.308Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:53:04.309Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:53:07.310Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:53:07.311Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:53:14.202Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:53:44.203Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:53:47.354Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:53:47.355Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:54:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 17:54:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:54:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:54:06.368Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:54:06.370Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:54:14.204Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:54:44.205Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:54:45.408Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:54:45.408Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:55:01 CDT 2025: Running scheduled reports
+Thu Jun 26 17:55:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:55:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:55:12.434Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:55:12.435Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:55:14.206Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:55:31.452Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:55:31.452Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:55:44.208Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:56:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:56:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:56:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:56:07.486Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:56:07.487Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:56:14.208Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:56:44.209Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:56:53.534Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:56:53.534Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:57:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:57:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:57:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:57:14.211Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:57:16.557Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:57:16.558Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:57:44.211Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:57:50.584Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:57:50.586Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 17:58:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:58:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:58:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:58:10.603Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:58:10.603Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:58:14.212Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:58:32.622Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:58:32.623Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:58:44.213Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 17:59:00 CDT 2025: Running scheduled reports
+Thu Jun 26 17:59:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 17:59:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T22:59:04.655Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:59:04.656Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T22:59:14.215Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:59:44.215Z] [INFO] Checking for scheduled reports...
+[2025-06-26T22:59:51.701Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T22:59:51.701Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 18:00:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 18:00:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:00:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:00:00.707Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:00:00.709Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:00:14.216Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:00:44.218Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:00:58.762Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:00:58.763Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 18:01:00 CDT 2025: Running scheduled reports
+Thu Jun 26 18:01:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:01:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:01:14.220Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:01:19.783Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:01:19.784Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:01:38.800Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:01:38.802Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:01:44.221Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 18:02:00 CDT 2025: Running scheduled reports
+Thu Jun 26 18:02:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:02:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:02:14.223Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:02:16.832Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:02:16.833Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:02:44.223Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:02:47.858Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:02:47.858Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 18:03:00 CDT 2025: Running scheduled reports
+Thu Jun 26 18:03:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:03:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:03:13.882Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:03:13.883Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:03:14.225Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:03:44.226Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:03:57.924Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:03:57.924Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 18:04:01 CDT 2025: Running scheduled reports
+Thu Jun 26 18:04:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:04:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:04:11.938Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:04:11.938Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:04:14.227Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:04:38.960Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:04:38.961Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:04:44.228Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 18:05:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 18:05:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:05:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:05:14.230Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:05:14.994Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:05:14.995Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:05:28.007Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:05:28.008Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:05:44.231Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:05:57.037Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:05:57.037Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 18:06:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 18:06:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:06:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:06:14.232Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:06:44.234Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:06:48.080Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:06:48.081Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 18:07:00 CDT 2025: Running scheduled reports
+Thu Jun 26 18:07:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:07:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:07:02.093Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:07:02.094Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:07:14.235Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:07:44.131Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:07:44.132Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:07:44.236Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 18:08:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 18:08:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:08:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:08:14.238Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:08:21.165Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:08:21.166Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:08:35.178Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:08:35.179Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:08:44.239Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 18:09:00 CDT 2025: Running scheduled reports
+Thu Jun 26 18:09:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:09:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:09:14.241Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:09:16.217Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:09:16.217Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:09:44.242Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:09:47.247Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:09:47.248Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 18:10:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 18:10:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:10:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:10:11.269Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:10:11.270Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:10:14.242Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:10:44.243Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:10:47.303Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:10:47.304Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:10:51.306Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:10:51.308Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 18:11:00 CDT 2025: Running scheduled reports
+Thu Jun 26 18:11:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:11:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:11:14.244Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:11:30.783Z] [INFO] Starting scheduled reports daemon with check interval of 30000ms
+[2025-06-26T23:11:30.784Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:11:32.165Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:11:32.273Z] [INFO] Found 1 company databases
+[2025-06-26T23:11:32.273Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:11:32.318Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:11:32.318Z)
+[2025-06-26T23:11:32.340Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:11:32.341Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:11:32.376Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:11:32.376Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:11:32.379Z] [DEBUG] MongoDB connection closed
+[2025-06-26T23:11:32.379Z] [INFO] Daemon is now running continuously...
+[2025-06-26T23:11:44.246Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 18:12:01 CDT 2025: Running scheduled reports
+Thu Jun 26 18:12:01 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:12:01 CDT 2025: NextJS server is running. Running scheduled reports check...
+/Users/sim/Project2/scripts/../scripts/run-scheduled-reports-cron.sh: line 25: node: command not found
+[2025-06-26T23:12:02.381Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:12:03.368Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:12:03.368Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:12:03.577Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:12:03.826Z] [INFO] Found 1 company databases
+[2025-06-26T23:12:03.827Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:12:04.009Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:12:04.009Z)
+[2025-06-26T23:12:04.181Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:12:04.181Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:12:04.188Z] [DEBUG] MongoDB connection closed
+[2025-06-26T23:12:14.247Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:12:32.381Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:12:32.948Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:12:33.004Z] [INFO] Found 1 company databases
+[2025-06-26T23:12:33.005Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:12:33.052Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:12:33.052Z)
+[2025-06-26T23:12:33.095Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:12:33.096Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:12:33.100Z] [DEBUG] MongoDB connection closed
+[2025-06-26T23:12:42.399Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:12:42.400Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:12:44.249Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 18:13:00 CDT 2025: Running scheduled reports
+Thu Jun 26 18:13:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:13:00 CDT 2025: NextJS server is running. Running scheduled reports check...
+/Users/sim/Project2/scripts/../scripts/run-scheduled-reports-cron.sh: line 25: node: command not found
+[2025-06-26T23:13:02.382Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:13:03.629Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:13:03.792Z] [INFO] Found 1 company databases
+[2025-06-26T23:13:03.792Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:13:03.840Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:13:03.840Z)
+[2025-06-26T23:13:04.041Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:13:04.042Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:13:04.048Z] [DEBUG] MongoDB connection closed
+[2025-06-26T23:13:10.420Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:13:10.420Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:13:14.250Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:13:32.383Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:13:32.906Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:13:32.964Z] [INFO] Found 1 company databases
+[2025-06-26T23:13:32.965Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:13:33.011Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:13:33.011Z)
+[2025-06-26T23:13:33.056Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:13:33.056Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:13:33.058Z] [DEBUG] MongoDB connection closed
+[2025-06-26T23:13:44.251Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:13:45.504Z] [INFO] Starting scheduled reports daemon with check interval of 30000ms
+[2025-06-26T23:13:45.506Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:13:46.129Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:13:46.191Z] [INFO] Found 1 company databases
+[2025-06-26T23:13:46.191Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:13:46.241Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:13:46.241Z)
+[2025-06-26T23:13:46.280Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:13:46.280Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:13:46.283Z] [DEBUG] MongoDB connection closed
+[2025-06-26T23:13:46.283Z] [INFO] Daemon is now running continuously...
+[2025-06-26T23:13:48.453Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:13:48.454Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 18:14:00 CDT 2025: Running scheduled reports
+Thu Jun 26 18:14:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:14:03 CDT 2025: NextJS server is running. Running scheduled reports check...
+/Users/sim/Project2/scripts/../scripts/run-scheduled-reports-cron.sh: line 25: node: command not found
+[2025-06-26T23:14:06.473Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:14:06.474Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:14:14.252Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:14:16.284Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:14:17.871Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:14:18.130Z] [INFO] Found 1 company databases
+[2025-06-26T23:14:18.130Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:14:18.175Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:14:18.175Z)
+[2025-06-26T23:14:18.340Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:14:18.341Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:14:18.342Z] [DEBUG] MongoDB connection closed
+[2025-06-26T23:14:38.507Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:14:38.508Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:14:44.254Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:14:46.286Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:14:47.034Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:14:47.087Z] [INFO] Found 1 company databases
+[2025-06-26T23:14:47.087Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:14:47.130Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:14:47.130Z)
+[2025-06-26T23:14:47.205Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:14:47.205Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:14:47.207Z] [DEBUG] MongoDB connection closed
+Thu Jun 26 18:15:00 CDT 2025: Running scheduled reports
+Thu Jun 26 18:15:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:15:01 CDT 2025: NextJS server is running. Running scheduled reports check...
+/Users/sim/Project2/scripts/../scripts/run-scheduled-reports-cron.sh: line 25: node: command not found
+[2025-06-26T23:15:14.254Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:15:16.287Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:15:17.337Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:15:17.392Z] [INFO] Found 1 company databases
+[2025-06-26T23:15:17.392Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:15:17.436Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:15:17.436Z)
+[2025-06-26T23:15:17.475Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:15:17.475Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:15:17.477Z] [DEBUG] MongoDB connection closed
+[2025-06-26T23:15:36.558Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:15:36.559Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:15:44.256Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:15:44.566Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:15:44.567Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:15:46.288Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:15:46.768Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:15:46.820Z] [INFO] Found 1 company databases
+[2025-06-26T23:15:46.821Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:15:46.867Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:15:46.867Z)
+[2025-06-26T23:15:46.904Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:15:46.904Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:15:46.905Z] [DEBUG] MongoDB connection closed
+Thu Jun 26 18:16:00 CDT 2025: Running scheduled reports
+Thu Jun 26 18:16:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:16:00 CDT 2025: NextJS server is running. Running scheduled reports check...
+/Users/sim/Project2/scripts/../scripts/run-scheduled-reports-cron.sh: line 25: node: command not found
+[2025-06-26T23:16:06.583Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:16:06.584Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:16:14.256Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:16:16.290Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:16:16.944Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:16:16.996Z] [INFO] Found 1 company databases
+[2025-06-26T23:16:16.997Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:16:17.041Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:16:17.041Z)
+[2025-06-26T23:16:17.078Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:16:17.078Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:16:17.079Z] [DEBUG] MongoDB connection closed
+[2025-06-26T23:16:40.617Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:16:40.618Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:16:44.257Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:16:46.291Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:16:47.377Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:16:47.475Z] [INFO] Found 1 company databases
+[2025-06-26T23:16:47.475Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:16:47.519Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:16:47.519Z)
+[2025-06-26T23:16:47.557Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:16:47.558Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:16:47.559Z] [DEBUG] MongoDB connection closed
+Thu Jun 26 18:17:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 18:17:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:17:00 CDT 2025: NextJS server is running. Running scheduled reports check...
+/Users/sim/Project2/scripts/../scripts/run-scheduled-reports-cron.sh: line 25: node: command not found
+[2025-06-26T23:17:02.633Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:17:02.634Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:17:14.258Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:17:16.292Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:17:16.751Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:17:16.804Z] [INFO] Found 1 company databases
+[2025-06-26T23:17:16.804Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:17:16.848Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:17:16.848Z)
+[2025-06-26T23:17:16.886Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:17:16.886Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:17:16.888Z] [DEBUG] MongoDB connection closed
+[2025-06-26T23:17:44.260Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:17:46.294Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:17:47.655Z] [DEBUG] Connected to MongoDB
+[2025-06-26T23:17:47.675Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:17:47.675Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:17:47.708Z] [INFO] Found 1 company databases
+[2025-06-26T23:17:47.709Z] [DEBUG] Processing company database: company_9jxwph8g
+[2025-06-26T23:17:47.756Z] [DEBUG] Finding reports to execute in company_9jxwph8g (current time: 2025-06-26T23:17:47.756Z)
+[2025-06-26T23:17:47.797Z] [INFO] Found 0 reports to execute in company_9jxwph8g
+[2025-06-26T23:17:47.797Z] [INFO] Scheduled reports check completed
+[2025-06-26T23:17:47.799Z] [DEBUG] MongoDB connection closed
+Thu Jun 26 18:18:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 18:18:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:18:00 CDT 2025: NextJS server is running. Running scheduled reports check...
+/Users/sim/Project2/scripts/../scripts/run-scheduled-reports-cron.sh: line 25: node: command not found
+[2025-06-26T23:18:12.699Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:18:12.700Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:18:14.261Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:18:44.263Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:18:46.730Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:18:46.730Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+Thu Jun 26 18:19:00 CDT 2025: Running scheduled reports
+Thu Jun 26 18:19:00 CDT 2025: Checking if NextJS server is running...
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:19:00 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:19:14.265Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:19:21.765Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:19:21.766Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:19:40.784Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:19:40.784Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)
+[2025-06-26T23:19:44.267Z] [INFO] Checking for scheduled reports...
+Thu Jun 26 18:20:00 CDT 2025: Checking if NextJS server is running...
+Thu Jun 26 18:20:00 CDT 2025: Running scheduled reports
+/Users/sim/Project2/scripts/../scripts/run-simple-scheduled-reports.sh: line 16: node: command not found
+Thu Jun 26 18:20:01 CDT 2025: NextJS server is not running. Skipping scheduled reports check.
+[2025-06-26T23:20:14.268Z] [INFO] Checking for scheduled reports...
+[2025-06-26T23:20:17.820Z] [ERROR] Error in checkScheduledReports: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+[2025-06-26T23:20:17.820Z] [ERROR] Stack trace: Error: querySrv ETIMEOUT _mongodb._tcp.cluster0.nen0dzs.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)

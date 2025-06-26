@@ -1,0 +1,99 @@
+
+> synera-ai@0.1.0 build
+> set -e && CI=false NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192 next build --no-lint || (echo 'Build had errors but continuing...' && mkdir -p .next && exit 0)
+
+ ⚠ Linting is disabled.
+Successfully loaded .env.local
+Environment variables loaded for build:
+- MONGODB_URI: Set
+- MONGODB_URI_BASE: Set
+- NEXT_PUBLIC_APP_URL: http://localhost:3000
+ ⚠ Invalid next.config.js options detected: 
+ ⚠     Expected object, received boolean at "experimental.serverActions"
+ ⚠     Unrecognized key(s) in object: 'serverComponentsExternalPackages' at "experimental"
+ ⚠     Unrecognized key(s) in object: 'swcMinify'
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+ ⚠ `experimental.serverComponentsExternalPackages` has been moved to `serverExternalPackages`. Please update your next.config.js file accordingly.
+   ▲ Next.js 15.3.4
+   - Environments: .env.local, .env.production
+
+   Creating an optimized production build ...
+ ⚠ Compiled with warnings in 26.0s
+
+./src/app/api/erp/connect/route.ts
+Attempted import error: 'connectToMongoDB' is not exported from '@/lib/dbConnect' (imported as 'connectToMongoDB').
+
+Import trace for requested module:
+./src/app/api/erp/connect/route.ts
+
+./src/app/api/erp/connect/route.ts
+Attempted import error: 'connectToMongoDB' is not exported from '@/lib/dbConnect' (imported as 'connectToMongoDB').
+
+Import trace for requested module:
+./src/app/api/erp/connect/route.ts
+
+./src/app/api/notifications/read-all/route.ts
+Attempted import error: 'verifyToken' is not exported from '@/utils/auth' (imported as 'verifyToken').
+
+Import trace for requested module:
+./src/app/api/notifications/read-all/route.ts
+
+   Skipping validation of types
+   Collecting page data ...
+[App] _app.tsx loaded
+[App] _app.tsx loaded
+[App] _app.tsx loaded
+(node:35667) [MONGOOSE] Warning: Duplicate schema index on {"domain":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35667) [MONGOOSE] Warning: Duplicate schema index on {"companyCode":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:35668) [MONGOOSE] Warning: Duplicate schema index on {"domain":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35668) [MONGOOSE] Warning: Duplicate schema index on {"companyCode":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:35666) [MONGOOSE] Warning: Duplicate schema index on {"domain":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35666) [MONGOOSE] Warning: Duplicate schema index on {"companyCode":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:35663) [MONGOOSE] Warning: Duplicate schema index on {"stripeSubscriptionId":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35662) [MONGOOSE] Warning: Duplicate schema index on {"stripeSubscriptionId":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Using in-memory storage (MockRedis)
+(node:35666) [MONGOOSE] Warning: Duplicate schema index on {"stripeSubscriptionId":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:35664) [MONGOOSE] Warning: Duplicate schema index on {"stripeSubscriptionId":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Using mock Redis client
+Redis connection error, falling back to in-memory storage: connect ECONNREFUSED 127.0.0.1:6379
+Using mock Redis client
+[2025-06-26 23:10:37] DEBUG Creating transport: nodemailer (6.10.1; +https://nodemailer.com/; SMTP/6.10.1[client:6.10.1])
+Using mock Redis client
+[2025-06-26 23:10:37] DEBUG Creating transport: nodemailer (6.10.1; +https://nodemailer.com/; SMTP/6.10.1[client:6.10.1])
+Using mock Redis client
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] Resolved smtp.gmail.com as 142.251.186.108 [cache miss]
+[2025-06-26 23:10:37] DEBUG Creating transport: nodemailer (6.10.1; +https://nodemailer.com/; SMTP/6.10.1[client:6.10.1])
+[2025-06-26 23:10:37] DEBUG [tv5ibnLLiO8] Resolved smtp.gmail.com as 142.251.186.108 [cache miss]
+[2025-06-26 23:10:37] DEBUG [2M28sj6yXMY] Resolved smtp.gmail.com as 142.251.186.108 [cache miss]
+[2025-06-26 23:10:37] INFO  [ZNU0VzOm24] Secure connection established to 142.251.186.108:465
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] S: 220 smtp.gmail.com ESMTP 46e09a7af769-73afafee647sm157138a34.4 - gsmtp
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] C: EHLO MacBook-Air.local
+[2025-06-26 23:10:37] INFO  [tv5ibnLLiO8] Secure connection established to 142.251.186.108:465
+[2025-06-26 23:10:37] INFO  [2M28sj6yXMY] Secure connection established to 142.251.186.108:465
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] S: 250-smtp.gmail.com at your service, [206.121.139.66]
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] S: 250-SIZE 35882577
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] S: 250-8BITMIME
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] S: 250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] S: 250-ENHANCEDSTATUSCODES
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] S: 250-PIPELINING
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] S: 250-CHUNKING
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] S: 250 SMTPUTF8
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] SMTP handshake finished
+[2025-06-26 23:10:37] DEBUG [ZNU0VzOm24] C: AUTH PLAIN AHRlY2h5Z2Vla3NsYW5kQGdtYWlsLmNvbQAvKiBzZWNyZXQgKi8=
+[2025-06-26 23:10:37] DEBUG [tv5ibnLLiO8] S: 220 smtp.gmail.com ESMTP 586e51a60fabf-2efd4f05ebdsm588464fac.17 - gsmtp
+[2025-06-26 23:10:37] DEBUG [tv5ibnLLiO8] C: EHLO MacBook-Air.local
+[2025-06-26 23:10:37] DEBUG [2M28sj6yXMY] S: 220 smtp.gmail.com ESMTP 46e09a7af769-73afb107871sm156306a34.58 - gsmtp
+[2025-06-26 23:10:37] DEBUG [2M28sj6yXMY] C: EHLO MacBook-Air.local
+
+> Build optimization failed: found page without a React Component as default export in 
+pages/test-report
+
+See https://nextjs.org/docs/messages/page-without-valid-component for more info.
+
+Build had errors but continuing...

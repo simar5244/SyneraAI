@@ -137,7 +137,7 @@ async function connectToMongoDB(companyCode: string) {
 /**
  * Get a connection to the main database (without company prefix)
  */
-export async function connectToMainDatabase() {
+async function connectToMainDatabase() {
   if (!MONGODB_URI) {
     throw new Error('MONGODB_URI is not defined');
   }
@@ -183,19 +183,12 @@ export async function connectToMainDatabase() {
   }
 }
 
-// Export connectToMongoDB as both default and named export
-// Add this at the very end of your dbConnect file to ensure all exports are available
-
-// Make sure all functions are exported properly
-export { connectToMongoDB as default, connectToMongoDB };
-
-// Also export getCompanyMongoURI in case it's needed elsewhere
-export { getCompanyMongoURI };
-
-// Alternative: you can also do this if the above doesn't work
-module.exports = {
+// Export all functions using ES modules
+export { 
   connectToMongoDB,
   connectToMainDatabase,
-  getCompanyMongoURI,
-  default: connectToMongoDB
+  getCompanyMongoURI
 };
+
+// Default export for backward compatibility
+export default connectToMongoDB;

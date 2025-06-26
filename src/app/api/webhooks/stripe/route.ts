@@ -4,7 +4,7 @@ const getStripeSignature = (req: NextRequest) => {
   return req.headers.get('stripe-signature');
 };
 import Stripe from 'stripe';
-import { connectToMongoDB } from '@/lib/dbConnect';
+import connectToMongoDB from '@/lib/dbConnect';
 import User from '@/models/User';
 
 // Define interface

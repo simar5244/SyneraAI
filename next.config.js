@@ -6,9 +6,23 @@ const fs = require('fs');
 // Load environment variables
 const envPath = path.resolve(process.cwd(), '.env.local');
 if (fs.existsSync(envPath)) {
-  require('dotenv').config({ path: envPath });
+  const envConfig = require('dotenv').config({ path: envPath });
+  if (envConfig.error) {
+    console.error('Error loading .env.local:', envConfig.error);
+  } else {
+    console.log('Successfully loaded .env.local');
+  }
 } else {
   console.warn('.env.local not found, using environment variables from the system');
+}
+
+// Ensure required environment variables are set
+const requiredEnvVars = ['STRIPE_SECRET_KEY', 'MONGODB_URI'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error('Missing required environment variables:', missingVars.join(', '));
+  process.exit(1);
 }
 
 // Check if we're running in a Docker container

@@ -10,7 +10,7 @@ ARG NEXT_PUBLIC_APP_URL
 ARG CACHE_DATE=2025-06-22
 RUN echo "Cache bust: $CACHE_DATE"
 
-# Install system dependencies (Python and build tools)
+# Install system dependencies (Python, build tools, and dos2unix)
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-venv \
@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libgif-dev \
     librsvg2-dev \
+    dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -60,42 +61,17 @@ RUN echo "MONGODB_URI=$MONGODB_URI" > .env.local && \
 # Install dependencies with legacy peer deps
 RUN npm install --legacy-peer-deps --force
 
-# Create a custom build script
-RUN echo '#!/bin/sh\n\
-set -x\n\
-# Run the build with maximum memory and ignore all errors\
-NEXT_TELEMETRY_DISABLED=1 \
-NODE_OPTIONS="--max_old_space_size=8192" \
-CI=false \
-npm run build || echo "Build had errors but continuing..."\n\
-# Ensure .next directory exists\
-mkdir -p .next\n\
-# Create minimal required files if they don\'t exist\
-echo "Creating required build files..."\n\
-# Create BUILD_ID if it doesn\'t exist\
-if [ ! -f .next/BUILD_ID ]; then\
-  echo "$(date +%s)" > .next/BUILD_ID\
-fi\n\
-# Create package.json if it doesn\'t exist\
-if [ ! -f .next/package.json ]; then\
-  echo '{"name": "next-build"}' > .next/package.json\
-fi\n\
-# Create routes-manifest.json if it doesn\'t exist\
-if [ ! -f .next/routes-manifest.json ]; then\
-  echo '{\"version\":3,\"basePath\":\"\",\"pages404\":false,\"dynamicRoutes\":[]}' > .next/routes-manifest.json\
-fi\n\
-# Create build-manifest.json if it doesn\'t exist\
-if [ ! -f .next/build-manifest.json ]; then\
-  echo '{\"pages\":{},\"dev\":false,\"polyfillFiles\":[],\"lowPriorityFiles\":[]}' > .next/build-manifest.json\
-fi\n\
-# Create required-server-files.json if it doesn\'t exist\
-if [ ! -f .next/required-server-files.json ]; then\
-  echo '{\"version\":1,\"files\":[],\"config\":{\"pageExtensions\":[\"tsx\",\"ts\",\"jsx\",\"js\",\"mjs\"]}}' > .next/required-server-files.json\
-fi\n\
-echo "Build files verification complete"\n' > /app/build.sh && \
-chmod +x /app/build.sh
+# Copy and prepare the build script
+COPY build.sh /app/
+RUN dos2unix /app/build.sh && \
+    chmod +x /app/build.sh && \
+    # Verify the script is valid
+    if ! /bin/sh -n /app/build.sh; then \
+        echo "ERROR: build.sh has syntax errors" >&2; \
+        exit 1; \
+    fi
 
-# Run the custom build script
+# Run the build script
 RUN /app/build.sh
 
 # Verify the build was successful

@@ -1,4 +1,4 @@
-import { verifyAuth } from '../../../src/lib/auth';
+import { verifyToken } from '../../../src/lib/auth';
 
 export default async function handler(req, res) {
   try {
@@ -14,9 +14,9 @@ export default async function handler(req, res) {
     const token = authHeader.replace('Bearer ', '');
     
     // Verify the token
-    const user = await verifyAuth(token);
+    const decoded = verifyToken(token);
     
-    if (!user) {
+    if (!decoded) {
       return res.status(401).json({ 
         authenticated: false,
         message: 'Invalid or expired token' 
@@ -27,11 +27,11 @@ export default async function handler(req, res) {
     return res.status(200).json({
       authenticated: true,
       user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        company: user.company,
-        companyCode: user.companyCode
+        id: decoded.id,
+        email: decoded.email,
+        role: decoded.role,
+        company: decoded.company,
+        companyCode: decoded.companyCode
       }
     });
   } catch (error) {

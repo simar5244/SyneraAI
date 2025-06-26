@@ -1,8 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/dbConnect";
+import connectToMongoDB from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { v4 as uuidv4 } from 'uuid';
+import mongoose from 'mongoose';
+
+// Type for authenticated user with company code
+type AuthenticatedUser = {
+  id: string;
+  email: string;
+  companyCode: string;
+  role?: string;
+  tier?: number;
+  notificationPreferences?: {
+    email: boolean;
+    browser: boolean;
+    types: {
+      system: boolean;
+      project: boolean;
+      mention: boolean;
+      task: boolean;
+    };
+  };
+};
 
 // Define types for simulation scenarios
 type SimulationType = 'attrition' | 'reorganization' | 'growth' | 'cost_reduction';
@@ -90,13 +110,29 @@ export async function GET(request: NextRequest) {
     const includeTemplates = searchParams.get('includeTemplates') === 'true';
     
     try {
-      // Connect to database
-      const client = await connectToDatabase();
-      const db = client.db();
+      // Get company code from session with type assertion
+      const user = session.user as AuthenticatedUser;
+      const companyCode = user.companyCode;
+      
+      if (!companyCode) {
+        return NextResponse.json(
+          { error: 'Company code is required' },
+          { status: 400 }
+        );
+      }
+      
+      // Connect to MongoDB with company code and add null check
+      await connectToMongoDB(companyCode);
+      if (!mongoose.connection?.db) {
+        throw new Error('Failed to connect to database');
+      }
+      const db = mongoose.connection.db;
       const scenariosCollection = db.collection('simulationScenarios');
       
-      // Build query
-      const query: any = {};
+      // Build query with user ID from typed user object
+      const query: any = {
+        userId: user.id
+      };
       
       if (!includeTemplates) {
         query.userId = session.user.id;
@@ -189,15 +225,29 @@ export async function POST(request: NextRequest) {
       type: data.type,
       createdAt: new Date(),
       updatedAt: new Date(),
-      userId: session.user.id,
+      userId: (session.user as AuthenticatedUser).id,
       parameters: data.parameters || {},
       isTemplate: data.isTemplate || false
     };
     
     try {
-      // Connect to database
-      const client = await connectToDatabase();
-      const db = client.db();
+      // Get company code from session with type assertion
+      const user = session.user as AuthenticatedUser;
+      const companyCode = user.companyCode;
+      
+      if (!companyCode) {
+        return NextResponse.json(
+          { error: 'Company code is required' },
+          { status: 400 }
+        );
+      }
+      
+      // Connect to MongoDB with company code and add null check
+      await connectToMongoDB(companyCode);
+      if (!mongoose.connection?.db) {
+        throw new Error('Failed to connect to database');
+      }
+      const db = mongoose.connection.db;
       const scenariosCollection = db.collection('simulationScenarios');
       
       // Insert new scenario

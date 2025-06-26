@@ -68674,3 +68674,11 @@ Traceback (most recent call last):
   File [35m"/Users/sim/Project2/./attrition_score.py"[0m, line [35m6[0m, in [35m<module>[0m
     import numpy as np
 [1;35mModuleNotFoundError[0m: [35mNo module named 'numpy'[0m
+Traceback (most recent call last):
+  File [35m"/Users/sim/Project2/./attrition_score.py"[0m, line [35m6[0m, in [35m<module>[0m
+    import numpy as np
+[1;35mModuleNotFoundError[0m: [35mNo module named 'numpy'[0m
+Traceback (most recent call last):
+  File [35m"/Users/sim/Project2/./attrition_score.py"[0m, line [35m6[0m, in [35m<module>[0m
+    import numpy as np
+[1;35mModuleNotFoundError[0m: [35mNo module named 'numpy'[0m
