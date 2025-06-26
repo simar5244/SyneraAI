@@ -35,11 +35,17 @@ const nextConfig = {
   
   // Configure ESLint to ignore during builds
   eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
   
   // Configure TypeScript to ignore build errors
   typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
     ignoreBuildErrors: true,
   },
   
