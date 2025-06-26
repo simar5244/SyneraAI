@@ -1,5 +1,5 @@
 import { MongoClient, ObjectId } from 'mongodb';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import reportGeneration from './report-generation.js';
 
 // Environment variables

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import mongoose from 'mongoose';
 import connectDB from '@/lib/dbConnect';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import feedbackService from '@/services/feedbackService';
 import { getUserModel } from '@/models/User';
 

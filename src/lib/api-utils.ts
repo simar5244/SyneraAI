@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { MongoClient } from 'mongodb';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import { getCompanyDbName } from '@/lib/companyDb';
 
 // MongoDB connection string from environment variable

@@ -2,7 +2,7 @@ import { MongoClient } from 'mongodb';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import Anthropic from '@anthropic-ai/sdk';
 import claudeQuery from './claude-query.js'; // Import the claude-query module with explicit extension
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import { fetchWebsiteContext } from './website-utils.js';
 
 // Environment variables

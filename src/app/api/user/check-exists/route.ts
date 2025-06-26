@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/dbConnect';
 import { getUserModel } from '@/models/User';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import { unstable_noStore as noStore } from 'next/cache';
 
 export async function GET(request: NextRequest) {

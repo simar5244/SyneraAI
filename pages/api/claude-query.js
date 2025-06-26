@@ -1,7 +1,7 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import Anthropic from '@anthropic-ai/sdk';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 
 // Environment variables
 const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGODB_URI_BASE;

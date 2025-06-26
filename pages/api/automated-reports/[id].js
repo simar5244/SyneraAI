@@ -1,5 +1,5 @@
 import { MongoClient, ObjectId } from 'mongodb';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 
 // MongoDB connection parameters
 const MONGODB_URI = process.env.MONGODB_URI;

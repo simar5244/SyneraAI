@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { unstable_noStore as noStore } from 'next/cache';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import mongoose from 'mongoose';
 import connectDB from '@/lib/dbConnect';
 import Feedback from '@/models/Feedback';

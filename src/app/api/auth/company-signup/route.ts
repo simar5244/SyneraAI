@@ -11,6 +11,8 @@ import { getAuthUserModel } from '@/models/AuthUser';
 // Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2025-05-28.basil',
+  typescript: true,
+  timeout: 10000, // 10 second timeout
 });
 
 interface UserDocument extends Document {

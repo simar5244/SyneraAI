@@ -11,7 +11,7 @@ import os from 'os';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { spawn } from 'child_process';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 
 // Function to run the Python script as a child process
 async function runPythonScript(scriptArgs: string[]): Promise<any> {

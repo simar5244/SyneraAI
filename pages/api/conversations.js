@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const COLLECTION_NAME = 'conversations';
