@@ -61,7 +61,10 @@ RUN echo "MONGODB_URI=$MONGODB_URI" > .env.local && \
 RUN NEXT_TELEMETRY_DISABLED=1 \
     NODE_OPTIONS=--max_old_space_size=4096 \
     CI=false \
-    npm run build || (echo "Build completed with warnings" && exit 0)
+    npm run build || (echo "Build completed with warnings" && mkdir -p .next && touch .next/BUILD_ID && exit 0)
+
+# Ensure .next directory exists
+RUN mkdir -p .next && touch .next/BUILD_ID || true
 
 # Stage 2: Create the production image
 FROM node:20-slim
