@@ -2,17 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Redis } from 'ioredis';
 import { z } from 'zod';
 import { getToken } from 'next-auth/jwt';
-import crypto from 'crypto';
 import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 import { connectToMongoDB } from '@/lib/dbConnect';
-import mongoose from 'mongoose';
 import Organization from '@/models/Organization';
-import User from '@/models/User';
-import authService from '@/services/authService';
 import connectDB from '@/lib/db';
-import { ObjectId } from 'mongodb';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
@@ -198,8 +193,8 @@ async function storeConnectionData(userId: string, connectionData: any, companyC
 }
 
 // Functions to execute Python script for validation
-async function validateERPConnection(connectionType: string, credentials: any): Promise<{success: boolean; message: string}> {
-  return new Promise((resolve, reject) => {
+async function validateERPConnection(connectionType: string, credentials: any): Promise<{success: boolean; message: string; dataFound?: boolean}> {
+  return new Promise((resolve) => {
     try {
       const scriptPath = path.join(process.cwd(), 'erpbackend.py');
       
@@ -212,63 +207,78 @@ async function validateERPConnection(connectionType: string, credentials: any): 
       // Create a temporary input file with connection parameters
       const tempInput = path.join(process.cwd(), `erp-input-${Date.now()}.json`);
       
-      let args: string[] = [];
-      let data: Record<string, any> = {};
+      const args: string[] = [];
+      const data: Record<string, string> = {};
       
       // Map credentials to what the Python script expects based on connection type
-      switch (connectionType) {
-        case 'SAP_HR':
-          args = ['--sap-only'];
-          data = {
-            sap_ashost: credentials.host || '',
-            sap_sysnr: credentials.sysnr || credentials.port || '',
-            sap_client: credentials.client || credentials.systemId || '',
-            sap_user: credentials.user || credentials.username || '',
-            sap_passwd: credentials.passwd || credentials.password || ''
-          };
-          break;
-          
-        case 'PEOPLESOFT':
-          args = ['--ps-only'];
-          data = {
-            ps_url: credentials.url || `http://${credentials.host}:${credentials.port}`,
-            ps_user: credentials.username || '',
-            ps_passwd: credentials.password || '',
-            ps_database: credentials.database || ''
-          };
-          break;
-          
-        case 'MICROSOFT_AD':
-          args = ['--ad-only'];
-          data = {
-            ad_server: credentials.server || `ldap://${credentials.domain}`,
-            ad_domain: credentials.domain || '',
-            ad_user: credentials.username || '',
-            ad_passwd: credentials.password || '',
-            ad_search_base: `DC=${credentials.domain?.split('.').join(',DC=')}` || ''
-          };
-          break;
-          
-        default:
-          return resolve({ 
-            success: false, 
-            message: `Unsupported ERP type: ${connectionType}` 
-          });
+      const connectionConfig = (() => {
+        const config = { args: [] as string[], data: {} as Record<string, string> };
+        
+        switch (connectionType) {
+          case 'SAP_HR':
+            config.args.push('--sap-only');
+            config.data = {
+              sap_ashost: credentials.host || '',
+              sap_sysnr: credentials.sysnr || credentials.port || '',
+              sap_client: credentials.client || credentials.systemId || '',
+              sap_user: credentials.user || credentials.username || '',
+              sap_passwd: credentials.passwd || credentials.password || ''
+            };
+            break;
+            
+          case 'PEOPLESOFT':
+            config.args.push('--peoplesoft');
+            config.data = {
+              ps_host: credentials.host || '',
+              ps_port: credentials.port || '',
+              ps_db: credentials.database || '',
+              ps_user: credentials.username || '',
+              ps_pwd: credentials.password || ''
+            };
+            break;
+            
+          case 'MICROSOFT_AD':
+            config.args.push('--ad');
+            config.data = {
+              ad_domain: credentials.domain || '',
+              ad_user: credentials.username || '',
+              ad_pwd: credentials.password || ''
+            };
+            break;
+            
+          case 'WORKDAY':
+            config.args.push('--workday');
+            config.data = {
+              wd_tenant: credentials.tenantId || '',
+              wd_api_key: credentials.apiKey || ''
+            };
+            break;
+            
+          default:
+            throw new Error(`Unsupported ERP type: ${connectionType}`);
+        }
+        
+        return config;
+      })();
+      
+      // Add arguments and data
+      const { args: connectionArgs, data: connectionData } = connectionConfig;
+      
+      // Write credentials to temporary file
+      fs.writeFileSync(tempInput, JSON.stringify(connectionData, null, 2));
+      
+      // Add input file to args if it exists
+      if (fs.existsSync(tempInput)) {
+        connectionArgs.push('--input', tempInput);
       }
       
-      // Write connection parameters to temp file
-      fs.writeFileSync(tempInput, JSON.stringify(data));
-      
-      // Append input file to arguments
-      args.push('--input-file', tempInput);
-      
-      console.log(`Executing Python script with args: ${args.join(' ')}`);
+      console.log(`Executing Python script with args: ${connectionArgs.join(' ')}`);
       
       let stdout = '';
       let stderr = '';
       
       // Spawn Python process
-      const pythonProcess = spawn('python3', [scriptPath, ...args]);
+      const pythonProcess = spawn('python3', [scriptPath, ...connectionArgs]);
       
       pythonProcess.stdout.on('data', (data) => {
         stdout += data.toString();
@@ -350,9 +360,10 @@ async function validateERPConnection(connectionType: string, credentials: any): 
         console.error('Failed to start Python process:', err);
         resolve({ success: false, message: 'Failed to execute ERP backend' });
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error validating ERP connection:', error);
-      resolve({ success: false, message: 'Internal server error' });
+      const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+      resolve({ success: false, message: errorMessage });
     }
   });
 }
@@ -441,11 +452,19 @@ export async function POST(req: NextRequest) {
     
     // Validate specific ERP type requirements
     const typeValidator = typeValidators[data.type as keyof typeof typeValidators];
+    if (!typeValidator) {
+      return NextResponse.json(
+        { error: `Unsupported ERP type: ${data.type}` },
+        { status: 400 }
+      );
+    }
+    
     try {
       typeValidator.parse(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Invalid data format';
       return NextResponse.json(
-        { error: `Validation error: ${error.message}` },
+        { error: `Validation error: ${errorMessage}` },
         { status: 400 }
       );
     }
@@ -464,9 +483,9 @@ export async function POST(req: NextRequest) {
     await connectToMongoDB();
     
     // Get user information
-    const userId = session.user.id || session.user.email;
-    const userEmail = session.user.email;
-    const companyCode = session.user.companyCode?.toLowerCase();
+    const userId = session.user.id || session.user.email || '';
+    const userEmail = session.user.email || '';
+    const companyCode = (session.user.companyCode || '').toLowerCase();
     
     // Check if user has a company code
     if (!companyCode) {
@@ -555,7 +574,7 @@ export async function POST(req: NextRequest) {
     // Trigger the automatic merge process via internal API
     try {
       // Don't wait for the result to avoid delaying the main API response
-      await fetch('/api/integrations/merge', {
+      await fetch(`${process.env.NEXTAUTH_URL || ''}/api/integrations/merge`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -584,10 +603,11 @@ export async function POST(req: NextRequest) {
       },
       mergeStatus: 'automatic' // Change from mergeTriggered to mergeStatus
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error connecting to ERP:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to connect to ERP system';
     return NextResponse.json(
-      { error: 'Failed to connect to ERP system' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -640,10 +660,11 @@ export async function GET() {
         createdAt: activeConnection.createdAt
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching ERP connections:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch ERP connections';
     return NextResponse.json(
-      { error: 'Failed to fetch ERP connections' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

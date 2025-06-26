@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import connectDB from '@/lib/dbConnect';
+import { connectToDatabase } from '@/services/mongodb';
 import { getDBConnection } from '@/lib/companyDBConnect';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import { getUserModel } from '@/models/User';
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
 
 // MongoDB connection string
@@ -14,8 +14,8 @@ const uri = process.env.MONGODB_URI || '';
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const id = url.searchParams.get('id');
-  let client = null;
-  let authClient = null;
+  let client: MongoClient | null = null;
+  let authClient: MongoClient | null = null;
   
   try {
     const token = request.headers.get('authorization')?.split(' ')[1];
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     const status = url.searchParams.get('status') || '';
 
     // Build query
-    const query: any = {};
+    const query: Record<string, unknown> = {};
     
     // Status filter
     if (status) {
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
     authClient = new MongoClient(authDbURI);
     await authClient.connect();
     
-    let users = [];
+    let users: Record<string, unknown>[] = [];
     let totalUsers = 0;
     
     // If we're looking up a specific user by ID
@@ -122,7 +122,6 @@ export async function GET(request: NextRequest) {
         const usersCollection = companyDb.collection('users');
         
         try {
-          const { ObjectId } = require('mongodb');
           user = await usersCollection.findOne({ _id: new ObjectId(id) });
         } catch (err) {
           // If not a valid ObjectId, do nothing
@@ -134,7 +133,8 @@ export async function GET(request: NextRequest) {
       }
       
       // Remove sensitive fields
-      if (user.password) delete user.password;
+      const userObj = user as Record<string, unknown>;
+      if (userObj.password) delete userObj.password;
       
       return NextResponse.json(user, { status: 200 });
     }
@@ -153,7 +153,7 @@ export async function GET(request: NextRequest) {
       console.log('Company DB query:', JSON.stringify(mongoQuery));
       
       // Get users from company database
-      users = await usersCollection.find(mongoQuery)
+      const userDocs = await usersCollection.find(mongoQuery)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -161,10 +161,10 @@ export async function GET(request: NextRequest) {
       
       totalUsers = await usersCollection.countDocuments(mongoQuery);
       
-      console.log(`Found ${users.length} users in company database, total: ${totalUsers}`);
+      console.log(`Found ${userDocs.length} users in company database, total: ${totalUsers}`);
       
       // Map to format users and remove sensitive data
-      users = users.map(user => ({
+      users = userDocs.map(user => ({
         _id: user._id.toString(),
         username: user.username,
         email: user.email,
@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
         console.log('Company DB query (superadmin):', JSON.stringify(mongoQuery));
         
         // Get users from company database
-        users = await usersCollection.find(mongoQuery)
+        const userDocs = await usersCollection.find(mongoQuery)
           .sort({ createdAt: -1 })
           .skip(skip)
           .limit(limit)
@@ -200,7 +200,7 @@ export async function GET(request: NextRequest) {
         
         totalUsers = await usersCollection.countDocuments(mongoQuery);
         
-        console.log(`Found ${users.length} users in company database, total: ${totalUsers}`);
+        console.log(`Found ${userDocs.length} users in company database, total: ${totalUsers}`);
         
         // Get company name
         const mainDb = client.db('org_sim_db');
@@ -208,7 +208,7 @@ export async function GET(request: NextRequest) {
         const companyName = org ? org.name : '';
         
         // Map to format users and remove sensitive data
-        users = users.map(user => ({
+        users = userDocs.map(user => ({
           _id: user._id.toString(),
           username: user.username,
           email: user.email,
@@ -232,7 +232,7 @@ export async function GET(request: NextRequest) {
         console.log('Auth DB query (superadmin):', JSON.stringify(mongoQuery));
         
         // Get users from auth database
-        users = await authUsersCollection.find(mongoQuery)
+        const userDocs = await authUsersCollection.find(mongoQuery)
           .sort({ lastSynced: -1 })
           .skip(skip)
           .limit(limit)
@@ -240,10 +240,10 @@ export async function GET(request: NextRequest) {
         
         totalUsers = await authUsersCollection.countDocuments(mongoQuery);
         
-        console.log(`Found ${users.length} users in auth database, total: ${totalUsers}`);
+        console.log(`Found ${userDocs.length} users in auth database, total: ${totalUsers}`);
         
         // Map to format users and remove sensitive data
-        users = users.map(user => ({
+        users = userDocs.map(user => ({
           _id: user.userId || user._id.toString(),
           username: user.username,
           email: user.email,
@@ -267,9 +267,10 @@ export async function GET(request: NextRequest) {
       totalPages,
       currentPage: page
     });
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch users';
     console.error('Error fetching users:', error);
-    return NextResponse.json({ error: error.message || 'Failed to fetch users' }, { status: 500 });
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   } finally {
     if (client) await client.close();
     if (authClient) await authClient.close();
@@ -375,8 +376,12 @@ export async function POST(request: NextRequest) {
         });
         
         // Get created user
-        createdUser = await usersCollection.findOne({ _id: result.insertedId });
-        delete createdUser.password;
+        const createdUserDoc = await usersCollection.findOne({ _id: result.insertedId });
+        if (createdUserDoc) {
+          const userObj = createdUserDoc as Record<string, unknown>;
+          delete userObj.password;
+          createdUser = createdUserDoc;
+        }
       } finally {
         await client.close();
       }
@@ -387,7 +392,7 @@ export async function POST(request: NextRequest) {
       // Determine which database to use
       if (userCompanyCode) {
         // Connect to company-specific database
-        const companyConn = await getDBConnection(userCompanyCode);
+        await getDBConnection(userCompanyCode);
         userModel = getUserModel(userCompanyCode);
         
         // Check if user already exists in this company's database
@@ -403,8 +408,8 @@ export async function POST(request: NextRequest) {
         }
       } else if (payload.role === 'superadmin') {
         // Superadmin creating user in main database (global user)
-        await connectDB();
-        userModel = mongoose.models.User || getUserModel('');
+        await connectToDatabase();
+        userModel = getUserModel('');
         
         // Check if user already exists in the main database
         const existingUser = await userModel.findOne({
@@ -430,9 +435,10 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(createdUser, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create user';
     console.error('Error creating user:', error);
-    return NextResponse.json({ error: error.message || 'Failed to create user' }, { status: 500 });
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
@@ -463,16 +469,16 @@ export async function PATCH(request: NextRequest) {
     // Determine which database to use
     if (payload.role === 'admin' && payload.companyCode) {
       // Connect to company-specific database for admin users
-      const companyConn = await getDBConnection(payload.companyCode);
+      await getDBConnection(payload.companyCode);
       userModel = getUserModel(payload.companyCode);
     } else if (payload.role === 'superadmin' && updateData.companyCode) {
       // Superadmin updating user in a specific company
-      const companyConn = await getDBConnection(updateData.companyCode);
+      await getDBConnection(updateData.companyCode);
       userModel = getUserModel(updateData.companyCode);
     } else {
       // Connect to main database as fallback
-      await connectDB();
-      userModel = mongoose.models.User || getUserModel('');
+      await connectToDatabase();
+      userModel = getUserModel('');
     }
     
     // Find the user first to check if they exist and to get their current data
@@ -481,8 +487,8 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
     
-    // Admin can only update users in their own company (case-insensitive comparison)
-    if (payload.role === 'admin' && existingUser.company.toLowerCase() !== payload.company.toLowerCase()) {
+    // Admin can only update users in their own company
+    if (payload.role === 'admin' && existingUser.company && payload.companyCode && existingUser.company.toLowerCase() !== payload.companyCode.toLowerCase()) {
       return NextResponse.json({ error: 'You can only update users in your own company' }, { status: 403 });
     }
     
@@ -546,7 +552,6 @@ export async function PATCH(request: NextRequest) {
           const tenantClient = new MongoClient(uri);
           await tenantClient.connect();
           const tenantDb = tenantClient.db(`company_${tenantCode}`);
-          const { ObjectId } = require('mongodb');
           await tenantDb.collection('users').updateOne(
             { _id: new ObjectId(id) },
             { $set: { role: updateData.role } }
@@ -556,22 +561,6 @@ export async function PATCH(request: NextRequest) {
           console.error('Error propagating role to tenant DB:', err);
         }
       })();
-      // Propagate to global users collection in org_sim_db
-      (async () => {
-        try {
-          const mainClient = new MongoClient(uri);
-          await mainClient.connect();
-          const mainDb = mainClient.db('org_sim_db');
-          const { ObjectId } = require('mongodb');
-          await mainDb.collection('users').updateOne(
-            { _id: new ObjectId(id) },
-            { $set: { role: updateData.role } }
-          );
-          await mainClient.close();
-        } catch (err) {
-          console.error('Error propagating role to global DB:', err);
-        }
-      })();
     }
 
     if (!updatedUser) {
@@ -579,9 +568,10 @@ export async function PATCH(request: NextRequest) {
     }
     
     return NextResponse.json(updatedUser);
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to update user';
     console.error('Error updating user:', error);
-    return NextResponse.json({ error: error.message || 'Failed to update user' }, { status: 500 });
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
@@ -614,22 +604,25 @@ export async function DELETE(request: NextRequest) {
     // Determine which database to use
     if (payload.role === 'admin' && payload.companyCode) {
       // Connect to company-specific database for admin users
-      const companyConn = await getDBConnection(payload.companyCode);
+      await getDBConnection(payload.companyCode);
       userModel = getUserModel(payload.companyCode);
     } else {
       // Connect to main database for superadmin or fallback
-      await connectDB();
-      userModel = mongoose.models.User || getUserModel('');
+      await connectToDatabase();
+      userModel = getUserModel('');
     }
     
     // Get all users to be deleted for verification
     const usersToDelete = await userModel.find({ _id: { $in: userIds } });
     
     // Admin can only delete users in their own company
-    if (payload.role === 'admin') {
+    if (payload.role === 'admin' && 'companyCode' in payload && payload.companyCode) {
       // Use lowercase comparison for company names
-      const adminCompany = payload.company.toLowerCase();
-      const nonCompanyUsers = usersToDelete.filter(user => user.company.toLowerCase() !== adminCompany);
+      const adminCompany = payload.companyCode?.toLowerCase() || '';
+      const nonCompanyUsers = usersToDelete.filter(user => {
+        const userCompany = (user as { company?: string }).company?.toLowerCase() || '';
+        return userCompany !== adminCompany;
+      });
       
       if (nonCompanyUsers.length > 0) {
         return NextResponse.json({ 
@@ -639,7 +632,11 @@ export async function DELETE(request: NextRequest) {
       }
       
       // Admin cannot delete another admin
-      const otherAdmins = usersToDelete.filter(user => user.role === 'admin' && user._id.toString() !== payload.id);
+      const otherAdmins = usersToDelete.filter(user => {
+        const userObj = user as { role: string; _id: { toString: () => string } };
+        return userObj.role === 'admin' && userObj._id.toString() !== payload.id;
+      });
+      
       if (otherAdmins.length > 0) {
         return NextResponse.json({ 
           error: 'You cannot delete other admin users',
@@ -648,20 +645,22 @@ export async function DELETE(request: NextRequest) {
       }
     }
     
-    // Delete the users
+    // Delete users
     const result = await userModel.deleteMany({ _id: { $in: userIds } });
     
-    if (result.deletedCount === 0) {
+    if (!result || !result.deletedCount || result.deletedCount === 0) {
       return NextResponse.json({ error: 'No users were deleted' }, { status: 404 });
     }
     
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       deletedCount: result.deletedCount,
-      message: `Successfully deleted ${result.deletedCount} user(s)`
+      message: `Successfully deleted ${result.deletedCount} user(s)`,
+      deletedUserIds: userIds
     });
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to delete users';
     console.error('Error deleting users:', error);
-    return NextResponse.json({ error: error.message || 'Failed to delete users' }, { status: 500 });
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
-} 
+}

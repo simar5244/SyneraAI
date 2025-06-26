@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import { mergeIntegrationDataNow } from '@/utils/integrationDataMergerUtil';
 
 /**

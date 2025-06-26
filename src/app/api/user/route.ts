@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { MongoClient, ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
 import { unstable_noStore as noStore } from 'next/cache';
-import { verifyAuth } from "@/lib/auth";
+import { verifyAuth } from "@/lib/edgeAuth";
 import mongoose from 'mongoose';
 
 // MongoDB connection string from environment variable

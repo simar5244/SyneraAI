@@ -1,16 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectToMongoDB } from '@/lib/dbConnect';
-import Employee from '@/models/Employee';
-import mongoose from 'mongoose';
+import { MongoClient } from 'mongodb';
+
+// MongoDB connection string
+const MONGODB_URI = process.env.MONGODB_URI || '';
 
 // GET /api/departments
 export async function GET(request: NextRequest) {
+  let client: MongoClient | null = null;
+  
   try {
     // Connect to MongoDB
-    await connectToMongoDB();
+    client = new MongoClient(MONGODB_URI);
+    await client.connect();
+    
+    const db = client.db('org_sim_db');
+    const employeesCollection = db.collection('employees');
     
     // Aggregate departments from employee records
-    const departments = await Employee.aggregate([
+    const departments = await employeesCollection.aggregate([
       // Group by department
       {
         $group: {
@@ -43,16 +50,16 @@ export async function GET(request: NextRequest) {
       },
       // Sort by department name
       { $sort: { name: 1 } }
-    ]);
+    ]).toArray();
     
     // Format departments for frontend
-    const formattedDepartments = departments.map(dept => ({
+    const formattedDepartments = departments.map((dept: any) => ({
       id: dept.id,
       departmentId: dept.departmentId,
       name: dept.name,
       employeeCount: dept.count,
       parentDepartmentId: dept.parentDepartmentId,
-      manager: dept.managers.length > 0 ? dept.managers[0] : null
+      manager: dept.managers && dept.managers.length > 0 ? dept.managers[0] : null
     }));
     
     return NextResponse.json(formattedDepartments);
@@ -62,5 +69,9 @@ export async function GET(request: NextRequest) {
       { error: 'Failed to fetch departments' },
       { status: 500 }
     );
+  } finally {
+    if (client) {
+      await client.close();
+    }
   }
 } 

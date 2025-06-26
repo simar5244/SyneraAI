@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import { MongoClient } from 'mongodb';
 import { unstable_noStore as noStore } from 'next/cache';
 

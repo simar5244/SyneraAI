@@ -1,11 +1,52 @@
-import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import { NextRequest, NextResponse } from 'next/server';
+import { connectToDatabase } from '@/services/mongodb';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import mongoose from 'mongoose';
+import { Collection, Document, WithId } from 'mongodb';
 
 const execAsync = promisify(exec);
 
-export async function POST(req: Request) {
+interface Employee extends WithId<Document> {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  jobResponsibilities?: any[];
+  utilization?: {
+    score: number;
+  };
+}
+
+interface Duty {
+  id?: string;
+  hours?: number;
+  intensity?: number;
+  [key: string]: any;
+}
+
+interface SuccessorAssignment {
+  email: string;
+  name: string;
+  duties: Duty[];
+  totalHours: number;
+  averageIntensity: number;
+  dutyCount: number;
+}
+
+export async function POST(req: NextRequest): Promise<NextResponse> {
+  const body = await req.json().catch(() => ({}));
+  const { removedEmployeeEmail, selectedSuccessors } = body as {
+    removedEmployeeEmail?: string;
+    selectedSuccessors?: string[];
+  };
+
+  if (!removedEmployeeEmail || !Array.isArray(selectedSuccessors) || selectedSuccessors.length === 0) {
+    console.error('Missing or invalid parameters in preview-redistribution call');
+    return NextResponse.json(
+      { error: 'Missing or invalid parameters' }, 
+      { status: 400 }
+    );
+  }
   try {
     const { 
       removedEmployeeEmail,
@@ -20,8 +61,13 @@ export async function POST(req: Request) {
     console.log(`Preview redistribution request for ${removedEmployeeEmail} to ${selectedSuccessors.length} successors`);
 
     // Connect to MongoDB to verify employee exists
-    const { db } = await connectToDatabase();
-    const employee = await db.collection('merged_output').findOne({ email: removedEmployeeEmail });
+    const conn = await connectToDatabase();
+    const db = conn.connection.db;
+    if (!db) {
+      throw new Error('Failed to connect to database');
+    }
+    const collection = db.collection<Employee>('merged_output');
+    const employee = await collection.findOne<Employee>({ email: removedEmployeeEmail });
 
     if (!employee) {
       console.error(`Employee not found: ${removedEmployeeEmail}`);
@@ -55,8 +101,9 @@ export async function POST(req: Request) {
         console.log(`Redistribution preview complete. ${redistributionResult.redistributedDuties} duties assigned.`);
         
         return NextResponse.json(redistributionResult);
-      } catch (parseError) {
-        console.error(`Error parsing script output: ${parseError.message}`);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error(`Error parsing script output: ${errorMessage}`);
         console.error(`Script output: ${stdout.substring(0, 500)}...`);
         
         // Fallback to manual assignment if script fails
@@ -79,15 +126,24 @@ export async function POST(req: Request) {
         // Fetch successors
         const successors = await Promise.all(
           selectedSuccessors.map(async (email: string) => {
-            return await db.collection('merged_output').findOne({ email });
+            return await collection.findOne({ email });
           })
         );
         
-        const validSuccessors = successors.filter(Boolean);
+        const validSuccessors = successors.filter((s): s is Employee => s !== null);
         
         // Simple distribution - round robin
-        const dutyAssignments = [];
-        const successorDutyMap: Record<string, any[]> = {};
+        const dutyAssignments: Array<{
+          dutyId: string;
+          duty: Duty;
+          successorEmail: string;
+          successorName: string;
+          score: number;
+          utilizationScore: number;
+          overlapScore: number;
+        }> = [];
+        
+        const successorDutyMap: Record<string, Duty[]> = {};
         
         // Initialize empty arrays for each successor
         validSuccessors.forEach(successor => {
@@ -95,7 +151,7 @@ export async function POST(req: Request) {
         });
         
         // Distribute duties round-robin style
-        duties.forEach((duty, index) => {
+        (duties as Duty[]).forEach((duty: Duty, index: number) => {
           const successorIndex = index % validSuccessors.length;
           const successor = validSuccessors[successorIndex];
           
@@ -114,10 +170,10 @@ export async function POST(req: Request) {
           successorDutyMap[successor.email].push(duty);
         });
         
-        const successorAssignments = validSuccessors.map(successor => {
+        const successorAssignments: SuccessorAssignment[] = validSuccessors.map(successor => {
           const assignedDuties = successorDutyMap[successor.email] || [];
           const totalHours = assignedDuties.reduce(
-            (sum, duty) => sum + (duty.hours || duty.intensity * 10 || 5), 0
+            (sum, duty) => sum + (duty.hours || (duty.intensity || 0.5) * 10 || 5), 0
           );
           
           return {
@@ -144,15 +200,20 @@ export async function POST(req: Request) {
         
         return NextResponse.json(result);
       }
-    } catch (scriptError) {
-      console.error(`Error running redistribution script: ${scriptError.message}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`Error running redistribution script: ${errorMessage}`);
       return NextResponse.json({ 
         error: 'Failed to run redistribution script',
-        details: scriptError.message
+        details: errorMessage
       }, { status: 500 });
     }
   } catch (error) {
-    console.error(`API error: ${error}`);
-    return NextResponse.json({ error: 'Server error', details: error.message }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`API error: ${errorMessage}`);
+    return NextResponse.json(
+      { error: 'Server error', details: errorMessage }, 
+      { status: 500 }
+    );
   }
 } 

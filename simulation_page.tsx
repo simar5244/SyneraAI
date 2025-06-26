@@ -337,7 +337,7 @@ export function SimulationPage() {
   // Handle layout selection
   const handleLayoutChange = (event: SelectChangeEvent<number | string>) => {
     const layoutId = event.target.value;
-    setSelectedLayoutId(layoutId);
+    setSelectedLayoutId(layoutId === '' ? '' : Number(layoutId));
     
     if (typeof layoutId === 'number') {
       fetchLayoutDetails(layoutId);

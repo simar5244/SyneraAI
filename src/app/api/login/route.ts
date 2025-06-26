@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { generateToken, verifyAuth } from '@/lib/auth';
-import User from '@/models/User';
-import connectDB from '@/lib/dbConnect';
+import { generateToken } from '@/lib/auth';
+import { connectToDatabase } from '@/services/mongodb';
+import { getUserModel } from '@/models/User';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,9 +15,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await connectDB();
-    
-    const user = await User.findOne({ email }).select('+password');
+    await connectToDatabase();
+    const UserModel = getUserModel('');
+    const user = await UserModel.findOne({ email }).select('+password').lean();
 
     if (!user) {
       return NextResponse.json(
@@ -41,14 +41,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const tokenPayload = {
+    const token = generateToken({
       id: user._id.toString(),
       email: user.email,
       role: user.role,
-      organizationId: user.organizationId?.toString() || null,
-      company: user.company || null
-    };
-    const token = await generateToken(tokenPayload);
+      company: user.company || ''
+    });
 
     const response = NextResponse.json({
       success: true,

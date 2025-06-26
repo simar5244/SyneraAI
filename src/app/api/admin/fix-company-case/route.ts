@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import connectDB from '@/lib/dbConnect';
 import { getDBConnection } from '@/lib/companyDBConnect';
 import { getUserModel } from '@/models/User';
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     // For each user, update their company name to lowercase
     const updatePromises = usersToFix.map(user => {
       return User.findByIdAndUpdate(user._id, {
-        $set: { company: user.company.toLowerCase() }
+        $set: { company: user.company?.toLowerCase() }
       });
     });
 

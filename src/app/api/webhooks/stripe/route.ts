@@ -7,7 +7,7 @@ import Stripe from 'stripe';
 import { connectToMongoDB } from '@/lib/dbConnect';
 import User from '@/models/User';
 
-// Define Company interface
+// Define interface
 interface ICompany {
   companyCode: string;
   name: string;

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/utils/auth';
 import redis from '@/utils/redis';
-import { Notification } from '../route';
+import { connectToDatabase } from '@/services/mongodb';
+import Notification from '@/models/Notification';
 
 // Type definitions for notifications
 type NotificationType = 'info' | 'success' | 'warning' | 'error';

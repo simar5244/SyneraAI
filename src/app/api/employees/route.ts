@@ -64,14 +64,7 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     console.error('Error fetching employees:', error);
     
-    // Return mock data for development/demo purposes
-    return NextResponse.json([
-      { id: 'emp-001', name: 'John Doe', email: 'john.doe@example.com', position: 'Software Engineer', department: 'Engineering', managerId: 'emp-005', skills: 'JavaScript, React, Node.js' },
-      { id: 'emp-002', name: 'Jane Smith', email: 'jane.smith@example.com', position: 'Product Manager', department: 'Product', managerId: 'emp-007', skills: 'Product Strategy, Agile, User Research' },
-      { id: 'emp-003', name: 'Mike Johnson', email: 'mike.johnson@example.com', position: 'UX Designer', department: 'Design', managerId: 'emp-005', skills: 'UI/UX, Figma, User Testing' },
-      { id: 'emp-004', name: 'Sarah Williams', email: 'sarah.williams@example.com', position: 'Data Scientist', department: 'Engineering', managerId: 'emp-007', skills: 'Python, Machine Learning, SQL' },
-      { id: 'emp-005', name: 'David Brown', email: 'david.brown@example.com', position: 'Engineering Director', department: 'Engineering', managerId: 'emp-010', skills: 'Leadership, Architecture, Mentoring' }
-    ]);
+    
   } finally {
     if (client) {
       await client.close();

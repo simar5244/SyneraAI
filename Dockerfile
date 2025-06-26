@@ -57,14 +57,15 @@ RUN echo "MONGODB_URI=$MONGODB_URI" > .env.local && \
     echo "NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL" >> .env.local && \
     chmod 644 .env.local
 
+# Copy build script
+COPY build.sh /app/build.sh
+
 # Set environment variables for the build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_OPTIONS=--max_old_space_size=4096
 
-# Build the Next.js app with ignore flags
-RUN NEXT_TELEMETRY_DISABLED=1 \
-    NODE_OPTIONS=--max_old_space_size=4096 \
-    npm run build || (echo "Build failed but continuing due to ignore flags" && exit 0)
+# Run the build script
+RUN chmod +x /app/build.sh && /app/build.sh
 
 # Stage 2: Create the production image
 FROM node:20-slim

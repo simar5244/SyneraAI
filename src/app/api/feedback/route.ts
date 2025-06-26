@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/dbConnect';
+import { connectToDatabase } from '@/services/mongodb';
 export const runtime = 'nodejs';
 import { unstable_noStore as noStore } from 'next/cache';
-import { verifyAuth } from '@/lib/auth';
-import mongoose from 'mongoose';
+import { verifyAuth } from '@/lib/edgeAuth';
 import feedbackService from '@/services/feedbackService';
 
 // POST handler to submit feedback
 export async function POST(request: NextRequest): Promise<NextResponse> {
   noStore();
-  await connectDB();
+  const client = await connectToDatabase();
   
   try {
     // Verify authentication with enhanced company validation
@@ -92,7 +91,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 // GET handler to retrieve feedback
 export async function GET(request: NextRequest): Promise<NextResponse> {
   noStore();
-  await connectDB();
+  const client = await connectToDatabase();
   console.log('Route GET /api/feedback: headers =', Object.fromEntries(request.headers.entries()));
   
   try {

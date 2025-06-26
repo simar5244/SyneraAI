@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import { ERPService } from '@/services/erpService';
 import { connectToDatabase } from '@/services/mongodb';
 import Organization from '@/models/Organization';
+
+interface TokenPayload {
+  role: string;
+  orgId: string;
+  [key: string]: any;
+}
 
 // POST /api/admin/integrations/erp/[id]/sync - Sync data from an ERP connection
 export async function POST(
@@ -10,8 +16,9 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Verify the token and ensure admin access
-    const tokenData = await verifyToken(req);
+    // Get and verify the token
+    const token = req.headers.get('authorization')?.split(' ')[1] || '';
+    const tokenData = await verifyAuth(token);
     if (!tokenData || tokenData.role !== 'admin') {
       return NextResponse.json(
         { error: 'You do not have permission to sync ERP data' },
@@ -40,10 +47,11 @@ export async function POST(
       message: `Successfully synced ${result.employeeCount} employees`,
       employeeCount: result.employeeCount
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error syncing ERP data:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to sync ERP data';
     return NextResponse.json(
-      { error: 'Failed to sync ERP data' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

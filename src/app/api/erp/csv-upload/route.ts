@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { parse } from 'csv-parse/sync';
 import { MongoClient } from 'mongodb';
 import { unstable_noStore as noStore } from 'next/cache';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 
 // Import the integration data merger utility
 const { mergeIntegrationDataNow } = require('@/utils/integrationDataMergerUtil');

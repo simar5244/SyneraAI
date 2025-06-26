@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MongoClient } from 'mongodb';
 import { unstable_noStore as noStore } from 'next/cache';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import { connectToCompanyDb } from '@/lib/companyDb';
 
 export async function GET(request: NextRequest) {

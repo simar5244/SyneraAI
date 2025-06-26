@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { MongoClient, ObjectId } from 'mongodb';
 import { unstable_noStore as noStore } from 'next/cache';
-import { verifyAuth } from '@/lib/auth';
-import connectDB from '@/lib/dbConnect';
+import { verifyAuth } from '@/lib/edgeAuth';
+import { connectToDatabase } from '@/services/mongodb';
 import User, { getUserModel } from '@/models/User';
+import type { Document, Types } from 'mongoose';
 import mongoose from 'mongoose';
 
 // MongoDB connection string from environment variable
 const uri = process.env.MONGODB_URI || '';
-const dbName = 'org_sim_db';
+const dbName = process.env.MONGODB_DATABASE || '';
 
 // Helper function to extract token from Authorization header
 const extractToken = (request: NextRequest): string | null => {
@@ -21,7 +21,6 @@ const extractToken = (request: NextRequest): string | null => {
 
 export async function PATCH(request: NextRequest) {
   noStore();
-  let client: MongoClient | null = null;
   
   try {
     // Extract and verify token
@@ -55,36 +54,42 @@ export async function PATCH(request: NextRequest) {
     console.log('Updating job profile with data:', JSON.stringify(updateData));
     
     // Connect to database
-    await connectDB();
+    const mongooseConnection = await connectToDatabase();
     
     // Choose the appropriate user model based on company code
     const UserModel = companyCode ? getUserModel(companyCode) : User;
     
-    // Connect to MongoDB for merged_output collection
+    // Get native MongoDB connection for merged_output collection
     console.log('Connecting to MongoDB for merged_output collection');
-    client = new MongoClient(uri);
-    await client.connect();
+    const db = mongooseConnection.connection.db;
+    if (!db) {
+      throw new Error('Failed to connect to database');
+    }
     
     // Use company-specific database if available
     const dbToUse = companyCode ? `company_${companyCode}` : dbName;
     console.log(`Using database: ${dbToUse}`);
     
-    const db = client.db(dbToUse);
     const profilesCollection = db.collection('users'); // Use 'users' collection in company DB
     
-    // Try to find the user
-    let userId = payload.id;
+    // Try to find the user by email from token first
+    let user: Document | null = null;
     
-    let user: any = null;
-
-    // 1) Try to find by valid ObjectId
-    if (mongoose.Types.ObjectId.isValid(userId)) {
-      user = await UserModel.findById(userId).select('-password -__v');
+    if (payload.email) {
+      user = await (UserModel as any).findOne({ email: { $regex: `^${payload.email}$`, $options: 'i' } })
+        .select('-password -__v')
+        .lean()
+        .exec();
     }
-
-    // 2) Fallback: try to find by email from token
-    if (!user && payload.email) {
-      user = await UserModel.findOne({ email: { $regex: `^${payload.email}$`, $options: 'i' } }).select('-password -__v');
+    
+    // Fallback to find by ID if not found by email
+    if (!user?._id && payload.id) {
+      if (mongoose.Types.ObjectId.isValid(payload.id)) {
+        user = await (UserModel as any).findById(payload.id)
+          .select('-password -__v')
+          .lean()
+          .exec();
+      }
     }
 
     if (!user) {
@@ -136,14 +141,35 @@ export async function PATCH(request: NextRequest) {
     }
     
     // Update directly in the user document
-    console.log(`Updating job profile for user ${user._id.toString()}:`, JSON.stringify(profileUpdate));
+    const userId = (user as { _id: Types.ObjectId })._id;
+    console.log(`Updating job profile for user ${userId.toString()}:`, JSON.stringify(profileUpdate));
     
     // Update the user document directly
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      user._id,
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Invalid user ID' },
+        { status: 400 }
+      );
+    }
+    
+    const updatedUser = await (UserModel as any).findByIdAndUpdate(
+      userId,
       { $set: profileUpdate },
-      { new: true, runValidators: true }
-    ).select('-password -__v');
+      { 
+        new: true, 
+        runValidators: true,
+        select: '-password -__v',
+        lean: true 
+      }
+    )
+    .exec();
+    
+    if (!updatedUser) {
+      return NextResponse.json(
+        { error: 'Failed to update user profile' },
+        { status: 500 }
+      );
+    }
     
     if (!updatedUser) {
       return NextResponse.json(
@@ -188,8 +214,6 @@ export async function PATCH(request: NextRequest) {
       { status: 500 }
     );
   } finally {
-    if (client) {
-      await client.close();
-    }
+    // No need to close the connection as it's managed by the connection pool
   }
 } 

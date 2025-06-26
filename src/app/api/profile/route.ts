@@ -4,7 +4,7 @@ import { MongoClient, ObjectId } from 'mongodb';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import authService from '@/services/authService';
-import { verifyAuth } from "@/lib/auth";
+import { verifyAuth } from "@/lib/edgeAuth";
 import connectDB from '@/lib/dbConnect';
 import User, { getUserModel, IUser } from '@/models/User';
 

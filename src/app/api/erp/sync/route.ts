@@ -1,21 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
 import { UserRole, Permission, hasPermission } from '@/utils/roles';
+import { verifyToken } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
+    // Get the token from the Authorization header
+    const authHeader = req.headers.get('authorization');
+    const token = authHeader?.split(' ')[1];
+    
+    if (!token) {
+      return NextResponse.json(
+        { error: 'No token provided' },
+        { status: 401 }
+      );
+    }
+
     // Verify the token
-    const tokenData = await verifyToken(req);
+    const tokenData = await verifyToken(token);
     if (!tokenData) {
       return NextResponse.json(
-        { error: 'Unauthorized access' },
+        { error: 'Invalid or expired token' },
         { status: 401 }
       );
     }
 
     // Check if user has permission to sync ERP data
     const canSyncERP = hasPermission(
-      tokenData.role as UserRole, 
+      tokenData.role as UserRole,
       Permission.MANAGE_EMPLOYEES
     );
 
@@ -51,7 +62,7 @@ export async function POST(req: NextRequest) {
         departments: 28
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error syncing ERP data:', error);
     return NextResponse.json(
       { error: 'Failed to synchronize ERP data' },

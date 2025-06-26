@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MongoClient } from 'mongodb';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth } from '@/lib/edgeAuth';
 import { unstable_noStore as noStore } from 'next/cache';
 
 // Get MongoDB connection string from environment variables

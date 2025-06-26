@@ -3,11 +3,12 @@ import dbConnect from '@/lib/dbConnect';
 import Notification from '@/models/Notification';
 import { getToken } from 'next-auth/jwt';
 import { authOptions } from '@/lib/auth';
+import { connectToDatabase } from '@/services/mongodb';
 
 // POST /api/notifications/mark-all-read - Mark all notifications as read
 export async function POST(request: NextRequest) {
   try {
-    await dbConnect();
+    await connectToDatabase();
     
     // Verify authentication
     const token = await getToken({ req: request, secret: authOptions.secret });
