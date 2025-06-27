@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     bash \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -29,13 +30,14 @@ ENV npm_config_python=/usr/bin/python3
 # Install Node.js dependencies (including concurrently for production)
 RUN echo "Node.js version: $(node --version)" && \
     echo "npm version: $(npm --version)" && \
-    npm config set fetch-retries 3 && \
-    npm config set fetch-retry-mintimeout 10000 && \
-    npm config set fetch-retry-maxtimeout 60000 && \
+    echo "Git version: $(git --version)" && \
+    npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
     npm config set audit false && \
     npm config set fund false && \
     npm cache clean --force && \
-    npm install --legacy-peer-deps
+    npm install --legacy-peer-deps --no-audit --progress=false
 
 # Set up Python virtual environment
 RUN python3 -m venv /opt/venv
@@ -75,6 +77,7 @@ RUN apt-get update && apt-get install -y \
     python3-venv \
     curl \
     bash \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -90,9 +93,12 @@ COPY --from=builder /app/*.py ./
 COPY --from=builder /app/*.sh ./
 
 # Install production Node.js dependencies (including concurrently)
-RUN npm config set audit false && \
+RUN npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm config set audit false && \
     npm config set fund false && \
-    npm install --legacy-peer-deps
+    npm install --legacy-peer-deps --no-audit --progress=false
 
 # Make bash scripts executable
 RUN find . -name "*.sh" -type f -exec chmod +x {} \;
