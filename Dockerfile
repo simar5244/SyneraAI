@@ -1,35 +1,22 @@
 # Stage 1: Build the Next.js application
 FROM node:20-slim AS builder
 
-# Accept build-time env variables (from Render or Docker CLI)
+# Accept build-time env variables
 ARG MONGODB_URI
 ARG MONGODB_URI_BASE
 ARG NEXT_PUBLIC_APP_URL
 
-# Cache bust argument to force layer rebuild
-ARG CACHE_DATE=2025-06-26
-RUN echo "Cache bust: $CACHE_DATE"
-
-# Install system dependencies including Git and build tools
+# Install required system dependencies
 RUN apt-get update && apt-get install -y \
-    git \
     python3 \
     python3-venv \
-    python3-dev \
     python3-pip \
     build-essential \
-    pkg-config \
-    libcairo2-dev \
-    libpango1.0-dev \
-    libjpeg-dev \
-    libgif-dev \
-    librsvg2-dev \
-    dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files first for better caching
 COPY package*.json ./
 COPY requirements*.txt ./
 
@@ -37,31 +24,20 @@ COPY requirements*.txt ./
 ENV PYTHON=/usr/bin/python3
 ENV npm_config_python=/usr/bin/python3
 
-# Set Python path for node-gyp
-ENV PYTHON=/usr/bin/python3
-ENV npm_config_python=/usr/bin/python3
-
-# Install Node.js dependencies with production flag (allow legacy peer deps)
+# Install Node.js dependencies
 RUN npm config set fetch-retries 5 && \
     npm config set fetch-retry-mintimeout 20000 && \
     npm config set fetch-retry-maxtimeout 120000 && \
-    npm install --only=production --legacy-peer-deps --prefer-offline --no-audit --progress=false && \
-    npm cache clean --force
+    npm install --legacy-peer-deps --no-audit --progress=false
 
-# Create and activate a virtual environment for Python in builder stage
+# Set up Python virtual environment
 RUN python3 -m venv /opt/venv
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Install Python dependencies in the virtual environment
+# Install Python dependencies
 RUN python -m pip install --upgrade pip setuptools wheel && \
     python -m pip install --no-cache-dir -r requirements.txt
-
-# Copy package-lock.json (if exists) for better dependency resolution
-COPY package-lock.json* ./
-
-# Install development dependencies
-RUN npm install --legacy-peer-deps --no-audit --progress=false
 
 # Copy the rest of the application
 COPY . .
@@ -72,64 +48,45 @@ RUN echo "MONGODB_URI=$MONGODB_URI" > .env.local && \
     echo "NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL" >> .env.local && \
     chmod 644 .env.local
 
-# Copy and prepare the build script
-COPY build.sh /app/
-RUN dos2unix /app/build.sh && \
-    chmod +x /app/build.sh && \
-    # Verify the script is valid
-    if ! /bin/sh -n /app/build.sh; then \
-        echo "ERROR: build.sh has syntax errors" >&2; \
-        exit 1; \
-    fi
+# Build the application with error handling
+RUN set -e && \
+    echo "Starting build process..." && \
+    export NODE_OPTIONS=--max_old_space_size=4096 && \
+    export NEXT_TELEMETRY_DISABLED=1 && \
+    npm run build --no-lint && \
+    echo "Build completed successfully"
 
-# Run the build script
-RUN /app/build.sh
-
-# Verify the build was successful
-RUN if [ ! -d ".next" ]; then \
-      echo "ERROR: .next directory was not created!" >&2; \
-      exit 1; \
-    else \
-      echo "Build verification: .next directory exists"; \
-    fi
-
-# Stage 2: Create the production image
+# Stage 2: Production image
 FROM node:20-slim
 
-# Install Python runtime dependencies
+# Install runtime dependencies
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-venv \
-    python3-dev \
-    python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy required files from the builder
+# Copy required files from builder
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/requirements*.txt ./
-COPY --from=builder /app/.env.local .env.local
+COPY --from=builder /app/.env.local ./
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/*.py ./
-COPY --from=builder /app/*.sh ./
 
 # Install production Node.js dependencies
 RUN npm install --only=production --legacy-peer-deps
 
-# Set up virtualenv in production container
+# Set up Python virtual environment
 RUN python3 -m venv /opt/venv
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Install Python dependencies in the virtual environment
+# Install Python dependencies
 RUN python -m pip install --upgrade pip setuptools wheel && \
     python -m pip install --no-cache-dir -r requirements.txt
-
-# Make shell scripts executable
-RUN chmod +x ./*.sh
 
 # Set environment variables
 ENV NODE_ENV=production
