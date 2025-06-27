@@ -5,6 +5,9 @@ FROM node:20-slim AS builder
 ARG MONGODB_URI
 ARG MONGODB_URI_BASE
 ARG NEXT_PUBLIC_APP_URL
+ARG STRIPE_SECRET_KEY
+ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+ARG STRIPE_WEBHOOK_SECRET
 
 # Install required system dependencies
 RUN apt-get update && apt-get install -y \
@@ -58,6 +61,9 @@ RUN find . -name "*.sh" -type f -exec chmod +x {} \;
 RUN echo "MONGODB_URI=${MONGODB_URI}" > .env.local && \
     echo "MONGODB_URI_BASE=${MONGODB_URI_BASE}" >> .env.local && \
     echo "NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}" >> .env.local && \
+    echo "STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}" >> .env.local && \
+    echo "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}" >> .env.local && \
+    echo "STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}" >> .env.local && \
     chmod 644 .env.local
 
 # Build the application
